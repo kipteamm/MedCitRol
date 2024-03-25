@@ -1,1 +1,3 @@
-<a href="/game/create">Create game</a>
+{% for world in worlds %}
+    <a href="/game/{{ world.id}}">{{ world.code }}</a>
+{% endfor %}

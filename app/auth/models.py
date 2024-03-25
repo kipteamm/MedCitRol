@@ -11,6 +11,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
 
+    worlds = db.relationship('World', secondary='user_worlds', backref=db.backref('users', lazy='dynamic'))
+
     def __init__(self, email, password):
         self.email = email
         self.set_password(password)
@@ -28,3 +30,10 @@ class User(UserMixin, db.Model):
         if user and user.check_password(password):
             return user
         return None
+
+
+class UserWorlds(db.Model):
+    __tablename__ = 'user_worlds'
+
+    world_id = db.Column(db.Integer, db.ForeignKey('world.id'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)

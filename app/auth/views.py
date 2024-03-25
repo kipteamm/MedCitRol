@@ -59,7 +59,7 @@ def login():
             
             return redirect(url_for('game.home'))
         else:
-            flash('Invalid username or password', 'error')
+            flash('Invalid email or password', 'error')
             return render_template('auth/login.html')
 
     return render_template('auth/login.html')
