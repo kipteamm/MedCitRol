@@ -24,7 +24,9 @@
 
                 <ul>
                     <li>Buildings in your settlement</li>
-                <ul>
+                </ul>
+
+                {{ settlement }}
             </div>
         </div>
         <div class="right">
@@ -34,9 +36,11 @@
                 <ul>
                     <li>Other settlements</li>
                 </ul>
+
+                {{ world }}
             </div>
             <div class="bottom">
-                <h2>Player</h2>
+                <h2>Character</h2>
                 <ul>
                     <li>Hunger <b>0/24</b></li>
                     <li>Fatigue <b>You feel ... (this may/will cause)</b></li>
@@ -44,6 +48,8 @@
                     <li>Happiness <b>You feel ... (this may/will cause)</b></li>
                     <li>Coins <b>0</b></li>
                 </ul>
+
+                {{ character }}
             </div>
         </div>
     </div>

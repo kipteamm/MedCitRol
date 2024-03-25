@@ -2,6 +2,7 @@ from flask_login import current_user, login_required
 
 from flask import Blueprint, render_template, redirect, url_for
 
+from app.utils.functions import get_presence
 from app.extensions import db
 
 from .models import World, Settlement, Character
@@ -36,7 +37,15 @@ def create_game():
 
     return redirect(url_for('game.home'))
 
-@game_blueprint.route('/game')
+
+@game_blueprint.route('/game/<id>')
 @login_required
-def game():
-    return render_template('game/game.html')
+def game(id):
+    world = World.query.filter_by(id=id).first()
+
+    if not world:
+        return redirect(url_for('game.home'))
+    
+    settlement, character = get_presence(world, current_user) # type: ignore
+
+    return render_template('game/game.html', world=world, settlement=settlement, character=character)

@@ -35,6 +35,7 @@ class Settlement(db.Model):
     world_id = db.Column(db.Integer, db.ForeignKey('world.id'), nullable=False)
 
     name = db.Column(db.String(120), nullable=False)
+    colour = db.Column(db.String(120), nullable=False)
 
 
 class Character(db.Model):

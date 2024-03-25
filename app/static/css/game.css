@@ -34,3 +34,7 @@
 .game .right .top {
     background-color: bisque;
 }
+
+.game .right .bottom {
+    background-color: burlywood;
+}
