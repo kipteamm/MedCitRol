@@ -8,11 +8,11 @@ class User(UserMixin, db.Model):
     
     # Authentication
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(25), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
 
-    def __init__(self, username, password):
-        self.username = username
+    def __init__(self, email, password):
+        self.email = email
         self.set_password(password)
     
     def set_password(self, password):
@@ -22,8 +22,8 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
     
     @staticmethod
-    def authenticate(username, password):
-        user = User.query.filter_by(username=username).first()
+    def authenticate(email, password):
+        user = User.query.filter_by(email=email).first()
         
         if user and user.check_password(password):
             return user

@@ -1,0 +1,11 @@
+# Ignore virtual environments
+/.venv
+venv/
+.venv
+
+# Ignore any pycaches
+**/__pycache__/*
+**/database.db
+
+# Ignore migrations folder
+migrations/*
