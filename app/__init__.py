@@ -1,19 +1,23 @@
-from flask import Flask, redirect, url_for, flash
+from flask_apscheduler import APScheduler
 
 from flask_login import LoginManager
 
 from flask_migrate import Migrate
 
-from .game.events import register_events as register_game_events
+from flask import Flask, redirect, url_for, flash
 
 from .auth.models import User
 from .auth.views import auth_blueprint
 
 from .game.views import game_blueprint
+from .game.events import register_events
+from .game.models import World
 
 from .main.views import main_blueprint
 
 from .extensions import db, socketio
+
+from datetime import timedelta
 
 
 def create_app():
@@ -44,6 +48,25 @@ def create_app():
         return redirect(url_for('auth.login'))
 
     socketio.init_app(app)
-    register_game_events(socketio)
+    register_events(socketio)
+
+    scheduler = APScheduler()
+    scheduler.init_app(app)
+    scheduler.start()
+
+    if not scheduler.get_job('update_time'):
+        @scheduler.task('interval', id='update_time', minutes=1)
+        def update_time():
+            with app.app_context():
+                print("updated time")
+
+                worlds = World.query.all()
+                
+                for world in worlds:
+                    world.current_time += timedelta(hours=1)
+
+                db.session.commit()
+
+                pass
 
     return app
