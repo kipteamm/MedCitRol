@@ -1,6 +1,8 @@
+from flask_socketio import join_room
+
 from flask_login import current_user, login_required
 
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, make_response
 
 from app.utils.functions import get_presence
 from app.extensions import db

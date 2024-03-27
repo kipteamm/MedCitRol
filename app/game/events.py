@@ -1,4 +1,4 @@
-from flask_socketio import SocketIO, join_room, leave_room
+from flask_socketio import SocketIO, Namespace, join_room, leave_room # type: ignore
 
 from app.extensions import db
 

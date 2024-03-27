@@ -1,8 +1,10 @@
 from flask_apscheduler import APScheduler
 
-from flask_login import LoginManager
+from flask_socketio import emit
 
 from flask_migrate import Migrate
+
+from flask_login import LoginManager
 
 from flask import Flask, redirect, url_for, flash
 
@@ -64,6 +66,8 @@ def create_app():
                 
                 for world in worlds:
                     world.current_time += timedelta(hours=1)
+
+                    emit('update_time', {'current_time' : world.current_time}, namespace=f'/game/{world.id}', room=world.id, broadcast=True) #type: ignore
 
                 db.session.commit()
 
