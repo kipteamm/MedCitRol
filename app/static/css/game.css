@@ -25,17 +25,17 @@ canvas#map {
     top: 0;
 }
 
-.settlement {
+.world {
     right: 0;
     top: 0;
 }
 
-.world {
+.character {
     left: 0;
     bottom: 0;
 }
 
-.character {
+.settlement {
     right: 0;
     bottom: 0;
 }

@@ -2,24 +2,25 @@ const mapContainer = document.getElementById('map-container');
 const canvas = document.getElementById("map");
 const ctx = canvas.getContext('2d');
 
-const terrainTileSet = new Image();
-terrainTileSet.src = '/static/images/tilesets/terrain.png';
-
-terrainTileSet.onload = function() {
-    loadTerrain();
-    prepareCanvas();
-};
-
 const zoomFactor = 4;
 const tileSize = 16;
-const mapWidth = 100; // Number of tiles in the map horizontally
-const mapHeight = 100; // Number of tiles in the map vertically
+const mapWidth = 100;
+const mapHeight = 100;
 
-// Store the translate coordinates
 let translateX = 0;
 let translateY = 0;
 
 let terrain = []
+
+const terrainTileSet = new Image();
+
+terrainTileSet.src = '/static/images/tilesets/terrain.png';
+
+terrainTileSet.onload = function() {
+    loadTerrain();
+
+    prepareCanvas();
+};
 
 function loadTerrain() {
     for (let x = 0; x < mapWidth; x++) {
@@ -38,9 +39,6 @@ function prepareCanvas() {
     ctx.imageSmoothingEnabled = false;
 
     render();
-
-    // Update the rendered tiles when the user scrolls or drags the map
-    canvas.addEventListener('scroll', render);
 };
 
 function render() {
@@ -50,20 +48,18 @@ function render() {
     // Get the visible portion of the map
     const visibleTilesX = Math.ceil(canvas.width / (tileSize * zoomFactor));
     const visibleTilesY = Math.ceil(canvas.height / (tileSize * zoomFactor));
-    const offsetX = Math.floor(canvas.scrollLeft / (tileSize * zoomFactor));
-    const offsetY = Math.floor(canvas.scrollTop / (tileSize * zoomFactor));
 
     // Calculate the start position based on the translation
-    const startX = Math.max(0, Math.floor(-translateX / (tileSize * zoomFactor)));
-    const startY = Math.max(0, Math.floor(-translateY / (tileSize * zoomFactor)));
+    const startX = Math.max(0, Math.floor(-translateX / tileSize));
+    const startY = Math.max(0, Math.floor(-translateY / tileSize));
 
     for (let x = startX; x < startX + visibleTilesX; x++) {
         for (let y = startY; y < startY + visibleTilesY; y++) {
             const tile = terrain[x][y]
 
             // Calculate the position to draw the tile based on translate
-            const drawX = (x * tileSize + translateX) * zoomFactor;
-            const drawY = (y * tileSize + translateY) * zoomFactor;
+            const drawX = (x * tileSize + translateX);
+            const drawY = (y * tileSize + translateY);
 
             // Check if the tile is within the map bounds
             if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight) {
@@ -73,8 +69,8 @@ function render() {
                     0,
                     tileSize,
                     tileSize,
-                    drawX,
-                    drawY,
+                    drawX * zoomFactor,
+                    drawY * zoomFactor,
                     tileSize * zoomFactor,
                     tileSize * zoomFactor
                 );
