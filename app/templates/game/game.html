@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/basics.css') }}">
 
+    <script src="{{ url_for('static', filename='js/game.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/basics.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/game_socket.js') }}" defer></script>
 
@@ -24,8 +25,8 @@
     <div class="game">
         <div class="information">
             <ul>
-                <li>Time <b>00:00</b></li>
-                <li>Date <b>00/00/00</b></li>
+                <li>Time <b id="clock">00:00</b></li>
+                <li>Date <b id="date">00/00/00</b></li>
             </ul>
         </div>
 

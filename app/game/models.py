@@ -36,7 +36,7 @@ class World(db.Model):
             'id' : self.id,
             'user_id' : self.id,
             'code' : self.code,
-            'current_time' : self.current_time
+            'current_time' : self.current_time.timestamp()
         }
 
 

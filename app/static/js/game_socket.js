@@ -5,5 +5,6 @@ socket.on('connect', function() {
 })
 
 socket.on('update_time', function(data) {
-    console.log(data)
+    updateClock(data.current_time)
+    updateDate(data.current_time)
 })
