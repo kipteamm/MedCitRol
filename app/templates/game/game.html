@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/basics.css') }}">
 
+    <script src="{{ url_for('static', filename='js/map.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/game.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/basics.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/game_socket.js') }}" defer></script>
@@ -22,48 +23,46 @@
     </script>
 </head>
 <body>
-    <div class="game">
-        <div class="information">
-            <ul>
-                <li>Time <b id="clock">00:00</b></li>
-                <li>Date <b id="date">00/00/00</b></li>
-            </ul>
-        </div>
-
-        <div class="left">
-            <div class="temp">
-                <h2>City</h2>
-
-                <ul>
-                    <li>Buildings in your settlement</li>
-                </ul>
-
-                {{ settlement }}
-            </div>
-        </div>
-        <div class="right">
-            <div class="top">
-                <h2>Map</h2>
-                
-                <ul>
-                    <li>Other settlements</li>
-                </ul>
-
-                {{ world }}
-            </div>
-            <div class="bottom">
-                <h2>Character</h2>
-                <ul>
-                    <li>Hunger <b>0/24</b></li>
-                    <li>Fatigue <b>You feel ... (this may/will cause)</b></li>
-                    <li>Health <b>You feel ... (this may/will cause)</b></li>
-                    <li>Happiness <b>You feel ... (this may/will cause)</b></li>
-                    <li>Coins <b>0</b></li>
-                </ul>
-
-                {{ character }}
-            </div>
-        </div>
+    <div class="ui information">
+        <ul>
+            <li>Time <b id="clock">00:00</b></li>
+            <li>Date <b id="date">00/00/00</b></li>
+        </ul>
     </div>
+
+    <div class="ui settlement">
+        <h2>Settlement</h2>
+
+        <ul>
+            <li>Buildings in your settlement</li>
+        </ul>
+
+        {{ settlement }}
+    </div>
+
+    <div class="ui world">
+        <h2>Map</h2>
+        
+        <ul>
+            <li>Other settlements</li>
+        </ul>
+
+        {{ world }}
+    </div>
+
+    <div class="ui character">
+        <h2>Character</h2>
+        <ul>
+            <li>Hunger <b>0/24</b></li>
+            <li>Fatigue <b>You feel ... (this may/will cause)</b></li>
+            <li>Health <b>You feel ... (this may/will cause)</b></li>
+            <li>Happiness <b>You feel ... (this may/will cause)</b></li>
+            <li>Coins <b>0</b></li>
+        </ul>
+
+        {{ character }}
+    </div>
+
+    <canvas id="map" width="800" height="600"></canvas>
 </body>
 </html>

@@ -22,7 +22,7 @@ from datetime import datetime, timedelta
 
 def create_app():
     app = Flask(__name__)
-    #app.config["DEBUG"] = True
+    app.config["DEBUG"] = True
     app.config["SECRET_KEY"] = "secret"
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./database.db'
 
@@ -54,7 +54,7 @@ def create_app():
     scheduler.init_app(app)
     scheduler.start()
 
-    if not scheduler.get_job('update_time'):
+    if not scheduler.get_job('update_time') and False:
         @scheduler.task('interval', id='update_time', minutes=1)
         def update_time():
             with app.app_context():
