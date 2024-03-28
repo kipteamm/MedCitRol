@@ -4,8 +4,8 @@ const ctx = canvas.getContext('2d');
 
 const zoomFactor = 4;
 const tileSize = 16;
-const mapWidth = 101;
-const mapHeight = 101;
+const mapWidth = 100;
+const mapHeight = 100;
 
 let translateX = 0;
 let translateY = 0;
@@ -48,17 +48,23 @@ function render() {
     // Get the visible portion of the map
     const visibleTilesX = Math.ceil(canvas.width / (tileSize * zoomFactor));
     const visibleTilesY = Math.ceil(canvas.height / (tileSize * zoomFactor));
-    
+
     // Calculate the start position based on the translation
     const startX = Math.max(0, Math.floor(-translateX / tileSize));
     const startY = Math.max(0, Math.floor(-translateY / tileSize));
 
     for (let x = startX; x < startX + visibleTilesX; x++) {
         for (let y = startY; y < startY + visibleTilesY; y++) {
-            const tile = terrain[x][y]
+            let tile;
+
+            if (x == 50 && y == 50) {
+                tile = 2
+            } else {
+                tile = terrain[x][y]
+            }
 
             // Calculate the position to draw the tile based on translate
-            const drawX = (x * tileSize + translateX);
+            const drawX = (x * tileSize + translateX); // So your code might look like something like this
             const drawY = (y * tileSize + translateY);
 
             // Check if the tile is within the map bounds
@@ -69,8 +75,8 @@ function render() {
                     0,
                     tileSize,
                     tileSize,
-                    drawX * zoomFactor,
-                    drawY * zoomFactor,
+                    drawX * zoomFactor - canvas.width / 2,
+                    drawY * zoomFactor - canvas.height / 2,
                     tileSize * zoomFactor,
                     tileSize * zoomFactor
                 );
@@ -122,18 +128,13 @@ function dragMap(e) {
         startY = y;
         translateX += deltaX;
         translateY += deltaY; 
-        mapContainer.scrollLeft += -deltaX;
-        mapContainer.scrollTop += -deltaY;
         render(); // Redraw the map based on the new translation
     }
 }
 
 function centerCamera() {
-    translateX = Math.round(mapWidth / 2) * tileSize;
-    translateY = Math.round(mapHeight / 2) * tileSize;
-
-    mapContainer.scrollLeft = translateX;
-    mapContainer.scrollTop = translateY;
+    translateX = -mapWidth / 2 * tileSize;
+    translateY = -mapHeight / 2 * tileSize;
 
     render();
 }
