@@ -21,21 +21,21 @@ canvas#map {
 }
 
 .information {
-    left: 0;
-    top: 0;
+    left: 12.5px;
+    top: 12.5px;
 }
 
 .world {
-    right: 0;
-    top: 0;
+    right: 12.5px;
+    top: 12.5px;
 }
 
 .character {
-    left: 0;
-    bottom: 0;
+    left: 12.5px;
+    bottom: 12.5px;
 }
 
 .settlement {
-    right: 0;
-    bottom: 0;
+    right: 12.5px;
+    bottom: 12.5px;
 }

@@ -87,3 +87,23 @@ class AccessKey(db.Model):
     key = db.Column(db.String(128))
     key_date = db.Column(DateTime(timezone=True), default=func.now(), nullable=False)
     
+
+class Tile(db.Model):
+    __tablename__ = 'tile'
+
+    id = db.Column(db.Integer, primary_key=True)
+    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+
+    pos_x = db.Column(db.Integer)
+    pos_y = db.Column(db.Integer)
+
+    tile_type = db.Column(db.String(128))
+
+    def to_dict(self) -> dict:
+        return {
+            'id' : self.id,
+            'settlement_id' : self.settlement_id,
+            'pos_x' : self.pos_x,
+            'pos_y' : self.pos_y,
+            'tile_type' : self.tile_type
+        }
