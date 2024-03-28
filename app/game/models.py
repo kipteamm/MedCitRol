@@ -30,6 +30,14 @@ class World(db.Model):
 
                 break
 
+    def get_dict(self) -> dict:
+        return {
+            'id' : self.id,
+            'user_id' : self.id,
+            'code' : self.code,
+            'current_time' : self.current_time
+        }
+
 
 class Settlement(db.Model):
     __tablename__ ='settlement'
@@ -40,6 +48,14 @@ class Settlement(db.Model):
     name = db.Column(db.String(120), nullable=False)
     colour = db.Column(db.String(120), nullable=False)
 
+    def get_dict(self) -> dict:
+        return {
+            'id' : self.id,
+            'world_id' : self.world_id,
+            'name' : self.name,
+            'colour' : self.colour
+        }
+
 
 class Character(db.Model):
     __tablename__ = 'character'
@@ -48,6 +64,14 @@ class Character(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     world_id = db.Column(db.Integer, db.ForeignKey('world.id'), nullable=False)
     settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+
+    def get_dict(self) -> dict:
+        return {
+            'id' : self.id,
+            'user_id' : self.user_id,
+            'world_id' : self.world_id,
+            'settlement_id' : self.settlement_id
+        }
 
 
 class AccessKey(db.Model):

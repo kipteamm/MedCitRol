@@ -97,3 +97,12 @@ def get_key(user_id: int, world_id: Optional[int]=None, settlement_id: Optional[
         db.session.commit()
 
     return access_key.key
+
+
+def authenticated(data: dict) -> bool:
+    access_key = AccessKey.query.filter_by(world_id=data['world_id'], settlement_id=data['settlement_id'], character_id=data['character_id'], key=data['access_key']).first()
+
+    if not access_key:
+        return False
+    
+    return True
