@@ -9,7 +9,7 @@ from .models import World
 
 def register_events(socketio: SocketIO):
     @socketio.on('join')
-    def join_game(data):
+    def join(data):
         if not authenticated(data):
             return
         

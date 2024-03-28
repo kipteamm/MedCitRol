@@ -16,7 +16,8 @@ class World(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) # world owner
     code = db.Column(db.String(10), nullable=False)
 
-    current_time = db.Column(db.DateTime, default=datetime.now(timezone.utc), nullable=False)
+    initial_current_time = datetime(1100, 5, 8, 0, 0, 0, tzinfo=timezone.utc)
+    current_time = db.Column(db.DateTime, default=initial_current_time, nullable=False)
 
     def __init__(self, user_id):
         self.user_id = user_id

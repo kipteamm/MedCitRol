@@ -1,7 +1,5 @@
 from flask_apscheduler import APScheduler
 
-from flask_socketio import emit
-
 from flask_migrate import Migrate
 
 from flask_login import LoginManager
@@ -24,7 +22,7 @@ from datetime import datetime, timedelta
 
 def create_app():
     app = Flask(__name__)
-    app.config["DEBUG"] = True
+    #app.config["DEBUG"] = True
     app.config["SECRET_KEY"] = "secret"
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./database.db'
 
@@ -56,7 +54,7 @@ def create_app():
     scheduler.init_app(app)
     scheduler.start()
 
-    if not scheduler.get_job('update_time') and False:
+    if not scheduler.get_job('update_time'):
         @scheduler.task('interval', id='update_time', minutes=1)
         def update_time():
             with app.app_context():
@@ -67,7 +65,7 @@ def create_app():
                 for world in worlds:
                     world.current_time += timedelta(hours=1)
 
-                    emit('update_time', {'current_time' : world.current_time}, namespace=f'/game/{world.id}', room=world.id, broadcast=True) #type: ignore
+                    socketio.emit('update_time', {'current_time' : world.current_time.timestamp()}, room=world.id) #type: ignore
 
                 db.session.commit()
 
