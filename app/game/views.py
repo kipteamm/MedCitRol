@@ -4,7 +4,8 @@ from flask_login import current_user, login_required
 
 from flask import Blueprint, render_template, redirect, url_for, make_response
 
-from app.utils.functions import get_presence
+from app.utils.functions import get_presence, get_key
+
 from app.extensions import db
 
 from .models import World, Settlement, Character
@@ -50,4 +51,8 @@ def game(id):
     
     settlement, character = get_presence(world, current_user) # type: ignore
 
-    return render_template('game/game.html', world=world, settlement=settlement, character=character)
+    response = make_response(render_template('game/game.html', world=world, settlement=settlement, character=character))
+
+    response.set_cookie('psk', get_key(current_user.id, world.id, settlement.id, character.id))
+
+    return response

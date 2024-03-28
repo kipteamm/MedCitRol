@@ -1,7 +1,13 @@
-from app.game.models import World, Settlement, Character
+from app.game.models import World, Settlement, Character, AccessKey
 from app.auth.models import User
 
 from app.extensions import db
+
+from datetime import datetime, timezone, timedelta
+
+from typing import Optional
+
+import secrets
 
 
 settlement_colours = ['cyan', 'lime', 'purple', 'red', 'brown']
@@ -57,3 +63,37 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
         settlement = Settlement.query.filter_by(world_id=world.id, id=character.settlement_id).first()
 
     return settlement, character
+
+
+def get_key(user_id: int, world_id: Optional[int]=None, settlement_id: Optional[int]=None, character_id: Optional[int]=None) -> str:
+    access_key = AccessKey.query.filter_by(user_id=user_id).first()
+
+    now = datetime.now(timezone.utc)
+
+    if not access_key:
+        access_key = AccessKey(
+            user_id=user_id, 
+            world_id=world_id, 
+            settlement_id=settlement_id, 
+            character_id=character_id,
+            key=secrets.token_hex(nbytes=32),
+            key_date=now
+        )
+
+        db.session.add(access_key)
+        db.session.commit()
+
+        return access_key.key
+    
+    if access_key.key_date.tzinfo is None:
+        access_key.key_date = access_key.key_date.replace(tzinfo=timezone.utc)
+
+    expired = access_key.key_date - now > timedelta(hours=12) if access_key.key_date else False
+
+    if expired or not access_key.key:
+        access_key.key = secrets.token_hex(nbytes=32)
+        access_key.key_date = now
+
+        db.session.commit()
+
+    return access_key.key

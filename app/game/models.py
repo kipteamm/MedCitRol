@@ -1,5 +1,8 @@
 from app.extensions import db
 
+from sqlalchemy.sql import func
+from sqlalchemy import DateTime
+
 from datetime import datetime, timezone
 
 import random
@@ -45,3 +48,17 @@ class Character(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     world_id = db.Column(db.Integer, db.ForeignKey('world.id'), nullable=False)
     settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+
+
+class AccessKey(db.Model):
+    __tablename__ = 'access_key'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    world_id = db.Column(db.Integer, db.ForeignKey('world.id'), nullable=False)
+    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+    character_id = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
+
+    key = db.Column(db.String(128))
+    key_date = db.Column(DateTime(timezone=True), default=func.now(), nullable=False)
+    
