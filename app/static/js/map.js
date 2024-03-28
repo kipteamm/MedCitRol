@@ -7,6 +7,7 @@ terrainTileSet.src = '/static/images/tilesets/terrain.png';
 
 terrainTileSet.onload = function() {
     loadTerrain();
+    prepareCanvas();
 };
 
 const zoomFactor = 4;
@@ -18,7 +19,19 @@ const mapHeight = 100; // Number of tiles in the map vertically
 let translateX = 0;
 let translateY = 0;
 
+let terrain = []
+
 function loadTerrain() {
+    for (let x = 0; x < mapWidth; x++) {
+        let column = [];
+        for (let y = 0; y < mapHeight; y++) {
+            column.push(Math.floor(Math.random() * (7 - 4)) + 4);
+        }
+        terrain.push(column);
+    }
+}
+
+function prepareCanvas() {
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
 
@@ -46,7 +59,7 @@ function render() {
 
     for (let x = startX; x < startX + visibleTilesX; x++) {
         for (let y = startY; y < startY + visibleTilesY; y++) {
-            const tile = Math.floor(Math.random() * (7 - 4)) + 4;
+            const tile = terrain[x][y]
 
             // Calculate the position to draw the tile based on translate
             const drawX = (x * tileSize + translateX) * zoomFactor;
@@ -100,13 +113,15 @@ function stopDragging(e) {
 canvas.addEventListener('mousemove', dragMap);
 canvas.addEventListener('touchmove', dragMap);
 
+const dragSpeed = 0.5; 
+
 function dragMap(e) {
     e.preventDefault();
     if (isDragging) {
         const x = e.clientX || e.touches[0].clientX;
         const y = e.clientY || e.touches[0].clientY;
-        const deltaX = x - startX;
-        const deltaY = y - startY;
+        const deltaX = (x - startX) * dragSpeed;
+        const deltaY = (y - startY) * dragSpeed;
         startX = x;
         startY = y;
         translateX += deltaX;
