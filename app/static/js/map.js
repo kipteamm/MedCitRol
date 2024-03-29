@@ -2,13 +2,13 @@ const mapContainer = document.getElementById('map-container');
 const canvas = document.getElementById("map");
 const ctx = canvas.getContext('2d');
 
-const zoomFactor = 4;
 const tileSize = 16;
-const mapWidth = 100;
-const mapHeight = 100;
+const mapWidth = 31;
+const mapHeight = 31;
 
-let translateX = 0;
-let translateY = 0;
+let zoom = 75;
+let camX = mapWidth / 2;
+let camY = mapHeight / 2;
 
 let terrain = []
 
@@ -33,54 +33,84 @@ function loadTerrain() {
 }
 
 function prepareCanvas() {
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+    canvas.width = mapContainer.clientWidth;
+    canvas.height = mapContainer.clientHeight;
 
     ctx.imageSmoothingEnabled = false;
 
     render();
 };
 
+window.onresize = prepareCanvas;
+
+function getScreenX(x) {
+    return Math.round((x - camX) * zoom) + canvas.width / 2;
+}
+
+function getScreenY(y) {
+    return Math.round((y - camY) * -zoom) + canvas.height / 2;
+}
+
+function getWorldX(screenX) {
+    return (screenX - canvas.width / 2) / zoom + camX;
+}
+
+function getWorldY(screenY) {
+    return (screenY - canvas.height / 2) / -zoom + camY;
+}
+
+function getScreenWidth(width) {
+    return width * zoom;
+}
+
+function getScreenHeight(height) {
+    return height * zoom;
+}
+
+function fillRect(x0, y0, width, height, color) {
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.fillRect(getScreenX(x0), getScreenY(y0), getScreenWidth(width), getScreenHeight(height));
+    ctx.fill();
+}
+
+function drawTilesetImage(tileset, tileIndex, x, y, tileSize, scale) {
+    ctx.drawImage(
+        tileset,
+        (tileIndex - 1) * tileSize,
+        0,
+        tileSize,
+        tileSize,
+        getScreenX(x),
+        getScreenY(y),
+        getScreenWidth(tileSize * scale),
+        getScreenHeight(tileSize * scale)
+    );
+}
+
 function render() {
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    let startX = Math.floor(getWorldX(0)) - 1;
+    let startY = Math.floor(getWorldY(canvas.height)) - 1;
+    if (startX < 0) startX = 0;
+    if (startY < 0) startY = 0;
+    
+    let endX = Math.ceil(getWorldX(canvas.width)) + 1;
+    let endY = Math.ceil(getWorldY(0)) + 1;
+    if (endX > mapWidth) endX = mapWidth;
+    if (endY > mapHeight) endY = mapHeight;
 
-    // Get the visible portion of the map
-    const visibleTilesX = Math.ceil(canvas.width / (tileSize * zoomFactor));
-    const visibleTilesY = Math.ceil(canvas.height / (tileSize * zoomFactor));
-
-    // Calculate the start position based on the translation
-    const startX = Math.max(0, Math.floor(-translateX / tileSize));
-    const startY = Math.max(0, Math.floor(-translateY / tileSize));
-
-    for (let x = startX; x < startX + visibleTilesX; x++) {
-        for (let y = startY; y < startY + visibleTilesY; y++) {
-            let tile;
-
-            if (x == 50 && y == 50) {
+    for (let x = startX; x < endX; x++) {
+        for (let y = startY; y < endY; y++) {
+            let tile = terrain[x][y];
+            if (x == 15 && y == 15) {
                 tile = 2
-            } else {
-                tile = terrain[x][y]
             }
-
-            // Calculate the position to draw the tile based on translate
-            const drawX = (x * tileSize + translateX); // So your code might look like something like this
-            const drawY = (y * tileSize + translateY);
 
             // Check if the tile is within the map bounds
-            if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight) {
-                ctx.drawImage(
-                    terrainTileSet,
-                    (tile - 1) * tileSize,
-                    0,
-                    tileSize,
-                    tileSize,
-                    drawX * zoomFactor - canvas.width / 2,
-                    drawY * zoomFactor - canvas.height / 2,
-                    tileSize * zoomFactor,
-                    tileSize * zoomFactor
-                );
-            }
+            drawTilesetImage(terrainTileSet, tile, x, y, tileSize, 1 / 15);
         }
     }
 }
@@ -115,7 +145,7 @@ function stopDragging(e) {
 canvas.addEventListener('mousemove', dragMap);
 canvas.addEventListener('touchmove', dragMap);
 
-const dragSpeed = 0.5; 
+const dragSpeed = 1; 
 
 function dragMap(e) {
     e.preventDefault();
@@ -126,15 +156,15 @@ function dragMap(e) {
         const deltaY = (y - startY) * dragSpeed;
         startX = x;
         startY = y;
-        translateX += deltaX;
-        translateY += deltaY; 
+        camX -= deltaX / zoom;
+        camY += deltaY / zoom;
         render(); // Redraw the map based on the new translation
     }
 }
 
 function centerCamera() {
-    translateX = -mapWidth / 2 * tileSize;
-    translateY = -mapHeight / 2 * tileSize;
+    camX = mapWidth / 2;
+    camY = mapHeight / 2;
 
     render();
 }
