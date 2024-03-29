@@ -5,8 +5,19 @@ from sqlalchemy import DateTime
 
 from datetime import datetime, timezone
 
+from app.utils.tiles import get_tile_index
+
 import random
 import string
+
+
+def get_timestamp(year: int, month: int, day: int) -> int:
+    reference_date = datetime(1970, 1, 1)
+    date = datetime(year, month, day)
+    
+    delta = date - reference_date
+    
+    return int(delta.total_seconds())
 
 
 class World(db.Model):
@@ -36,7 +47,7 @@ class World(db.Model):
             'id' : self.id,
             'user_id' : self.id,
             'code' : self.code,
-            'current_time' : self.current_time.timestamp()
+            'current_time' : get_timestamp(self.current_time.year, self.current_time.month, self.current_time.day)
         }
 
 
@@ -65,6 +76,7 @@ class Character(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     world_id = db.Column(db.Integer, db.ForeignKey('world.id'), nullable=False)
     settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+    house_id = db.Column(db.Integer)
 
     def get_dict(self) -> dict:
         return {
@@ -92,18 +104,20 @@ class Tile(db.Model):
     __tablename__ = 'tile'
 
     id = db.Column(db.Integer, primary_key=True)
+    character_id = db.Column(db.Integer, db.ForeignKey('character.id'))
     settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
 
-    pos_x = db.Column(db.Integer)
-    pos_y = db.Column(db.Integer)
+    pos_x = db.Column(db.Integer, nullable=False)
+    pos_y = db.Column(db.Integer, nullable=False)
 
     tile_type = db.Column(db.String(128))
 
-    def to_dict(self) -> dict:
+    def get_dict(self) -> dict:
         return {
             'id' : self.id,
             'settlement_id' : self.settlement_id,
             'pos_x' : self.pos_x,
             'pos_y' : self.pos_y,
-            'tile_type' : self.tile_type
+            'tile_type' : self.tile_type,
+            'tile_index' : get_tile_index(self.tile_type),
         }

@@ -3,8 +3,8 @@ const canvas = document.getElementById("map");
 const ctx = canvas.getContext('2d');
 
 const tileSize = 16;
-const mapWidth = 31;
-const mapHeight = 31;
+const mapWidth = 75;
+const mapHeight = 75;
 
 let zoom = 75;
 let camX = mapWidth / 2;
@@ -14,7 +14,7 @@ let terrain = []
 
 const terrainTileSet = new Image();
 
-terrainTileSet.src = '/static/images/tilesets/terrain.png';
+terrainTileSet.src = `/static/images/tilesets/${settlement.colour}_tilemap.png`;
 
 terrainTileSet.onload = function() {
     loadTerrain();
@@ -26,7 +26,13 @@ function loadTerrain() {
     for (let x = 0; x < mapWidth; x++) {
         let column = [];
         for (let y = 0; y < mapHeight; y++) {
-            column.push(Math.floor(Math.random() * (7 - 4)) + 4);
+            const tileData = tiles.find(tile => tile.pos_x == x && tile.pos_y == y)
+
+            if (tileData !== undefined) {
+                column.push(tileData.tile_index);
+            } else {
+                column.push(Math.floor(Math.random() * (6 - 3)) + 3);
+            }
         }
         terrain.push(column);
     }
@@ -75,10 +81,12 @@ function fillRect(x0, y0, width, height, color) {
 }
 
 function drawTilesetImage(tileset, tileIndex, x, y, tileSize, scale) {
+    const row = Math.floor(tileIndex / 6);
+
     ctx.drawImage(
         tileset,
-        (tileIndex - 1) * tileSize,
-        0,
+        (tileIndex - (row * 6)) * tileSize,
+        row * tileSize,
         tileSize,
         tileSize,
         getScreenX(x),
@@ -105,9 +113,6 @@ function render() {
     for (let x = startX; x < endX; x++) {
         for (let y = startY; y < endY; y++) {
             let tile = terrain[x][y];
-            if (x == 15 && y == 15) {
-                tile = 2
-            }
 
             // Check if the tile is within the map bounds
             drawTilesetImage(terrainTileSet, tile, x, y, tileSize, 1 / 15);

@@ -1,4 +1,4 @@
-from app.game.models import World, Settlement, Character, AccessKey
+from app.game.models import World, Settlement, Character, AccessKey, Tile
 from app.auth.models import User
 
 from app.extensions import db
@@ -8,6 +8,7 @@ from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 import secrets
+import random
 
 
 settlement_colours = ['cyan', 'lime', 'purple', 'red', 'brown']
@@ -23,11 +24,11 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
 
             db.session.add(settlement)
 
-        elif settlements.count() < len(settlement_colours):
-            i = settlements.count()
+        elif len(settlements) < len(settlement_colours):
+            i = len(settlements)
 
             for _settlement in settlements:
-                if Character.query.filter_by(world=world.id, settlement_id=_settlement.id).count() >= 8:
+                if Character.query.filter_by(world_id=world.id, settlement_id=_settlement.id).count() >= 8:
                     settlement = Settlement(world_id=world.id, name="Unnamed", colour=settlement_colours[i])
 
                     db.session.add(settlement)
@@ -56,7 +57,15 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
 
         character = Character(world_id=world.id, user_id=user.id, settlement_id=settlement.id)
 
+        pos_x, pos_y = None, None
+
+        while pos_x is None or pos_y is None:
+            pos_x, pos_y = generateRandomCoordinates(37, 37, 5, True, settlement.id)
+
+        house = Tile(character_id=character.id, settlement_id=settlement.id, pos_x=pos_x, pos_y=pos_y, tile_type="hut")
+
         db.session.add(character)
+        db.session.add(house)
         db.session.commit()
 
     else:
@@ -106,3 +115,19 @@ def authenticated(data: dict) -> bool:
         return False
     
     return True
+
+
+def generateRandomCoordinates(center_x: int, center_y: int, deviation: int, empty: bool=False, settlement_id: Optional[int]=None) -> tuple[Optional[int], Optional[int]]:
+    pos_x = center_x + random.randint(-deviation, deviation)
+    pos_y = center_y + random.randint(-deviation, deviation)
+
+    if not empty:
+        return pos_x, pos_y
+    
+    if not settlement_id:
+        return None, None
+
+    if Tile.query.filter_by(settlement_id=settlement_id, pos_x=pos_x, pos_y=pos_y).first():
+        return None, None
+
+    return pos_x, pos_y

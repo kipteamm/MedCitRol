@@ -8,7 +8,7 @@ from app.utils.functions import get_presence, get_key
 
 from app.extensions import db
 
-from .models import World, Settlement, Character
+from .models import World, Tile
 
 game_blueprint = Blueprint('game', __name__)
 
@@ -51,7 +51,9 @@ def game(id):
     
     settlement, character = get_presence(world, current_user) # type: ignore
 
-    response = make_response(render_template('game/game.html', world=world, settlement=settlement, character=character))
+    tiles = [tile.get_dict() for tile in Tile.query.filter_by(settlement_id=settlement.id).all()]
+
+    response = make_response(render_template('game/game.html', tiles=tiles, world=world, settlement=settlement, character=character))
 
     response.set_cookie('psk', get_key(current_user.id, world.id, settlement.id, character.id))
 
