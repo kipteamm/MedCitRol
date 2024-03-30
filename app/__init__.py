@@ -6,6 +6,8 @@ from flask_login import LoginManager
 
 from flask import Flask, redirect, url_for, flash
 
+from .teacher.views import teacher_blueprint
+
 from .auth.models import User
 from .auth.views import auth_blueprint
 
@@ -28,6 +30,7 @@ def create_app():
     app.config["SECRET_KEY"] = "secret"
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./database.db'
 
+    app.register_blueprint(teacher_blueprint)
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(game_blueprint)
     app.register_blueprint(main_blueprint)
