@@ -21,7 +21,7 @@ canvas#map {
 
 .ui {
     position: fixed;
-    z-index: 1000;
+    z-index: 10;
 }
 
 .information {
@@ -42,4 +42,43 @@ canvas#map {
 .settlement {
     right: 12.5px;
     bottom: 12.5px;
+}
+
+.work-panel {
+    position: fixed;
+    bottom: -100%;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    transition: .3s;
+    z-index: 100;
+}
+
+.work-panel.active {
+    bottom: 0;
+}
+
+.work-panel.profession-selector {
+    padding: 50px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    overflow-y: scroll;
+}
+
+.work-panel.profession-selector .profession {
+    display: inline-table;
+    text-align: center;
+}
+
+.work-panel.profession-selector .profession img {
+    transition: .3s;
+    height: 400px;
+}
+
+.work-panel.profession-selector .profession:hover {
+    cursor: pointer;
+}
+.work-panel.profession-selector .profession:hover img {
+    opacity: 0.7;
 }

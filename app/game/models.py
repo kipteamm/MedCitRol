@@ -91,7 +91,11 @@ class Character(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     world_id = db.Column(db.Integer, db.ForeignKey('world.id'), nullable=False)
     settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+
     house_id = db.Column(db.Integer)
+    
+    profession = db.Column(db.String(120))
+    task_index = db.Column(db.Integer, default=0)
 
     def get_dict(self) -> dict:
         return {
@@ -136,3 +140,4 @@ class Tile(db.Model):
             'tile_type' : self.tile_type,
             'tile_index' : get_tile_index(self.tile_type),
         }
+    

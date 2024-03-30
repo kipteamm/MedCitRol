@@ -4,7 +4,7 @@ const dateElement = document.getElementById('date');
 function updateClock(timestamp) {
     const date = new Date(timestamp * 1000);
     
-    clockElement.innerText = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
+    clockElement.innerText = `${String(date.getHours()).padStart(2, '0')}:00`
 }
 
 function updateDate(timestamp) {

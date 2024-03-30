@@ -64,6 +64,8 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
 
         house = Tile(character_id=character.id, settlement_id=settlement.id, pos_x=pos_x, pos_y=pos_y, tile_type="hut")
 
+        character.house_id = house.id
+
         socketio.emit("new_tile", house.get_dict(), room=settlement.id) # type: ignore
 
         db.session.add(character)
@@ -87,7 +89,7 @@ def get_key(user_id: int, world_id: Optional[int]=None, settlement_id: Optional[
             world_id=world_id, 
             settlement_id=settlement_id, 
             character_id=character_id,
-            key=secrets.token_hex(nbytes=32),
+            key=secrets.token_hex(nbytes=64),
             key_date=now
         )
 
@@ -102,7 +104,7 @@ def get_key(user_id: int, world_id: Optional[int]=None, settlement_id: Optional[
     expired = access_key.key_date - now > timedelta(hours=12) if access_key.key_date else False
 
     if expired or not access_key.key:
-        access_key.key = secrets.token_hex(nbytes=32)
+        access_key.key = secrets.token_hex(nbytes=64)
         access_key.key_date = now
 
         db.session.commit()

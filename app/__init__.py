@@ -15,6 +15,8 @@ from .game.models import World
 
 from .main.views import main_blueprint
 
+from .api.views import api_blueprint
+
 from .extensions import db, socketio
 
 from datetime import datetime, timedelta
@@ -29,6 +31,7 @@ def create_app():
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(game_blueprint)
     app.register_blueprint(main_blueprint)
+    app.register_blueprint(api_blueprint)
 
     login_manager = LoginManager(app)
 

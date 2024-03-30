@@ -10,7 +10,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/basics.css') }}">
 
     <script src="{{ url_for('static', filename='js/map.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/work.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/game.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/components.js') }}"></script>
     <script src="{{ url_for('static', filename='js/basics.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/game_socket.js') }}" defer></script>
 
@@ -46,6 +48,8 @@
             <li>Happiness <b>You feel ... (this may/will cause)</b></li>
             <li>Coins <b>0</b></li>
         </ul>
+
+        <button onclick="work()">Work</button>
     </div>
 
     <div class="ui settlement">
@@ -61,5 +65,7 @@
     <div class="map-container" id="map-container">
         <canvas id="map"></canvas>
     </div>
+
+    <div class="work-panel" id="work-panel"></div>
 </body>
 </html>
