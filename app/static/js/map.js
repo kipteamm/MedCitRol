@@ -73,13 +73,6 @@ function getScreenHeight(height) {
     return height * zoom;
 }
 
-function fillRect(x0, y0, width, height, color) {
-    ctx.beginPath();
-    ctx.fillStyle = color;
-    ctx.fillRect(getScreenX(x0), getScreenY(y0), getScreenWidth(width), getScreenHeight(height));
-    ctx.fill();
-}
-
 function drawTilesetImage(tileset, tileIndex, x, y, tileSize, scale) {
     const row = Math.floor(tileIndex / 6);
 
@@ -89,10 +82,10 @@ function drawTilesetImage(tileset, tileIndex, x, y, tileSize, scale) {
         row * tileSize,
         tileSize,
         tileSize,
-        getScreenX(x),
-        getScreenY(y),
-        getScreenWidth(tileSize * scale),
-        getScreenHeight(tileSize * scale)
+        Math.round(getScreenX(x)),
+        Math.round(getScreenY(y)),
+        getScreenWidth(scale),
+        getScreenHeight(scale)
     );
 }
 
@@ -115,12 +108,11 @@ function render() {
             let tile = terrain[x][y];
 
             // Check if the tile is within the map bounds
-            drawTilesetImage(terrainTileSet, tile, x, y, tileSize, 1 / 15);
+            drawTilesetImage(terrainTileSet, tile, x, y, tileSize, 1);
         }
     }
 }
 
-// Initialize dragging variables
 let isDragging = false;
 let startX, startY;
 
@@ -166,6 +158,9 @@ function dragMap(e) {
         render(); // Redraw the map based on the new translation
     }
 }
+
+// canvas cancel rightclick
+canvas.oncontextmenu = function(event) {event.preventDefault(); return;};
 
 function centerCamera() {
     camX = mapWidth / 2;

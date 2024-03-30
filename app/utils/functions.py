@@ -1,7 +1,7 @@
 from app.game.models import World, Settlement, Character, AccessKey, Tile
 from app.auth.models import User
 
-from app.extensions import db
+from app.extensions import db, socketio
 
 from datetime import datetime, timezone, timedelta
 
@@ -63,6 +63,8 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
             pos_x, pos_y = generateRandomCoordinates(37, 37, 5, True, settlement.id)
 
         house = Tile(character_id=character.id, settlement_id=settlement.id, pos_x=pos_x, pos_y=pos_y, tile_type="hut")
+
+        socketio.emit("new_tile", house.get_dict(), room=settlement.id) # type: ignore
 
         db.session.add(character)
         db.session.add(house)
