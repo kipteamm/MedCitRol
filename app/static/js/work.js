@@ -1,5 +1,7 @@
+const workContent = document.getElementById('work-contnet');
 const workPanel = document.getElementById('work-panel');
 
+// working
 async function work() {
     workPanel.classList.add("active");
     
@@ -18,7 +20,7 @@ async function work() {
                 return chooseProfession(4);
             }
 
-            workPanel.innerHTML = json.error;
+            workContent.innerHTML = json.error;
         } catch {
             alert("Unexpected error");
         }
@@ -26,18 +28,23 @@ async function work() {
         return;
     }
 
-    workPanel.innerHTML = await response.json();
+    workContent.innerHTML = await response.json();
 }
 
+function stopWorking() {
+    workPanel.classList.remove("active");
+}
+
+// professions
 let professions = ["Farmer", "Miller", "Baker", "Butcher", "Woodcutter", "Carpenter", "Stonemason", "Blacksmith", "Tailor", "Armourer", "Merchant"]
 
 function chooseProfession(level) {
     const availableProfessions = professions.slice(0, level + 1);
 
-    workPanel.classList.add("profession-selector")
+    workContent.classList.add("profession-selector")
 
     availableProfessions.forEach(profession => {
-        workPanel.appendChild(professionComponent(profession))
+        workContent.appendChild(professionComponent(profession))
     })
 }
 
@@ -55,7 +62,7 @@ async function updateProfession(profession) {
         try {
             const json = await response.json();
 
-            workPanel.innerHTML = json.error;
+            workContent.innerHTML = json.error;
         } catch (error) {
             console.log(response, error)
 

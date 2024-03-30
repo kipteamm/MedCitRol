@@ -58,7 +58,13 @@ canvas#map {
     bottom: 0;
 }
 
-.work-panel.profession-selector {
+.work-panel button.close {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+}
+
+.work-content.profession-selector {
     padding: 50px;
     display: flex;
     align-items: center;
@@ -66,19 +72,19 @@ canvas#map {
     overflow-y: scroll;
 }
 
-.work-panel.profession-selector .profession {
+.work-content.profession-selector .profession {
     display: inline-table;
     text-align: center;
 }
 
-.work-panel.profession-selector .profession img {
+.work-content.profession-selector .profession img {
     transition: .3s;
     height: 400px;
 }
 
-.work-panel.profession-selector .profession:hover {
+.work-content.profession-selector .profession:hover {
     cursor: pointer;
 }
-.work-panel.profession-selector .profession:hover img {
+.work-content.profession-selector .profession:hover img {
     opacity: 0.7;
 }
