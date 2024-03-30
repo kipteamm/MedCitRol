@@ -1,0 +1,11 @@
+{% extends "/teacher/teacher_base.html" %}
+
+{% block content %}
+    <a href="/teacher/{{ world.id }}/game">Home</a>
+
+    <a href="/teacher/{{ world.id }}/task/create">Create</a>
+    
+    {% for task in tasks %}
+        {{ task }}
+    {% endfor %}
+{% endblock %}

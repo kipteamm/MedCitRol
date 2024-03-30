@@ -1,4 +1,4 @@
-const workContent = document.getElementById('work-contnet');
+const workContent = document.getElementById('work-content');
 const workPanel = document.getElementById('work-panel');
 
 // working
@@ -12,23 +12,19 @@ async function work() {
         }
     });
 
+    const json = await response.json();
+
     if (!response.ok) {
-        try {
-            const json = await response.json();
-
-            if (json.error === "You have no profession.") {
-                return chooseProfession(4);
-            }
-
-            workContent.innerHTML = json.error;
-        } catch {
-            alert("Unexpected error");
+        if (json.error === "You have no profession.") {
+            return chooseProfession(4);
         }
+
+        workContent.innerHTML = json.error;
 
         return;
     }
 
-    workContent.innerHTML = await response.json();
+    workContent.appendChild(taskComponent(json))
 }
 
 function stopWorking() {
@@ -59,15 +55,9 @@ async function updateProfession(profession) {
     });
 
     if (!response.ok) {
-        try {
-            const json = await response.json();
+        const json = await response.json();
 
-            workContent.innerHTML = json.error;
-        } catch (error) {
-            console.log(response, error)
-
-            alert("Unexpected error");
-        }
+        workContent.innerHTML = json.error;
 
         return;
     }

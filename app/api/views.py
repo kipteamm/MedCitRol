@@ -1,5 +1,6 @@
 from flask import Blueprint, request, make_response
 
+from app.teacher.models import Task
 from app.game.models import AccessKey, Character
 
 from app.extensions import db
@@ -25,9 +26,7 @@ def work():
     if not character.profession:
         return make_response({"error" : "You have no profession."}, 400)
     
-    #task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first().get_dict()
-
-    task = {"incoming" : True}
+    task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first().get_dict()
 
     return make_response(task, 200)
 

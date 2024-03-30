@@ -57,6 +57,8 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
 
         character = Character(world_id=world.id, user_id=user.id, settlement_id=settlement.id)
 
+        db.session.add(character)
+
         pos_x, pos_y = None, None
 
         while pos_x is None or pos_y is None:
@@ -64,12 +66,13 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
 
         house = Tile(character_id=character.id, settlement_id=settlement.id, pos_x=pos_x, pos_y=pos_y, tile_type="hut")
 
+        db.session.add(house)
+        db.session.commit()
+
         character.house_id = house.id
 
         socketio.emit("new_tile", house.get_dict(), room=settlement.id) # type: ignore
 
-        db.session.add(character)
-        db.session.add(house)
         db.session.commit()
 
     else:

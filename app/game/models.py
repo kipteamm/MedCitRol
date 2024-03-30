@@ -21,15 +21,17 @@ class World(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) # world owner
     code = db.Column(db.String(10), nullable=False)
 
+    question_index = db.Column(db.Integer, default=0)
+
     current_time = db.Column(db.DateTime, default=initial_current_time, nullable=False)
     last_time_update = db.Column(DateTime(timezone=True), default=func.now())
 
     def __init__(self, user_id):
         self.user_id = user_id
-        
+        self.last_time_update = datetime.now()
         
         while True:
-            room_id = ''.join(random.choices(string.ascii_letters, k=10))
+            room_id = ''.join(random.choices(string.ascii_letters, k=16))
 
             if not World.query.filter_by(code=room_id).first():
                 self.code = room_id

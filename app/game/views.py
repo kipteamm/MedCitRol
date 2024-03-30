@@ -33,7 +33,7 @@ def home():
 @game_blueprint.route('/game/create')
 @login_required
 def create_game():
-    world = World(user_id=current_user.id, last_time_update=datetime.now()) # type: ignore
+    world = World(user_id=current_user.id)
 
     db.session.add(world)
 

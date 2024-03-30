@@ -1,4 +1,4 @@
 {% for world in worlds %}
     <a href="/game/{{ world.id}}">Visit {{ world.code }}</a>
-    <a href="/teacher/game/{{ world.id }}">Teacher {{ world.code }}</a>
+    <a href="/teacher/{{ world.id }}/game">Teacher {{ world.code }}</a>
 {% endfor %}
