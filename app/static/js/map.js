@@ -6,7 +6,7 @@ const tileSize = 16;
 const mapWidth = 75;
 const mapHeight = 75;
 
-let zoom = 75;
+let zoom = tileSize * 4;
 let camX = mapWidth / 2;
 let camY = mapHeight / 2;
 
@@ -142,7 +142,7 @@ function stopDragging(e) {
 canvas.addEventListener('mousemove', dragMap);
 canvas.addEventListener('touchmove', dragMap);
 
-const dragSpeed = 1; 
+const dragSpeed = 1.15; 
 
 function dragMap(e) {
     e.preventDefault();

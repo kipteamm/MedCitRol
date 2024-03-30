@@ -64,8 +64,9 @@ def create_app():
                 
                 for world in worlds:
                     world.current_time += timedelta(hours=1)
+                    world.last_time_update = datetime.now()
 
-                    socketio.emit('update_time', {'current_time' : world.current_time.timestamp()}, room=world.id) #type: ignore
+                    socketio.emit('update_time', {'current_time' : world.get_world_time()}, room=world.id) #type: ignore
 
                 db.session.commit()
 

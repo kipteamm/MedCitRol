@@ -10,6 +10,9 @@ from app.extensions import db
 
 from .models import World, Tile
 
+from datetime import datetime
+
+
 game_blueprint = Blueprint('game', __name__)
 
 
@@ -30,7 +33,7 @@ def home():
 @game_blueprint.route('/game/create')
 @login_required
 def create_game():
-    world = World(current_user.id)
+    world = World(user_id=current_user.id, last_time_update=datetime.now()) # type: ignore
 
     db.session.add(world)
 
@@ -49,6 +52,8 @@ def game(id):
     if not world:
         return redirect(url_for('game.home'))
     
+    world.update_time()
+
     settlement, character = get_presence(world, current_user) # type: ignore
 
     tiles = [tile.get_dict() for tile in Tile.query.filter_by(settlement_id=settlement.id).all()]

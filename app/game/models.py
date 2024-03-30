@@ -3,7 +3,7 @@ from app.extensions import db
 from sqlalchemy.sql import func
 from sqlalchemy import DateTime
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from app.utils.tiles import get_tile_index
 
@@ -11,13 +11,7 @@ import random
 import string
 
 
-def get_timestamp(year: int, month: int, day: int) -> int:
-    reference_date = datetime(1970, 1, 1)
-    date = datetime(year, month, day)
-    
-    delta = date - reference_date
-    
-    return int(delta.total_seconds())
+initial_current_time = datetime(1100, 5, 8, 0, 0, 0, tzinfo=timezone.utc)
 
 
 class World(db.Model):
@@ -27,8 +21,8 @@ class World(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) # world owner
     code = db.Column(db.String(10), nullable=False)
 
-    initial_current_time = datetime(1100, 5, 8, 0, 0, 0, tzinfo=timezone.utc)
     current_time = db.Column(db.DateTime, default=initial_current_time, nullable=False)
+    last_time_update = db.Column(DateTime(timezone=True), default=func.now())
 
     def __init__(self, user_id):
         self.user_id = user_id
@@ -42,12 +36,33 @@ class World(db.Model):
 
                 break
 
+    def update_time(self) -> None:
+        if self.last_time_update is None:
+            self.last_time_update = func.now()
+            db.session.commit()
+            return
+
+        time_difference = (datetime.now() - self.last_time_update).total_seconds() // 60
+
+        self.current_time += timedelta(hours=time_difference)
+        self.last_time_update += timedelta(minutes=time_difference) # type: ignore
+
+        db.session.commit()
+
+    def get_world_time(self) -> int:
+        reference_date = datetime(1970, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+        date = datetime(self.current_time.year, self.current_time.month, self.current_time.day, self.current_time.hour, 0, 0, tzinfo=timezone.utc)
+        
+        delta = date - reference_date
+        
+        return int(delta.total_seconds())
+
     def get_dict(self) -> dict:
         return {
             'id' : self.id,
             'user_id' : self.id,
             'code' : self.code,
-            'current_time' : get_timestamp(self.current_time.year, self.current_time.month, self.current_time.day)
+            'current_time' : self.get_world_time()
         }
 
 
