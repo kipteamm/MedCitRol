@@ -104,7 +104,10 @@ class Character(db.Model):
             'id' : self.id,
             'user_id' : self.user_id,
             'world_id' : self.world_id,
-            'settlement_id' : self.settlement_id
+            'settlement_id' : self.settlement_id,
+            'house_id' : self.house_id,
+            'profession' : self.profession,
+            'task_index' : self.task_index 
         }
 
 

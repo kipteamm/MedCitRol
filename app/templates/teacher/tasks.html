@@ -6,6 +6,8 @@
     <a href="/teacher/{{ world.id }}/task/create">Create</a>
     
     {% for task in tasks %}
-        {{ task }}
+        <div class="task">
+            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/edit">Task {{ task.id }}</a>
+        </div>
     {% endfor %}
 {% endblock %}

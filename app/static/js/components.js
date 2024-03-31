@@ -18,9 +18,12 @@ function professionComponent(profession) {
 function taskComponent(task) {
     const wrapper = document.createElement("div");
 
+    console.log(task)
+
     wrapper.classList.add("task");
     wrapper.innerHTML = `
-        ${task.index}
+        task
+        ${task}
     `;
 
     return wrapper;

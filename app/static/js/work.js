@@ -1,9 +1,15 @@
 const workContent = document.getElementById('work-content');
 const workPanel = document.getElementById('work-panel');
 
+let activeTask;
+
 // working
 async function work() {
     workPanel.classList.add("active");
+
+    if (activeTask === character.task_index) return;
+
+    activeTask = character.task_index;
     
     const response = await fetch('/api/work', {
         method: "GET",
