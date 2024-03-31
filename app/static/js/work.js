@@ -38,7 +38,7 @@ function stopWorking() {
 }
 
 // professions
-let professions = ["Farmer", "Miller", "Baker", "Butcher", "Woodcutter", "Carpenter", "Stonemason", "Blacksmith", "Tailor", "Armourer", "Merchant"]
+let professions = ["Farmer", "Miller", "Baker", "Stonemason", "Woodcutter", "Carpenter", "Shoemaker", "Blacksmith", "Tailor", "Armourer", "Merchant"]
 
 function chooseProfession(level) {
     const availableProfessions = professions.slice(0, level + 1);

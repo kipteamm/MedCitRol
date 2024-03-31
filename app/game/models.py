@@ -89,11 +89,14 @@ class Settlement(db.Model):
 class Character(db.Model):
     __tablename__ = 'character'
 
+    # identification
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     world_id = db.Column(db.Integer, db.ForeignKey('world.id'), nullable=False)
     settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
 
+    # properties
+    pennies = db.Column(db.Integer, default=12) # 1 brood = 4 pennies
     house_id = db.Column(db.Integer)
     
     profession = db.Column(db.String(120))
@@ -105,6 +108,7 @@ class Character(db.Model):
             'user_id' : self.user_id,
             'world_id' : self.world_id,
             'settlement_id' : self.settlement_id,
+            'pennies' : self.pennies,
             'house_id' : self.house_id,
             'profession' : self.profession,
             'task_index' : self.task_index 

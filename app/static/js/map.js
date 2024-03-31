@@ -22,6 +22,17 @@ terrainTileSet.onload = function() {
     prepareCanvas();
 };
 
+function customRandom(seed) {
+    let state = seed;
+
+    return function() {
+        const x = Math.sin(state++) * 10000;
+        return x - Math.floor(x);
+    };
+}
+
+seedData = customRandom(world.id)
+
 function loadTerrain() {
     for (let x = 0; x < mapWidth; x++) {
         let column = [];
@@ -31,7 +42,7 @@ function loadTerrain() {
             if (tileData !== undefined) {
                 column.push(tileData.tile_index);
             } else {
-                column.push(Math.floor(Math.random() * (6 - 3)) + 3);
+                column.push(Math.floor(seedData() * (6 - 3)) + 3);
             }
         }
         terrain.push(column);
