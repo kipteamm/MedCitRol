@@ -1,8 +1,27 @@
 const marketPanel = document.getElementById("market-panel");
 const marketContent = marketPanel.querySelector('.content');
 
-function openMarket() {
+async function openMarket() {
     marketPanel.classList.add("active");
+
+    const response = await fetch("/api/settlement/market", {
+        method: "GET",
+        headers: {
+            "Authorization" : getCookie("psk")
+        }
+    });
+
+    const json = await response.json();
+
+    if (!response.ok) {
+        marketContent.innerHTML = json.error;
+    
+        return;
+    }
+
+    json.forEach(item => {
+        marketContent.appendChild(marketItemComponent(item));
+    });
 }
 
 function closeMarket() {
@@ -19,9 +38,9 @@ async function sellItem() {
     if (!inventoryItem) return;
     if (inventoryItem.amount < amountInput.value) return;
 
-    const response = await fetch("api/settlement/market/sell", {
+    const response = await fetch("/api/settlement/market/sell", {
         method: "POST",
-        data: JSON.stringify({item_type: inventoryItem.item_type, amount: amountInput.value, price: priceInput.value}),
+        body: JSON.stringify({item_type: inventoryItem.item_type, amount: amountInput.value, price: priceInput.value}),
         headers: {
             "Content-Type" : "application/json",
             "Authorization" : getCookie("psk")
@@ -36,5 +55,5 @@ async function sellItem() {
         return;
     }
 
-    marketContent.appendChild(marketItemComponent(json))
+    marketContent.appendChild(marketItemComponent(json));
 }
