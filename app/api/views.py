@@ -4,7 +4,7 @@ from app.utils.professions import Profession
 from app.utils.inventory import Inventory
 
 from app.teacher.models import Task
-from app.game.models import AccessKey, Character
+from app.game.models import AccessKey, Character, InventoryItem, MarketItem
 
 from app.extensions import db
 
@@ -93,3 +93,48 @@ def set_profession():
     db.session.commit()
 
     return make_response({"success" : True}, 204)
+
+
+@api_blueprint.route("/settlement/market/sell", methods=["POST"])
+def sell_item():
+    authorization = request.headers.get('Authorization')
+        
+    access_key = None
+
+    if authorization:
+        access_key = AccessKey.query.filter_by(key=authorization).first()
+
+    if not authorization or not access_key:
+        return make_response({"error" : "Invalid authentication."}, 401)
+    
+    character = Character.query.get(access_key.character_id)
+
+    json = request.json
+
+    if not json or not "item_type" in json or not "amount" in json or not "price" in json:
+        return make_response({"error" : "Invalid item."}, 400)
+    
+    inventory_item = InventoryItem(character_id=character.id, item_type=json["item_type"])
+
+    if not inventory_item:
+        return make_response({"error" : "Invalid item."}, 400)
+    
+    if inventory_item.buildable:
+        return make_response({"error" : "Invalid item."}, 400)
+    
+    if inventory_item.amount < json["amount"]:
+        return make_response({"error" : "Invalid amount."}, 400)
+    
+    inventory_item.amount -= json["amount"]
+
+    db.session.commit()
+
+    market_item = MarketItem.query.filter_by(character_id=character.id, settlement_id=access_key.settlement_id, item_type=json["item_type"]).first()
+
+    if not market_item:
+        market_item = MarketItem(character_id=character.id, settlement_id=access_key.settlement_id, item_type=json["item_type"])
+
+    market_item.amount += json["amount"]
+    market_item.price = json["price"]
+
+    return make_response(market_item.get_dict(), 204)  

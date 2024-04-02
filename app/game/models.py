@@ -185,3 +185,27 @@ class Farmer(db.Model):
 
     date = db.Column(db.DateTime, nullable=False)
     stage = db.Column(db.String(120), default="farm_land", nullable=False)
+
+
+class MarketItem(db.Model):
+    __tablename__ = 'market_item'
+
+    id = db.Column(db.Integer, primary_key=True)
+    character_id = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
+    world_id = db.Column(db.Integer, db.ForeignKey('world.id'))
+    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'))
+
+    item_type = db.Column(db.String(120), nullable=False)
+    amount = db.Column(db.Integer, default=0)
+    price = db.Column(db.Integer, default=0)
+
+    def get_dict(self) -> dict:
+        return {
+            'id' : self.id,
+            'character_id' : self.character_id,
+            'world_id' : self.world_id,
+            'settlement_id' : self.settlement_id,
+            'item_type' : self.item_type,
+            'amount' : self.amount,
+            'price' : self.price,
+        }

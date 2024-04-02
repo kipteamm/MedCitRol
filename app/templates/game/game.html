@@ -15,6 +15,7 @@
     <script src="{{ url_for('static', filename='js/game.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/components.js') }}"></script>
     <script src="{{ url_for('static', filename='js/build.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/market.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/basics.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/game_socket.js') }}" defer></script>
 
@@ -33,7 +34,7 @@
         <b id="clock">00:00</b> <b id="date">00/00/00</b>
 
         <button onclick="openBuildMenu()">Build</button>
-        <button>Market</button>
+        <button onclick="openMarket()">Market</button>
         <button>Map</button>
         <button onclick="centerCamera()">Center</button>
     </div>
@@ -67,6 +68,22 @@
 
         <button onclick="confirmBuild()">Confirm build</button>
         <button onclick="cancelBuild()">Cancel</button>
+    </div>
+
+    <div class="ui market-panel" id="market-panel">
+        <button class="close" onclick="closeMarket()">Close</button>
+
+        <div class="content"></div>
+
+        <div class="sell">
+            <h2>Sell</h2>
+            
+            <input type="text" placeholder="item" id="item">
+            <input type="number" placeholder="amount" id="amount">
+            <input type="number" placeholder="price per item" id="price">
+
+            <button onclick="sellItem()">Sell something</button>
+        </div>
     </div>
 </body>
 </html>
