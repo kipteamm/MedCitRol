@@ -40,7 +40,5 @@ def register_events(socketio: SocketIO):
             db.session.commit()
 
             tiles.append(tile.get_dict())
-
-        print(tiles)
-
+            
         socketio.emit('new_tiles', tiles, room=data['world_id']) # type: ignore

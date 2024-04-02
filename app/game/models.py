@@ -175,3 +175,13 @@ class InventoryItem(db.Model):
             'buildable' : self.buildable,
             'tile_index' : get_tile_index(self.item_type)
         }
+
+
+class Farmer(db.Model):
+    __tablename__ = 'farmer'
+
+    id = db.Column(db.Integer, primary_key=True)
+    character_id = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
+
+    date = db.Column(db.DateTime, nullable=False)
+    stage = db.Column(db.String(120), default="farm_land", nullable=False)

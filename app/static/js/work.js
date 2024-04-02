@@ -11,7 +11,7 @@ async function work() {
 
     activeTask = character.task_index;
     
-    const response = await fetch('/api/work', {
+    const response = await fetch('/api/task', {
         method: "GET",
         headers: {
             "Authorization" : getCookie("psk"),
@@ -31,6 +31,7 @@ async function work() {
     }
 
     workContent.appendChild(taskComponent(json))
+    workContent.innerHTML += '<button onclick="submitTask()">Submit</button>';
 }
 
 function stopWorking() {
@@ -71,4 +72,29 @@ async function updateProfession(profession) {
     activeTask = null;
 
     return work();
+}
+
+async function submitTask() {
+    const response = await fetch('/api/task/submit', {
+        method: "POST",
+        body: JSON.stringify({}),
+        headers: {
+            "Content-Type" : "application/json",
+            "Authorization" : getCookie("psk")
+        }
+    });
+
+    if (!response.ok) {
+        const json = await response.json();
+
+        workContent.innerHTML = json.error;
+
+        return;
+    }
+
+    workContent.innerHTML = '';
+
+    activeTask = null;
+
+    return stopWorking();
 }

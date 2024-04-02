@@ -22,7 +22,7 @@ socket.on('new_tiles', function(data) {
 
 socket.on('update_tiles', function(data) {
     data.forEach(tile => {     
-        tiles.find(_tile => _tile.id === tile.id).update(tile);
+        tiles[tiles.findIndex(_tile => _tile.id === tile.id)] = tile;
 
         terrain[tile.pos_x][tile.pos_y] = tile.tile_index;
 
