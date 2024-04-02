@@ -124,6 +124,26 @@ function render() {
     }
 }
 
+canvas.addEventListener('click', function(event) {
+    const worldX = getWorldX(event.offsetX);
+    const worldY = getWorldY(event.offsetY);
+    
+    const tileX = Math.floor(worldX);
+    const tileY = Math.floor(worldY);
+    
+    if (tileX >= 0 && tileX < mapWidth && tileY >= 0 && tileY < mapHeight) {
+        handleClick(tiles.find(tile => tile.pos_x === tileX && tile.pos_y === tileY + 1));
+    }
+});
+
+function handleClick(tile) {
+    if (tile === undefined) return;
+
+    console.log(tile)
+}
+
+// DRAG
+
 let isDragging = false;
 let startX, startY;
 
