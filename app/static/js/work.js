@@ -67,6 +67,8 @@ async function updateProfession(profession) {
 
         return;
     }
+    
+    activeTask = null;
 
     return work();
 }

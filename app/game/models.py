@@ -82,7 +82,8 @@ class Settlement(db.Model):
             'id' : self.id,
             'world_id' : self.world_id,
             'name' : self.name,
-            'colour' : self.colour
+            'colour' : self.colour,
+            'inventory' : [inventory_item.get_dict() for inventory_item in InventoryItem.query.filter_by(settlement_id=self.id).all()]
         }
 
 
@@ -111,7 +112,8 @@ class Character(db.Model):
             'pennies' : self.pennies,
             'house_id' : self.house_id,
             'profession' : self.profession,
-            'task_index' : self.task_index 
+            'task_index' : self.task_index,
+            'inventory' : [inventory_item.get_dict() for inventory_item in InventoryItem.query.filter_by(character_id=self.id).all()]
         }
 
 
@@ -151,3 +153,24 @@ class Tile(db.Model):
             'tile_index' : get_tile_index(self.tile_type),
         }
     
+
+class InventoryItem(db.Model):
+    __tablename__ = 'inventory_item'
+
+    id = db.Column(db.Integer, primary_key=True)
+    character_id = db.Column(db.Integer, db.ForeignKey('character.id'))
+    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'))
+
+    item_type = db.Column(db.String(120), nullable=False)
+    amount = db.Column(db.Integer, default=0)
+    buildable = db.Column(db.Boolean, default=False)
+
+    def get_dict(self) -> dict:
+        return {
+            'id' : self.id,
+            'character_id' : self.character_id,
+            'settlement_id' : self.settlement_id,
+            'item_type' : self.item_type,
+            'amount' : self.amount,
+            'buildable' : self.buildable
+        }

@@ -1,5 +1,6 @@
 from flask import Blueprint, request, make_response
 
+from app.utils.inventory import Inventory
 from app.teacher.models import Task
 from app.game.models import AccessKey, Character
 
@@ -26,9 +27,12 @@ def work():
     if not character.profession:
         return make_response({"error" : "You have no profession."}, 400)
     
-    task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first().get_dict()
+    task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
+    
+    if not task:
+        return make_response({"error": "No task found"}, 404)
 
-    return make_response(task, 200)
+    return make_response(task.get_dict(), 200)
 
 
 @api_blueprint.route("/profession/set", methods=["PUT"])
@@ -50,7 +54,12 @@ def set_profession():
     if not json or 'profession' not in json:
         return make_response({"error" : "Invalid profession."}, 400)
     
-    character.profession = json['profession']
+    profession = json['profession']
+
+    character.profession = profession
+
+    if profession == 'farmer':
+        Inventory(None, character.id).add_item('farm_land', 9)
 
     db.session.commit()
 

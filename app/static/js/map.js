@@ -125,6 +125,8 @@ function render() {
 }
 
 canvas.addEventListener('click', function(event) {
+    if (isDragging) return;
+
     const worldX = getWorldX(event.offsetX);
     const worldY = getWorldY(event.offsetY);
     
@@ -132,12 +134,18 @@ canvas.addEventListener('click', function(event) {
     const tileY = Math.floor(worldY);
     
     if (tileX >= 0 && tileX < mapWidth && tileY >= 0 && tileY < mapHeight) {
-        handleClick(tiles.find(tile => tile.pos_x === tileX && tile.pos_y === tileY + 1));
+        handleClick(tileX, tileY + 1);
     }
 });
 
-function handleClick(tile) {
-    if (tile === undefined) return;
+function handleClick(tileX, tileY) {
+    if ([3, 4, 5].includes(terrain[tileX][tileY])) {
+        if (!isBuilding) return;
+
+        return build(tileX, tileY);
+    }
+
+    tile = tiles.find(tile => tile.pos_x === tileX && tile.pos_y === tileY)
 
     console.log(tile)
 }
@@ -156,6 +164,7 @@ function startDragging(e) {
     isDragging = true;
     startX = e.clientX || e.touches[0].clientX;
     startY = e.clientY || e.touches[0].clientY;
+
 }
 
 // Stop dragging
@@ -198,4 +207,9 @@ function centerCamera() {
     camY = mapHeight / 2;
 
     render();
+}
+
+// building
+function build(tileX, tileY) {
+    drawTilesetImage(terrainTileSet, 35, tileX, tileY, tileSize, 1);
 }
