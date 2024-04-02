@@ -12,5 +12,13 @@ socket.on('update_time', function(data) {
 socket.on('new_tile', function(data) {
     tiles.push(data);
 
-    drawTilesetImage(terrainTileSet, data.tile_index, data.pos_x, data.pos_y, tileSize, 1)
+    terrain[data.pos_x][data.pos_y] = data.tile_index;
+
+    drawTilesetImage(terrainTileSet, data.tile_index, data.pos_x, data.pos_y, tileSize, 1);
+})
+
+socket.on('update_tile', function(data) {
+    terrain[data.pos_x][data.pos_y] = data.tile_index;
+
+    drawTilesetImage(terrainTileSet, data.tile_index, data.pos_x, data.pos_y, tileSize, 1);
 })

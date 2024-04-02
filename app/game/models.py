@@ -143,6 +143,7 @@ class Tile(db.Model):
     def get_dict(self) -> dict:
         return {
             'id' : self.id,
+            'character_id' : self.character_id,
             'settlement_id' : self.settlement_id,
             'pos_x' : self.pos_x,
             'pos_y' : self.pos_y,
