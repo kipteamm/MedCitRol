@@ -1,0 +1,87 @@
+.ui {
+    position: fixed;
+    z-index: 10;
+}
+
+.information {
+    left: 12.5px;
+    top: 12.5px;
+}
+
+.world {
+    right: 12.5px;
+    top: 12.5px;
+}
+
+.character {
+    left: 12.5px;
+    bottom: 12.5px;
+}
+
+.settlement {
+    right: 12.5px;
+    bottom: 12.5px;
+}
+
+.work-panel {
+    bottom: -100%;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    transition: .3s;
+    z-index: 100;
+}
+
+.work-panel.active {
+    bottom: 0;
+}
+
+.work-panel button.close {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+}
+
+.work-content.profession-selector {
+    padding: 50px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    overflow-y: scroll;
+}
+
+.work-content.profession-selector .profession {
+    display: inline-table;
+    text-align: center;
+}
+
+.work-content.profession-selector .profession img {
+    transition: .3s;
+    height: 400px;
+}
+
+.work-content.profession-selector .profession:hover {
+    cursor: pointer;
+}
+.work-content.profession-selector .profession:hover img {
+    opacity: 0.7;
+}
+
+.build-panel {
+    right: -100%;
+    width: 400px;
+    height: 100vh;
+    background-color: white;
+    transition: .3s;
+}
+.build-panel.active {
+    right: 0px;
+}
+
+.inventory-item {
+    padding: 25px;
+}
+
+.inventory-item.active {
+    background-color: rgb(217, 227, 236);
+}

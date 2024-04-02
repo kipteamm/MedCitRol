@@ -14,6 +14,22 @@ class Inventory:
     def _is_buildable(self, item_type: str) -> bool:
         return item_type in self.BUILDABLE_TYPES
 
+    def has_items(self, item_type: str, amount: int) -> bool:
+        if self.settlement_id:
+            inventory_item = InventoryItem.query.filter_by(settlement_id=self.settlement_id, item_type=item_type).first()
+
+            if not inventory_item:
+                return False
+
+            return inventory_item.amount >= amount
+        
+        inventory_item = InventoryItem.query.filter_by(character_id=self.character_id, item_type=item_type).first()
+
+        if not inventory_item:
+            return False
+        
+        return inventory_item.amount >= amount
+
     def add_item(self, item_type: str, amount: int) -> None:
         if self.settlement_id:
             inventory_item = InventoryItem.query.filter_by(settlement_id=self.settlement_id, item_type=item_type).first()

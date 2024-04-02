@@ -82,7 +82,7 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
 
         character.house_id = house.id
 
-        socketio.emit("new_tile", house.get_dict(), room=settlement.id) # type: ignore
+        socketio.emit("new_tiles", [house.get_dict()], room=settlement.id) # type: ignore
 
     else:
         settlement = Settlement.query.filter_by(world_id=world.id, id=character.settlement_id).first()

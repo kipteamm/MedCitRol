@@ -10,7 +10,8 @@ let zoom = tileSize * 4;
 let camX = mapWidth / 2;
 let camY = mapHeight / 2;
 
-let terrain = []
+let terrain = [];
+let buildings = [];
 
 const terrainTileSet = new Image();
 
@@ -26,8 +27,8 @@ function customRandom(seed) {
     let state = seed;
 
     return function() {
-        const x = Math.sin(state++) * 10000;
-        return x - Math.floor(x);
+        const r = Math.sin(state++) * 10000;
+        return r - Math.floor(r);
     };
 }
 
@@ -124,42 +125,61 @@ function render() {
     }
 }
 
-canvas.addEventListener('click', function(event) {
+let isDragging = false;
+let building = null;
+let startX, startY;
+
+canvas.addEventListener('click', (event) => handleClick(event, false));
+canvas.addEventListener('contextmenu', (event) => handleClick(event, true));
+
+function handleClick(event, rightClick=false) {
     if (isDragging) return;
 
     const worldX = getWorldX(event.offsetX);
     const worldY = getWorldY(event.offsetY);
     
     const tileX = Math.floor(worldX);
-    const tileY = Math.floor(worldY);
+    const tileY = Math.floor(worldY) + 1;
     
-    if (tileX >= 0 && tileX < mapWidth && tileY >= 0 && tileY < mapHeight) {
-        handleClick(tileX, tileY + 1);
-    }
-});
+    if (tileX < 0 || tileX > mapWidth || tileY < 0 || tileY > mapHeight) return;
 
-function handleClick(tileX, tileY) {
     if ([3, 4, 5].includes(terrain[tileX][tileY])) {
-        if (!isBuilding) return;
+        if (building === null) return;
+        if (rightClick) {
+            const buildingPlace = buildings.find(tile => tile.pos_x === tileX && tile.pos_y === tileY);
 
-        return build(tileX, tileY);
+            if (buildingPlace === undefined) return;
+
+            buildings.splice(buildings.indexOf(buildingPlace), 1);
+            
+            building.updateAmount(building, +1);
+
+            return drawTilesetImage(terrainTileSet, terrain[tileX][tileY], tileX, tileY, tileSize, 1);
+        }
+        if (building.amount == 0) return;
+        if (buildings.some(building => building.pos_x === tileX && building.pos_y === tileY)) return;
+
+        building.updateAmount(building, -1);
+
+        buildings.push({pos_x: tileX, pos_y: tileY, tile_type: building.item_type, character: character.id});
+
+        return drawTilesetImage(terrainTileSet, building.tile_index, tileX, tileY, tileSize, 1);
     }
+
+    if (rightClick) return;
 
     tile = tiles.find(tile => tile.pos_x === tileX && tile.pos_y === tileY)
 
     console.log(tile)
 }
 
-// DRAG
-
-let isDragging = false;
-let startX, startY;
-
 // Start dragging
 canvas.addEventListener('mousedown', startDragging);
 canvas.addEventListener('touchstart', startDragging);
 
 function startDragging(e) {
+    if (building !== null) return;
+
     e.preventDefault();
     isDragging = true;
     startX = e.clientX || e.touches[0].clientX;
@@ -174,6 +194,8 @@ canvas.addEventListener('touchend', stopDragging);
 canvas.addEventListener('touchcancel', stopDragging);
 
 function stopDragging(e) {
+    if (building !== null) return;
+
     e.preventDefault();
     isDragging = false;
 }
@@ -185,6 +207,8 @@ canvas.addEventListener('touchmove', dragMap);
 const dragSpeed = 1.15; 
 
 function dragMap(e) {
+    if (building !== null) return;
+
     e.preventDefault();
     if (isDragging) {
         const x = e.clientX || e.touches[0].clientX;

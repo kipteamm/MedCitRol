@@ -172,5 +172,6 @@ class InventoryItem(db.Model):
             'settlement_id' : self.settlement_id,
             'item_type' : self.item_type,
             'amount' : self.amount,
-            'buildable' : self.buildable
+            'buildable' : self.buildable,
+            'tile_index' : get_tile_index(self.item_type)
         }

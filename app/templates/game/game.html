@@ -6,6 +6,7 @@
 
     <title>Game</title>
 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ui.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/basics.css') }}">
 
@@ -13,6 +14,7 @@
     <script src="{{ url_for('static', filename='js/work.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/game.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/components.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/build.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/basics.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/game_socket.js') }}" defer></script>
 
@@ -30,7 +32,8 @@
     <div class="ui information">
         <b id="clock">00:00</b> <b id="date">00/00/00</b>
 
-        <button>Shop</button>
+        <button onclick="openBuildMenu()">Build</button>
+        <button>Market</button>
         <button>Map</button>
         <button onclick="centerCamera()">Center</button>
     </div>
@@ -53,10 +56,17 @@
         <canvas id="map"></canvas>
     </div>
 
-    <div class="work-panel" id="work-panel">
+    <div class="ui work-panel" id="work-panel">
         <button class="close" onclick="stopWorking()">Close</button>
 
         <div class="work-content" id="work-content"></div>
+    </div>
+
+    <div class="ui build-panel" id="build-panel">
+        <div class="content"></div>
+
+        <button onclick="confirmBuild()">Confirm build</button>
+        <button onclick="cancelBuild()">Cancel</button>
     </div>
 </body>
 </html>

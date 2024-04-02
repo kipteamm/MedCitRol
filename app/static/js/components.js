@@ -28,3 +28,19 @@ function taskComponent(task) {
 
     return wrapper;
 }
+
+function inventoryItem(item, building) {
+    const wrapper = document.createElement("div");
+
+    wrapper.id = item.id;
+    wrapper.classList.add("inventory-item");
+    wrapper.innerHTML = `
+        <b id="count-${item.id}">${item.amount}x</b> ${item.item_type}
+    `;
+
+    if (building) {
+        wrapper.onclick = function() {selectItem(item.id)}
+    }
+
+    return wrapper
+}
