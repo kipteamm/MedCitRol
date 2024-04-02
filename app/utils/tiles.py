@@ -1,4 +1,5 @@
 tile_index_map = {
+    "well" : 92,
     "hut" : 118
 }
 

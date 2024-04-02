@@ -23,6 +23,12 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
             settlement = Settlement(world_id=world.id, name="Unnamed", colour=settlement_colours[0])
 
             db.session.add(settlement)
+            db.session.commit()
+
+            tile = Tile(settlement_id=settlement.id, pos_x=37, pos_y=37, tile_type="well")
+            
+            db.session.add(tile)
+            db.session.commit()
 
         elif len(settlements) < len(settlement_colours):
             i = len(settlements)
@@ -32,6 +38,12 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
                     settlement = Settlement(world_id=world.id, name="Unnamed", colour=settlement_colours[i])
 
                     db.session.add(settlement)
+                    db.session.commit()
+
+                    tile = Tile(settlement_id=settlement.id, pos_x=37, pos_y=37, tile_type="well")
+                    
+                    db.session.add(tile)
+                    db.session.commit()
 
                     break
 
@@ -53,11 +65,10 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
 
             settlement = settlements.query.filter_by(id=sorted_data[i].id)
 
-        db.session.commit()
-
         character = Character(world_id=world.id, user_id=user.id, settlement_id=settlement.id)
 
         db.session.add(character)
+        db.session.commit()
 
         pos_x, pos_y = None, None
 
@@ -72,8 +83,6 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
         character.house_id = house.id
 
         socketio.emit("new_tile", house.get_dict(), room=settlement.id) # type: ignore
-
-        db.session.commit()
 
     else:
         settlement = Settlement.query.filter_by(world_id=world.id, id=character.settlement_id).first()

@@ -29,14 +29,10 @@
 <body>
     <div class="ui information">
         <b id="clock">00:00</b> <b id="date">00/00/00</b>
-    </div>
 
-    <div class="ui world">
-        <h2>Map</h2>
-        
-        <ul>
-            <li>Other settlements</li>
-        </ul>
+        <button>Shop</button>
+        <button>Map</button>
+        <button onclick="centerCamera()">Center</button>
     </div>
 
     <div class="ui character">
@@ -47,19 +43,10 @@
             <li>Health <b>You feel ... (this may/will cause)</b></li>
             <li>Happiness <b>You feel ... (this may/will cause)</b></li>
             <li><b>{{ character.pennies }} penningen</b> (1 pond = 240 penningen)(1 schelling = 12 penningen)</li>
+            <li>Profession <b>{{ character.profession }}</b></li>
         </ul>
 
         <button onclick="work()">Work</button>
-    </div>
-
-    <div class="ui settlement">
-        <h2>Settlement</h2>
-
-        <ul>
-            <li>Buildings in your settlement</li>
-        </ul>
-
-        <button onclick="centerCamera()">Center</button>
     </div>
 
     <div class="map-container" id="map-container">
