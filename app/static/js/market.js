@@ -63,7 +63,13 @@ async function sellItem() {
         return;
     }
 
-    marketContent.appendChild(marketItemComponent(json));
+    const existingMarketItem = document.getElementById(`market-item-${json.id}`);
+
+    if (existingMarketItem !== null) {
+        marketContent.replaceChild(marketItemComponent(json), existingMarketItem);
+    } else {
+        marketContent.appendChild(marketItemComponent(json));
+    }
 }
 
 async function buyItem(id) {

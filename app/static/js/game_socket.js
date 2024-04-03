@@ -49,7 +49,7 @@ socket.on('update_inventory', function(data) {
 socket.on('update_character', function(data) {
     if (character.id !== data.id) return;
     
-    // other stats
+    // other stats yet to get added
     character.updatePennies(data.pennies, true)
 });
 

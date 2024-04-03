@@ -3,6 +3,8 @@ const buildPanel = document.getElementById('build-panel');
 function openBuildMenu() {
     closeMarket()
 
+    if (buildPanel.classList.contains("active")) return cancelBuild();
+
     buildPanel.classList.add('active');
 
     const content = buildPanel.querySelector('.content');
