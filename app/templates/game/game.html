@@ -24,9 +24,9 @@
     <script>
         let tiles = {{ tiles|tojson }};
 
-        const world = {{ world.get_dict()|tojson }};
-        const settlement = {{ settlement.get_dict()|tojson }};
-        const character = {{ character.get_dict()|tojson }};
+        const world = {{ world|tojson }};
+        const settlement = {{ settlement|tojson }};
+        const character = {{ character|tojson }};
 
         character.updatePennies = function(pennies, reset=false) {
             this.pennies = reset? pennies : this.pennies + pennies;
@@ -48,11 +48,11 @@
     <div class="ui character">
         <h2>Character</h2>
         <ul>
-            <li>Hunger <b>0/24</b></li>
-            <li>Fatigue <b>You feel ... (this may/will cause)</b></li>
-            <li>Health <b>You feel ... (this may/will cause)</b></li>
-            <li>Happiness <b>You feel ... (this may/will cause)</b></li>
-            <li><b id="pennies">{{ character.pennies }} penningen</b> (1 schelling = 12 penningen)</li>
+            <li>Hunger <b>{{ character.hunger }}</b></li>
+            <li>Fatigue <b>{{ character.fatigue }}</b></li>
+            <li>Health <b>{{ character.health }}</b></li>
+            <li>Happiness <b>{{ character.happiness }}</b></li>
+            <li>Wealth <b id="pennies">{{ character.pennies }} penningen</b></li>
             <li>Profession <b>{{ character.profession }}</b></li>
         </ul>
 

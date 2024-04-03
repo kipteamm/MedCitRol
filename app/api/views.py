@@ -1,8 +1,8 @@
 from flask import Blueprint, request, make_response
 
+from app.utils.serializers import market_item_serializer, task_serializer, character_serializer
 from app.utils.professions import Profession
 from app.utils.inventory import Inventory
-
 from app.teacher.models import Task
 from app.game.models import AccessKey, Character, InventoryItem, MarketItem
 
@@ -34,7 +34,7 @@ def task():
     if not task:
         return make_response({"error": "No task found"}, 404)
 
-    return make_response(task.get_dict(), 200)
+    return make_response(task_serializer(task), 200)
 
 
 @api_blueprint.route("/task/submit", methods=["POST"])
@@ -61,7 +61,7 @@ def submit_task():
     
     Profession(character).work()
 
-    return make_response(task.get_dict(), 200)
+    return make_response(task_serializer(task), 200)
 
 
 @api_blueprint.route("/profession/set", methods=["PUT"])
@@ -113,7 +113,7 @@ def get_market():
     if not authorization or not access_key:
         return make_response({"error" : "Invalid authentication."}, 401)
     
-    market_data = [market_item.get_dict() for market_item in MarketItem.query.filter_by(settlement_id=access_key.settlement_id).all()]
+    market_data = [market_item_serializer(market_item) for market_item in MarketItem.query.filter_by(settlement_id=access_key.settlement_id).all()]
 
     return make_response(market_data, 200)
 
@@ -168,7 +168,7 @@ def sell_item():
 
     db.session.commit()
 
-    return make_response(market_item.get_dict(), 200)  
+    return make_response(market_item_serializer(market_item), 200)  
 
 
 @api_blueprint.route("/settlement/market/buy", methods=["POST"])
@@ -208,6 +208,6 @@ def buy_item():
         db.session.delete(item)
         db.session.commit()
 
-    socketio.emit("update_character", seller.get_dict(), room=seller.settlement_id) # type: ignore
+    socketio.emit("update_character", character_serializer(seller), room=seller.settlement_id) # type: ignore
 
     return make_response({"success" : True}, 204)

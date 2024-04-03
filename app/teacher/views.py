@@ -20,7 +20,7 @@ def game(world_id):
     if not world:
         return redirect(url_for('game.home'))
 
-    return render_template('teacher/game.html', world=world.get_dict())
+    return render_template('teacher/game.html', world=world)
 
 
 @teacher_blueprint.route('/<world_id>/tasks')

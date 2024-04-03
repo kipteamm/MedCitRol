@@ -1,3 +1,4 @@
+from app.utils.serializers import tile_serializer
 from app.utils.inventory import Inventory
 from app.game.models import Character, Farmer, World, Tile
 from app.extensions import db, socketio
@@ -19,7 +20,7 @@ class Profession:
 
             db.session.commit()
 
-            new_tiles.append(tile.get_dict())
+            new_tiles.append(tile_serializer(tile))
             
         socketio.emit('update_tiles', new_tiles, room=self._character.settlement_id) # type: ignore
         

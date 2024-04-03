@@ -1,6 +1,6 @@
+from app.utils.serializers import tile_serializer
 from app.game.models import World, Settlement, Character, AccessKey, Tile
 from app.auth.models import User
-
 from app.extensions import db, socketio
 
 from datetime import datetime, timezone, timedelta
@@ -82,7 +82,7 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
 
         character.house_id = house.id
 
-        socketio.emit("new_tiles", [house.get_dict()], room=settlement.id) # type: ignore
+        socketio.emit("new_tiles", [tile_serializer(house)], room=settlement.id) # type: ignore
 
     else:
         settlement = Settlement.query.filter_by(world_id=world.id, id=character.settlement_id).first()

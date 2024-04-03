@@ -1,3 +1,4 @@
+from app.utils.serializers import inventory_item_serializer
 from app.game.models import InventoryItem
 from app.extensions import db, socketio
 
@@ -57,7 +58,8 @@ class Inventory:
         data = {
             'character_id' : self._character_id,
             'settlement_id' : self._settlement_id,
-            'item' : inventory_item.get_dict()
+            'item' : inventory_item_serializer(inventory_item),
+            'deleted' : False
         }
 
         socketio.emit('update_inventory', data, room=self._room_id) # type: ignore
@@ -79,7 +81,7 @@ class Inventory:
 
         db.session.commit()
 
-        item_data = inventory_item.get_dict()
+        item_data = inventory_item_serializer(inventory_item)
 
         deleted = inventory_item.amount <= 0
 

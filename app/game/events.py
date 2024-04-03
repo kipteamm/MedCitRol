@@ -1,5 +1,6 @@
-from flask_socketio import SocketIO, Namespace, join_room, leave_room # type: ignore
+from flask_socketio import SocketIO, join_room
 
+from app.utils.serializers import tile_serializer
 from app.utils.inventory import Inventory
 from app.utils.functions import authenticated
 from app.extensions import db
@@ -39,6 +40,6 @@ def register_events(socketio: SocketIO):
             db.session.add(tile)
             db.session.commit()
 
-            tiles.append(tile.get_dict())
+            tiles.append(tile_serializer(tile))
             
         socketio.emit('new_tiles', tiles, room=data['world_id']) # type: ignore

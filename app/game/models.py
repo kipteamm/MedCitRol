@@ -5,8 +5,6 @@ from sqlalchemy import DateTime
 
 from datetime import datetime, timezone, timedelta
 
-from app.utils.tiles import get_tile_index
-
 import random
 import string
 
@@ -59,14 +57,6 @@ class World(db.Model):
         
         return int(delta.total_seconds())
 
-    def get_dict(self) -> dict:
-        return {
-            'id' : self.id,
-            'user_id' : self.id,
-            'code' : self.code,
-            'current_time' : self.get_world_time()
-        }
-
 
 class Settlement(db.Model):
     __tablename__ ='settlement'
@@ -76,15 +66,6 @@ class Settlement(db.Model):
 
     name = db.Column(db.String(120), nullable=False)
     colour = db.Column(db.String(120), nullable=False)
-
-    def get_dict(self) -> dict:
-        return {
-            'id' : self.id,
-            'world_id' : self.world_id,
-            'name' : self.name,
-            'colour' : self.colour,
-            'inventory' : [inventory_item.get_dict() for inventory_item in InventoryItem.query.filter_by(settlement_id=self.id).all()]
-        }
 
 
 class Character(db.Model):
@@ -97,24 +78,15 @@ class Character(db.Model):
     settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
 
     # properties
+    hunger = db.Column(db.Integer, default=24)
+    fatigue = db.Column(db.Integer, default=8)
+    health = db.Column(db.Integer, default=100)
+    happiness = db.Column(db.Integer, default=0)
     pennies = db.Column(db.Integer, default=12) # 1 brood = 4 pennies
     house_id = db.Column(db.Integer)
     
     profession = db.Column(db.String(120))
     task_index = db.Column(db.Integer, default=0)
-
-    def get_dict(self) -> dict:
-        return {
-            'id' : self.id,
-            'user_id' : self.user_id,
-            'world_id' : self.world_id,
-            'settlement_id' : self.settlement_id,
-            'pennies' : self.pennies,
-            'house_id' : self.house_id,
-            'profession' : self.profession,
-            'task_index' : self.task_index,
-            'inventory' : [inventory_item.get_dict() for inventory_item in InventoryItem.query.filter_by(character_id=self.id).all()]
-        }
 
 
 class AccessKey(db.Model):
@@ -141,17 +113,6 @@ class Tile(db.Model):
     pos_y = db.Column(db.Integer, nullable=False)
 
     tile_type = db.Column(db.String(128))
-
-    def get_dict(self) -> dict:
-        return {
-            'id' : self.id,
-            'character_id' : self.character_id,
-            'settlement_id' : self.settlement_id,
-            'pos_x' : self.pos_x,
-            'pos_y' : self.pos_y,
-            'tile_type' : self.tile_type,
-            'tile_index' : get_tile_index(self.tile_type),
-        }
     
 
 class InventoryItem(db.Model):
@@ -164,17 +125,6 @@ class InventoryItem(db.Model):
     item_type = db.Column(db.String(120), nullable=False)
     amount = db.Column(db.Integer, default=0)
     buildable = db.Column(db.Boolean, default=False)
-
-    def get_dict(self) -> dict:
-        return {
-            'id' : self.id,
-            'character_id' : self.character_id,
-            'settlement_id' : self.settlement_id,
-            'item_type' : self.item_type,
-            'amount' : self.amount,
-            'buildable' : self.buildable,
-            'tile_index' : get_tile_index(self.item_type)
-        }
 
 
 class Farmer(db.Model):
@@ -198,14 +148,3 @@ class MarketItem(db.Model):
     item_type = db.Column(db.String(120), nullable=False)
     amount = db.Column(db.Integer, default=0)
     price = db.Column(db.Integer, default=0)
-
-    def get_dict(self) -> dict:
-        return {
-            'id' : self.id,
-            'character_id' : self.character_id,
-            'world_id' : self.world_id,
-            'settlement_id' : self.settlement_id,
-            'item_type' : self.item_type,
-            'amount' : self.amount,
-            'price' : self.price,
-        }
