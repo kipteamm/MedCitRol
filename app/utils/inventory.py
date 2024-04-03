@@ -5,7 +5,7 @@ from typing import Optional
 
 
 class Inventory:
-    BUILDABLE_TYPES = {'farm_land'}
+    BUILDABLE_TYPES = {'farm_land', 'windmill', 'bakery'}
 
     def __init__(self, room_id: int, settlement_id: Optional[int]=None, character_id: Optional[int]=None) -> None:
         self._room_id = room_id
@@ -54,7 +54,12 @@ class Inventory:
 
         db.session.commit()
 
-        socketio.emit('update_inventory', {'is_settlement' : self._settlement_id != None, 'item_id': inventory_item.id, 'amount': inventory_item.amount}, room=self._room_id) # type: ignore
+        data = {
+            'is_settlement' : self._settlement_id != None,
+            'item' : inventory_item.get_dict()
+        }
+
+        socketio.emit('update_inventory', data, room=self._room_id) # type: ignore
 
     def remove_item(self, item_type: str, amount: int) -> None:
         if self._settlement_id:
@@ -73,4 +78,9 @@ class Inventory:
 
         db.session.commit()
 
-        socketio.emit('update_inventory', {'is_settlement' : self._settlement_id != None, 'item_id': inventory_item.id, 'amount': inventory_item.amount}, room=self._room_id) # type: ignore
+        data = {
+            'is_settlement' : self._settlement_id != None,
+            'item' : inventory_item.get_dict()
+        }
+
+        socketio.emit('update_inventory', data, room=self._room_id) # type: ignore

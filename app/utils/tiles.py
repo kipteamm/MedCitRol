@@ -1,4 +1,7 @@
 tile_index_map = {
+    "windmill" : 66,
+    "windmill-0" : 67,
+    "windmill-7" : 68,
     "farm_land" : 91,
     "well" : 92,
     "hut" : 118,

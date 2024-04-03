@@ -90,6 +90,12 @@ def set_profession():
     if profession == 'farmer':
         Inventory(character.settlement_id, None, character.id).add_item('farm_land', 9)
 
+    if profession == 'miller':
+        Inventory(character.settlement_id, None, character.id).add_item('windmill', 1)
+
+    if profession == 'baker':
+        Inventory(character.settlement_id, None, character.id).add_item('bakery', 1)
+
     db.session.commit()
 
     return make_response({"success" : True}, 204)

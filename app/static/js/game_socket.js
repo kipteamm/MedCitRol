@@ -31,12 +31,17 @@ socket.on('update_tiles', function(data) {
 })
 
 socket.on('update_inventory', function(data) {
-    if (data.is_settlement) {
-        settlement.inventory.find(item => item.id === data.item_id).amount = data.amount;
+    const itemData = data.item;
+    const inventory = data.is_settlement ? settlement.inventory : character.inventory;
+
+    let inventoryItem = inventory.find(item => item.id === itemData.item_id);
+
+    if (!inventoryItem) {
+        inventory.push(itemData);
     } else {
-        character.inventory.find(item => item.id === data.item_id).amount = data.amount;
+        inventoryItem.amount = itemData.amount;
     }
-})
+});
 
 function send(event, data) {
     eventData = defaultData
