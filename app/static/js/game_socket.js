@@ -37,10 +37,12 @@ socket.on('update_inventory', function(data) {
     const inventory = data.settlement? settlement.inventory : character.inventory;
     const inventoryItem = inventory.find(item => item.id === itemData.id);
 
-    if (!inventoryItem) {
+    if (!inventoryItem && !data.deleted) {
         inventory.push(itemData);
-    } else {
+    } else if (!data.deleted) {
         inventoryItem.amount = itemData.amount;
+    } else {
+        inventory.splice(inventory.indexOf(inventoryItem), 1)
     }
 });
 

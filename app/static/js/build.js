@@ -42,6 +42,14 @@ function confirmBuild() {
     if (buildings.length === 0) return;
 
     send('build', buildings)
+
+    buildPanel.classList.remove('active');
+
+    document.querySelector(`.inventory-item.active`)?.classList.remove("active");
+
+    build = null;
+
+    buildings = [];
 }
 
 function cancelBuild() {
