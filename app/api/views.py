@@ -88,7 +88,7 @@ def set_profession():
     character.profession = profession
 
     if profession == 'farmer':
-        Inventory(None, character.id).add_item('farm_land', 9)
+        Inventory(character.settlement_id, None, character.id).add_item('farm_land', 9)
 
     db.session.commit()
 
@@ -191,7 +191,7 @@ def buy_item():
     item.amount -= 1
     character.pennies -= item.price
     
-    Inventory(None, character.id).add_item(item.item_type, 1)
+    Inventory(character.settlement_id, None, character.id).add_item(item.item_type, 1)
 
     db.session.commit()
 

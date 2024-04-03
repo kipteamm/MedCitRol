@@ -21,7 +21,7 @@ def register_events(socketio: SocketIO):
         if not authenticated(data):
             return
         
-        inventory = Inventory(None, data['character_id'])
+        inventory = Inventory(data['settlement_id'], None, data['character_id'])
 
         tiles = []
 

@@ -56,7 +56,7 @@ class Profession:
             db.session.delete(farmer)
             db.session.commit()
 
-            Inventory(None, self._character.id).add_item("rye", len(tiles) * 20)
+            Inventory(self._character.settlement_id, None, self._character.id).add_item("rye", len(tiles) * 20)
 
             return
 

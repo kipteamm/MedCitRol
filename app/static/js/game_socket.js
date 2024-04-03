@@ -30,6 +30,14 @@ socket.on('update_tiles', function(data) {
     })
 })
 
+socket.on('update_inventory', function(data) {
+    if (data.is_settlement) {
+        settlement.inventory.find(item => item.id === data.item_id).amount = data.amount;
+    } else {
+        character.inventory.find(item => item.id === data.item_id).amount = data.amount;
+    }
+})
+
 function send(event, data) {
     eventData = defaultData
     eventData.event_data = data
