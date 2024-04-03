@@ -85,6 +85,27 @@ class Profession:
 
         db.session.commit()
 
+    def _miller(self) -> None:
+        print("miller worked")
+
+        tile = Tile.query.filter_by(settlement_id=self._character.settlement_id, character_id=self._character.id, tile_type="windmill").first()
+
+        if not tile:
+            return
+        
+        inventory = Inventory(self._character.settlement_id, None, self._character.id)
+        
+        amount = min(inventory.get_amount("rye"), 4)
+
+        if amount > 0:
+            inventory.remove_item("rye", amount)
+            inventory.add_item("rye_flour", random.randint(3, 4) * amount)
+
+        return
+
     def work(self) -> None:
         if self._character.profession == "farmer":
             return self._farmer()
+        
+        if self._character.profession == "miller":
+            return self._miller()

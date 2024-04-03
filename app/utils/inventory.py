@@ -84,3 +84,13 @@ class Inventory:
         }
 
         socketio.emit('update_inventory', data, room=self._room_id) # type: ignore
+
+    def get_amount(self, item_type: str) -> int:
+        try:
+            if self._settlement_id:
+                return InventoryItem.query.filter_by(settlement_id=self._settlement_id, item_type=item_type).first().amount
+
+            return InventoryItem.query.filter_by(character_id=self._character_id, item_type=item_type).first().amount
+        
+        except:
+            return 0

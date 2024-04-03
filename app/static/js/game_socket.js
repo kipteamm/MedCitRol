@@ -33,8 +33,7 @@ socket.on('update_tiles', function(data) {
 socket.on('update_inventory', function(data) {
     const itemData = data.item;
     const inventory = data.is_settlement ? settlement.inventory : character.inventory;
-
-    let inventoryItem = inventory.find(item => item.id === itemData.item_id);
+    const inventoryItem = inventory.find(item => item.id === itemData.id);
 
     if (!inventoryItem) {
         inventory.push(itemData);
