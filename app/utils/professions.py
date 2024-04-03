@@ -102,6 +102,24 @@ class Profession:
             inventory.add_item("rye_flour", random.randint(3, 4) * amount)
 
         return
+    
+    def _baker(self) -> None:
+        print("baker worked")
+
+        tile = Tile.query.filter_by(settlement_id=self._character.settlement_id, character_id=self._character.id, tile_type="bakery").first()
+
+        if not tile:
+            return
+        
+        inventory = Inventory(self._character.settlement_id, None, self._character.id)
+        
+        amount = min(inventory.get_amount("rye_flour"), 12)
+
+        if amount > 0:
+            inventory.remove_item("rye_flour", amount)
+            inventory.add_item("bread", amount)
+
+        return
 
     def work(self) -> None:
         if self._character.profession == "farmer":
@@ -109,3 +127,6 @@ class Profession:
         
         if self._character.profession == "miller":
             return self._miller()
+        
+        if self._character.profession == "baker":
+            return self._baker()

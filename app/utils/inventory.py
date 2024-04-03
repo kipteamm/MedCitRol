@@ -79,20 +79,19 @@ class Inventory:
 
         db.session.commit()
 
+        item_data = inventory_item.get_dict()
+
+        deleted = inventory_item.amount <= 0
+
         if inventory_item.amount <= 0:
             db.session.delete(inventory_item)
             db.session.commit()
-
-            item_data = None
-        
-        else:
-            item_data = inventory_item.get_dict()
-
+            
         data = {
             'character_id' : self._character_id,
             'settlement_id' : self._settlement_id,
             'item' : item_data,
-            'deleted' : item_data == None,
+            'deleted' : deleted,
         }
 
         socketio.emit('update_inventory', data, room=self._room_id) # type: ignore
