@@ -30,6 +30,7 @@ async function work() {
         return;
     }
 
+    workContent.innerHTML = '';
     workContent.appendChild(taskComponent(json))
     workContent.innerHTML += '<button onclick="submitTask()">Submit</button>';
 }

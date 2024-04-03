@@ -163,3 +163,40 @@ def sell_item():
     db.session.commit()
 
     return make_response(market_item.get_dict(), 200)  
+
+
+@api_blueprint.route("/settlement/market/buy", methods=["POST"])
+def buy_item():
+    authorization = request.headers.get('Authorization')
+
+    access_key = None
+
+    if authorization:
+        access_key = AccessKey.query.filter_by(key=authorization).first()
+
+    if not access_key:
+        return make_response({"error" : "Invalid authentication."}, 401)
+    
+    json = request.json
+
+    if not json or not "item_id" in json:
+        return make_response({"error" : "Invalid item."}, 400)
+    
+    character = Character.query.get(access_key.character_id)
+    item = MarketItem.query.get(json["item_id"])
+
+    if character.pennies < item.price:
+        return make_response({"error" : "You don't have enough money."}, 400)
+    
+    item.amount -= 1
+    character.pennies -= item.price
+    
+    Inventory(None, character.id).add_item(item.item_type, 1)
+
+    db.session.commit()
+
+    if item.amount == 0:
+        db.session.delete(item)
+        db.session.commit()
+
+    return make_response({"success" : True}, 204)

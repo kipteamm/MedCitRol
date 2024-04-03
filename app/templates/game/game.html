@@ -27,6 +27,12 @@
         const world = {{ world.get_dict()|tojson }};
         const settlement = {{ settlement.get_dict()|tojson }};
         const character = {{ character.get_dict()|tojson }};
+
+        character.updatePennies = function(pennies) {
+            this.pennies += pennies;
+
+            document.getElementById("pennies").innerText = `${this.pennies} penningen`;
+        }
     </script>
 </head>
 <body>
@@ -46,7 +52,7 @@
             <li>Fatigue <b>You feel ... (this may/will cause)</b></li>
             <li>Health <b>You feel ... (this may/will cause)</b></li>
             <li>Happiness <b>You feel ... (this may/will cause)</b></li>
-            <li><b>{{ character.pennies }} penningen</b> (1 schelling = 12 penningen)</li>
+            <li><b id="pennies">{{ character.pennies }} penningen</b> (1 schelling = 12 penningen)</li>
             <li>Profession <b>{{ character.profession }}</b></li>
         </ul>
 

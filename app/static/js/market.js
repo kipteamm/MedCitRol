@@ -1,7 +1,11 @@
 const marketPanel = document.getElementById("market-panel");
 const marketContent = marketPanel.querySelector('.content');
 
+let marketItems = [];
+
 async function openMarket() {
+    cancelBuild()
+
     marketPanel.classList.add("active");
 
     const response = await fetch("/api/settlement/market", {
@@ -19,7 +23,11 @@ async function openMarket() {
         return;
     }
 
+    marketContent.innerHTML = '';
+
     json.forEach(item => {
+        marketItems.push(item);
+
         marketContent.appendChild(marketItemComponent(item));
     });
 }
@@ -56,4 +64,49 @@ async function sellItem() {
     }
 
     marketContent.appendChild(marketItemComponent(json));
+}
+
+async function buyItem(id) {
+    const marketItem = marketItems.find(item => item.id === id);
+
+    if (!marketItem) return;
+    if (marketItem.price > character.pennies) return;
+
+    character.updatePennies(-marketItem.price);
+    marketItem.amount -= 1;
+
+    if (marketItem.amount === 0) {
+        document.getElementById(`market-item-${id}`).style.display = "none";
+    } else {
+        document.getElementById(`amount-${id}`).innerText = `${marketItem.amount}x`;
+    }
+
+    const response = await fetch("/api/settlement/market/buy", {
+        method: "POST",
+        body: JSON.stringify({item_id: marketItem.id}),
+        headers: {
+            "Content-Type" : "application/json",
+            "Authorization" : getCookie("psk")
+        }
+    })
+
+    if (!response.ok) {
+        const json = await response.json();
+
+        marketContent.innerHTML = json.error;
+
+        if (marketItem.amount === 0) {
+            document.getElementById(`market-item-${id}`).style.display = "block";
+        }
+
+        marketItem.amount += 1;
+
+        document.getElementById(`amount-${id}`).innerText = `${marketItem.amount}x`;
+
+        character.updatePennies(marketItem.price);
+    
+        return;
+    }
+
+    return;
 }

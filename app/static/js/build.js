@@ -1,6 +1,8 @@
 const buildPanel = document.getElementById('build-panel');
 
 function openBuildMenu() {
+    closeMarket()
+
     buildPanel.classList.add('active');
 
     const content = buildPanel.querySelector('.content');
@@ -45,9 +47,11 @@ function confirmBuild() {
 function cancelBuild() {
     buildPanel.classList.remove('active');
 
-    building.updateAmount(building, building.initial_amount - building.amount);
+    if (building !== null) {
+        building.updateAmount(building, building.initial_amount - building.amount);
 
-    building = null;
+        building = null;
+    }
 
     buildings.forEach(building => {
         drawTilesetImage(terrainTileSet, terrain[building.pos_x][building.pos_y], building.pos_x, building.pos_y, tileSize, 1);

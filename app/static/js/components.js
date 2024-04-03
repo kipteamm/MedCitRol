@@ -48,10 +48,11 @@ function inventoryItem(item, building) {
 function marketItemComponent(item) {
     const wrapper = document.createElement("div");
 
+    wrapper.id = `market-item-${item.id}`;
     wrapper.classList.add("market-item");
     wrapper.innerHTML = `
         ${item.item_type}
-        <b>${item.amount}x</b>
+        <b id="amount-${item.id}">${item.amount}x</b>
         <b>${item.price}pennies</b>
         ${item.character_id !== character.id? `<button onclick="buyItem(${item.id})">Buy</button>` : ""}
     `;
