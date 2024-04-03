@@ -6,7 +6,7 @@ from app.utils.inventory import Inventory
 from app.teacher.models import Task
 from app.game.models import AccessKey, Character, InventoryItem, MarketItem
 
-from app.extensions import db
+from app.extensions import db, socketio
 
 
 api_blueprint = Blueprint('api', __name__, url_prefix="/api")
@@ -196,6 +196,9 @@ def buy_item():
     
     item.amount -= 1
     character.pennies -= item.price
+
+    seller = Character.query.get(item.character_id)
+    seller.pennies += item.price
     
     Inventory(character.settlement_id, None, character.id).add_item(item.item_type, 1)
 
@@ -204,5 +207,7 @@ def buy_item():
     if item.amount == 0:
         db.session.delete(item)
         db.session.commit()
+
+    socketio.emit("update_character", seller.get_dict(), room=seller.settlement_id) # type: ignore
 
     return make_response({"success" : True}, 204)

@@ -55,7 +55,8 @@ class Inventory:
         db.session.commit()
 
         data = {
-            'is_settlement' : self._settlement_id != None,
+            'character_id' : self._character_id,
+            'settlement_id' : self._settlement_id,
             'item' : inventory_item.get_dict()
         }
 
@@ -79,7 +80,8 @@ class Inventory:
         db.session.commit()
 
         data = {
-            'is_settlement' : self._settlement_id != None,
+            'character_id' : self._character_id,
+            'settlement_id' : self._settlement_id,
             'item' : inventory_item.get_dict()
         }
 

@@ -28,8 +28,8 @@
         const settlement = {{ settlement.get_dict()|tojson }};
         const character = {{ character.get_dict()|tojson }};
 
-        character.updatePennies = function(pennies) {
-            this.pennies += pennies;
+        character.updatePennies = function(pennies, reset=false) {
+            this.pennies = reset? pennies : this.pennies + pennies;
 
             document.getElementById("pennies").innerText = `${this.pennies} penningen`;
         }

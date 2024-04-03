@@ -31,8 +31,10 @@ socket.on('update_tiles', function(data) {
 })
 
 socket.on('update_inventory', function(data) {
+    if (data.character_id !== character.id && data.character_id !== null) return;
+
     const itemData = data.item;
-    const inventory = data.is_settlement ? settlement.inventory : character.inventory;
+    const inventory = data.settlement? settlement.inventory : character.inventory;
     const inventoryItem = inventory.find(item => item.id === itemData.id);
 
     if (!inventoryItem) {
@@ -40,6 +42,13 @@ socket.on('update_inventory', function(data) {
     } else {
         inventoryItem.amount = itemData.amount;
     }
+});
+
+socket.on('update_character', function(data) {
+    if (character.id !== data.id) return;
+    
+    // other stats
+    character.updatePennies(data.pennies, true)
 });
 
 function send(event, data) {
