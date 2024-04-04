@@ -29,10 +29,10 @@ class World(db.Model):
         self.last_time_update = datetime.now()
         
         while True:
-            room_id = ''.join(random.choices(string.ascii_letters, k=16))
+            code = ''.join(random.choices(string.ascii_letters, k=16))
 
-            if not World.query.filter_by(code=room_id).first():
-                self.code = room_id
+            if not World.query.filter_by(code=code).first():
+                self.code = code
 
                 break
 

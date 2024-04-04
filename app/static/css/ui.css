@@ -1,6 +1,7 @@
 .ui {
     position: fixed;
     z-index: 10;
+    font-size: 18px;
 }
 
 .information {
@@ -8,18 +9,8 @@
     top: 12.5px;
 }
 
-.world {
-    right: 12.5px;
-    top: 12.5px;
-}
-
 .character {
     left: 12.5px;
-    bottom: 12.5px;
-}
-
-.settlement {
-    right: 12.5px;
     bottom: 12.5px;
 }
 
