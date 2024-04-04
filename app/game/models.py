@@ -80,14 +80,13 @@ class Character(db.Model):
     # properties
     hunger = db.Column(db.Integer, default=24)
     fatigue = db.Column(db.Integer, default=8)
-    health = db.Column(db.Integer, default=100)
+    health = db.Column(db.Float, default=100)
     happiness = db.Column(db.Integer, default=0)
     pennies = db.Column(db.Integer, default=12) # 1 brood = 4 pennies
     house_id = db.Column(db.Integer)
     
     profession = db.Column(db.String(120))
     task_index = db.Column(db.Integer, default=0)
-
 
 class AccessKey(db.Model):
     __tablename__ = 'access_key'

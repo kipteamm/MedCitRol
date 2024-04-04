@@ -8,9 +8,9 @@ function updateClock(timestamp) {
     
     clockElement.innerText = `${String(hours).padStart(2, '0')}:00`;
 
-    if (hours > 20) {
+    if (hours > 19 || hours < 6) {
         night.classList.add('active');
-    } else if (hours > 6) {
+    } else {
         night.classList.remove('active');
     }
 }
@@ -20,6 +20,15 @@ function updateDate(timestamp) {
     const dateString = date.toLocaleDateString('nl-BE', { day: 'numeric', month: 'long', year: 'numeric' });
 
     dateElement.innerHTML = dateString;
+}
+
+function updateProperty(property, value, reset=false) {
+    if (reset) {
+        character[property] = value;
+    } else {
+        character[property] += value;
+    }
+    document.getElementById(property).innerText = `${character[property]}`;
 }
 
 updateClock(world.current_time)

@@ -14,6 +14,10 @@ import random
 settlement_colours = ['cyan', 'lime', 'purple', 'red', 'brown']
 
 def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
+    user.active_world = world.id
+
+    db.session.commit()
+
     character = Character.query.filter_by(world_id=world.id, user_id=user.id).first()
 
     if not character:

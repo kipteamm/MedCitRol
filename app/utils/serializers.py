@@ -42,6 +42,20 @@ def character_serializer(character: Character) -> dict:
     }
 
 
+def properties_serializer(character: Character) -> dict:
+    properties = Properties(character)
+
+    return {
+        'id' : character.id,
+        'hunger' : properties.hunger(),
+        'fatigue' : properties.fatigue(),
+        'health' : properties.health(),
+        'happiness' : properties.happiness(),
+        'pennies' : character.pennies,
+        'profession' : character.profession,
+    }
+
+
 def tile_serializer(tile: Tile) -> dict:
     return {
         'id' : tile.id,

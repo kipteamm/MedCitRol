@@ -78,7 +78,8 @@ async function buyItem(id) {
     if (!marketItem) return;
     if (marketItem.price > character.pennies) return;
 
-    character.updatePennies(-marketItem.price, false);
+    updateProperty("pennies", -marketItem.price, false);
+
     marketItem.amount -= 1;
 
     if (marketItem.amount === 0) {
@@ -109,7 +110,7 @@ async function buyItem(id) {
 
         document.getElementById(`amount-${id}`).innerText = `${marketItem.amount}x`;
 
-        character.updatePennies(marketItem.price, false);
+        updatePennies("pennies", marketItem.price, false);
     
         return;
     }

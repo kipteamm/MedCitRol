@@ -19,7 +19,7 @@
     <script src="{{ url_for('static', filename='js/basics.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/game_socket.js') }}" defer></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
 
     <script>
         let tiles = {{ tiles|tojson }};
@@ -27,12 +27,6 @@
         const world = {{ world|tojson }};
         const settlement = {{ settlement|tojson }};
         const character = {{ character|tojson }};
-
-        character.updatePennies = function(pennies, reset=false) {
-            this.pennies = reset? pennies : this.pennies + pennies;
-
-            document.getElementById("pennies").innerText = `${this.pennies} penningen`;
-        }
     </script>
 </head>
 <body>
@@ -48,12 +42,12 @@
     </div>
 
     <div class="ui character">
-        <li>Hunger <b>{{ character.hunger }}</b></li>
-        <li>Fatigue <b>{{ character.fatigue }}</b></li>
-        <li>Health <b>{{ character.health }}</b></li>
-        <li>Happiness <b>{{ character.happiness }}</b></li>
+        <li>Hunger <b id="hunger">{{ character.hunger }}</b></li>
+        <li>Fatigue <b id="fatigue">{{ character.fatigue }}</b></li>
+        <li>Health <b id="health">{{ character.health }}</b></li>
+        <li>Happiness <b id="happiness">{{ character.happiness }}</b></li>
         <li>Wealth <b id="pennies">{{ character.pennies }} penningen</b></li>
-        <li>Profession <b>{{ character.profession }}</b></li>
+        <li>Profession <b id="profession">{{ character.profession }}</b></li>
 
         <button onclick="eat()">Eat</button>
         <button onclick="sleep()">Sleep</button>

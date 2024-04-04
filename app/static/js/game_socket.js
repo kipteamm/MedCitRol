@@ -5,6 +5,10 @@ socket.on('connect', function() {
     socket.emit('join', defaultData);
 })
 
+socket.on('disconnect', function() {
+    console.log('disconnected from server')
+})
+
 socket.on('update_time', function(data) {
     updateClock(data.current_time);
     updateDate(data.current_time);
@@ -48,9 +52,12 @@ socket.on('update_inventory', function(data) {
 
 socket.on('update_character', function(data) {
     if (character.id !== data.id) return;
-    
-    // other stats yet to get added
-    character.updatePennies(data.pennies, true)
+
+    for (const [key, value] of Object.entries(data)) {
+        if (key === "id") continue;
+        
+        updateProperty(key, value, true)
+    }
 });
 
 function send(event, data) {
