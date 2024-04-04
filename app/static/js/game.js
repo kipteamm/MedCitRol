@@ -1,10 +1,18 @@
 const clockElement = document.getElementById('clock');
 const dateElement = document.getElementById('date');
 
+const night = document.getElementById('night');
+
 function updateClock(timestamp) {
-    const date = new Date(timestamp * 1000);
+    const hours = new Date(timestamp * 1000).getHours();
     
-    clockElement.innerText = `${String(date.getHours()).padStart(2, '0')}:00`
+    clockElement.innerText = `${String(hours).padStart(2, '0')}:00`;
+
+    if (hours > 20) {
+        night.classList.add('active');
+    } else if (hours > 6) {
+        night.classList.remove('active');
+    }
 }
 
 function updateDate(timestamp) {

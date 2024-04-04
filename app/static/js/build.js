@@ -41,7 +41,7 @@ function updateAmount(item, amount) {
 }
 
 function confirmBuild() {
-    if (buildings.length === 0) return;
+    if (buildings.length === 0) return cancelBuild();
 
     send('build', buildings)
 

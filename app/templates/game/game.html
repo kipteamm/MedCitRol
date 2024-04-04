@@ -36,6 +36,8 @@
     </script>
 </head>
 <body>
+    <div class="night" id="night"></div>
+
     <div class="ui information">
         <b id="clock">00:00</b> <b id="date">00/00/00</b>
 
@@ -53,6 +55,8 @@
         <li>Wealth <b id="pennies">{{ character.pennies }} penningen</b></li>
         <li>Profession <b>{{ character.profession }}</b></li>
 
+        <button onclick="eat()">Eat</button>
+        <button onclick="sleep()">Sleep</button>
         <button onclick="work()">Work</button>
     </div>
 
