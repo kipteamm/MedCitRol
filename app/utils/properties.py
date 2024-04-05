@@ -21,7 +21,10 @@ class Properties:
         if self._hunger < 16:
             return "fed"
         
-        return "well fed"
+        if self._hunger <= 28:
+            return "well fed"
+        
+        return "stuffed"
     
     def fatigue(self) -> str:
         if self._fatigue < 0:

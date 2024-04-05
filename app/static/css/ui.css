@@ -1,17 +1,3 @@
-/* ALERTS */
-.alert {
-    top: 12.5px;
-    left: 25%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: .3s;
-}
-
-.alert.show {
-    left: 50%;
-    opacity: 1;
-}
-
 .ui {
     position: fixed;
     z-index: 10;
@@ -20,6 +6,22 @@
     color: #f6f9fb;
     padding: 12.5px;
     border-radius: 6.25px;
+}
+
+/* ALERTS */
+.alert {
+    top: 12.5px;
+    left: 25%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: .3s;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.alert.show {
+    left: 50%;
+    opacity: 1;
 }
 
 .information {

@@ -3,7 +3,7 @@ body {
 }
 
 .night {
-    z-index: 1000;
+    z-index: 10000;
     position: absolute;
     pointer-events: none;
     width: 100%;

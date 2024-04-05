@@ -78,7 +78,7 @@ async function buyItem(id) {
     const marketItem = marketItems.find(item => item.id === id);
 
     if (!marketItem) return;
-    if (marketItem.price > character.pennies) return;
+    if (marketItem.price > character.pennies) return sendAlert("error", "You don't have enough money.");
 
     updateProperty("pennies", -marketItem.price, false);
 
