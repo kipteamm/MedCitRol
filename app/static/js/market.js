@@ -18,7 +18,7 @@ async function openMarket() {
     const json = await response.json();
 
     if (!response.ok) {
-        marketContent.innerHTML = json.error;
+        sendAlert("error", json.error);
     
         return;
     }
@@ -60,7 +60,7 @@ async function sellItem() {
     const json = await response.json();
 
     if (!response.ok) {
-        marketContent.innerHTML = json.error;
+        sendAlert("error", json.error);
     
         return;
     }
@@ -102,7 +102,7 @@ async function buyItem(id) {
     if (!response.ok) {
         const json = await response.json();
 
-        marketContent.innerHTML = json.error;
+        sendAlert("error", json.error);
 
         if (marketItem.amount === 0) {
             document.getElementById(`market-item-${id}`).style.display = "block";

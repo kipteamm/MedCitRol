@@ -25,7 +25,7 @@ async function work() {
             return chooseProfession(4);
         }
 
-        workContent.innerHTML = json.error;
+        sendAlert("error", json.error);
 
         return;
     }
@@ -65,7 +65,7 @@ async function updateProfession(profession) {
     if (!response.ok) {
         const json = await response.json();
 
-        workContent.innerHTML = json.error;
+        sendAlert("error", json.error);
 
         return;
     }
@@ -88,7 +88,7 @@ async function submitTask() {
     if (!response.ok) {
         const json = await response.json();
 
-        workContent.innerHTML = json.error;
+        sendAlert("error", json.error);
 
         return;
     }

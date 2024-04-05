@@ -5,7 +5,7 @@ function updateProperty(property, value, reset=false) {
 }
 
 async function eat() {
-    const response = fetch('/api/character/eat', {
+    const response = await fetch('/api/character/eat', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -14,6 +14,10 @@ async function eat() {
     });
 
     if (!response.ok) {
+        const json = await response.json();
+
+        sendAlert("error", json.error);
+
         return;
     }
 }
