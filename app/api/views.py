@@ -1,6 +1,6 @@
 from flask import Blueprint, request, make_response
 
-from app.utils.serializers import market_item_serializer, task_serializer, character_serializer
+from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer
 from app.utils.professions import Profession
 from app.utils.inventory import Inventory
 from app.teacher.models import Task
@@ -208,6 +208,42 @@ def buy_item():
         db.session.delete(item)
         db.session.commit()
 
-    socketio.emit("update_character", character_serializer(seller), room=seller.settlement_id) # type: ignore
+    socketio.emit("update_character", properties_serializer(seller), room=seller.settlement_id) # type: ignore
 
     return make_response({"success" : True}, 204)
+
+
+@api_blueprint.route("/character/eat", methods=["POST"])
+def eat():
+    authorization = request.headers.get('Authorization')
+
+    access_key = None
+
+    if authorization:
+        access_key = AccessKey.query.filter_by(key=authorization).first()
+
+    if not access_key:
+        return make_response({"error" : "Invalid authentication."}, 401)
+    
+    character = Character.query.get(access_key.character_id)
+    inventory = Inventory(character.settlement_id, None, character.id)
+
+    if not inventory.has_items('bread', 1):
+        return make_response({"error" : "You don't have any bread."}, 400)
+    
+    inventory.remove_item('bread', 1)
+
+    character.hunger += 6
+
+    if character.hunger <= 24:
+        character.health += 1
+
+    elif character.hunger > 28:
+        character.health -= 1
+    
+    db.session.commit()
+
+    socketio.emit("update_character", properties_serializer(character), room=character.settlement_id) # type: ignore
+
+    return make_response({"success" : True}, 204)
+    

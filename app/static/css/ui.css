@@ -2,6 +2,10 @@
     position: fixed;
     z-index: 10;
     font-size: 18px;
+    background-color: #3f2d21;
+    color: #f6f9fb;
+    padding: 12.5px;
+    border-radius: 6.25px;
 }
 
 .information {
@@ -22,6 +26,7 @@
     background-color: white;
     transition: .3s;
     z-index: 100;
+    color: #000;
 }
 
 .work-panel.active,

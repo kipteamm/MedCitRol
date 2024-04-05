@@ -34,6 +34,8 @@ async function openMarket() {
 
 function closeMarket() {
     marketPanel.classList.remove("active");
+
+    marketItems = [];
 }
 
 const itemInput = document.getElementById("item");

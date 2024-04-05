@@ -22,14 +22,5 @@ function updateDate(timestamp) {
     dateElement.innerHTML = dateString;
 }
 
-function updateProperty(property, value, reset=false) {
-    if (reset) {
-        character[property] = value;
-    } else {
-        character[property] += value;
-    }
-    document.getElementById(property).innerText = `${character[property]}`;
-}
-
 updateClock(world.current_time)
 updateDate(world.current_time)
