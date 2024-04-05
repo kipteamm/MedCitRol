@@ -137,21 +137,20 @@ def sell_item():
     if not json or not "item_type" in json or not "amount" in json or not "price" in json:
         return make_response({"error" : "Invalid item."}, 400)
     
-    inventory_item = InventoryItem.query.filter_by(character_id=character.id, item_type=json["item_type"]).first()
+    inventory = Inventory(character.settlement_id, None, character.id)
 
-    if not inventory_item:
-        return make_response({"error" : "Invalid item."}, 400)
-    
-    if inventory_item.buildable:
-        return make_response({"error" : "Invalid item."}, 400)
-    
+    item = json["item_type"]
     amount = int(json['amount'])
+
+    if not inventory.has_items(item_type=item, amount=amount):
+        return make_response({"error" : "Invalid item."}, 400)
+    
+    if inventory.is_buildable(item):
+        return make_response({"error" : "Invalid item."}, 400)
+    
     price = int(json['price'])
     
-    if inventory_item.amount < amount:
-        return make_response({"error" : "Invalid amount."}, 400)
-    
-    inventory_item.amount -= amount
+    inventory.remove_item(item_type=item, amount=amount)
 
     db.session.commit()
 

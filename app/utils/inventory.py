@@ -13,7 +13,7 @@ class Inventory:
         self._settlement_id = settlement_id
         self._character_id = character_id
 
-    def _is_buildable(self, item_type: str) -> bool:
+    def is_buildable(self, item_type: str) -> bool:
         return item_type in self.BUILDABLE_TYPES
 
     def has_items(self, item_type: str, amount: int) -> bool:
@@ -37,7 +37,7 @@ class Inventory:
             inventory_item = InventoryItem.query.filter_by(settlement_id=self._settlement_id, item_type=item_type).first()
 
             if not inventory_item:
-                inventory_item = InventoryItem(settlement_id=self._settlement_id, item_type=item_type, buildable=self._is_buildable(item_type))
+                inventory_item = InventoryItem(settlement_id=self._settlement_id, item_type=item_type, buildable=self.is_buildable(item_type))
 
                 db.session.add(inventory_item)
                 db.session.commit()
@@ -46,7 +46,7 @@ class Inventory:
             inventory_item = InventoryItem.query.filter_by(character_id=self._character_id, item_type=item_type).first()
 
             if not inventory_item:
-                inventory_item = InventoryItem(character_id=self._character_id, item_type=item_type, buildable=self._is_buildable(item_type))
+                inventory_item = InventoryItem(character_id=self._character_id, item_type=item_type, buildable=self.is_buildable(item_type))
 
                 db.session.add(inventory_item)
                 db.session.commit()
