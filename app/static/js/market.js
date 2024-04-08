@@ -46,7 +46,8 @@ async function sellItem() {
     const inventoryItem = character.inventory.find(item => item.item_type === itemInput.value);
 
     if (!inventoryItem) return;
-    if (inventoryItem.amount < amountInput.value) return;
+    if (inventoryItem.amount < amountInput.value) return sendAlert("error", `You only have ${inventoryItem.amount} ${inventoryItem.item_type}.`);
+    if (!Number.isInteger(priceInput.value)) return sendAlert("error", "Price must be a number.");
 
     const response = await fetch("/api/settlement/market/sell", {
         method: "POST",

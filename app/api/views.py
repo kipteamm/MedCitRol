@@ -140,7 +140,12 @@ def sell_item():
     inventory = Inventory(character.settlement_id, None, character.id)
 
     item = json["item_type"]
-    amount = int(json['amount'])
+
+    try:
+        amount = int(json['amount'])
+
+    except:
+        return make_response({"error" : "Invalid amount."}, 400)
 
     if not inventory.has_items(item_type=item, amount=amount):
         return make_response({"error" : "Invalid item."}, 400)
@@ -148,7 +153,11 @@ def sell_item():
     if inventory.is_buildable(item):
         return make_response({"error" : "Invalid item."}, 400)
     
-    price = int(json['price'])
+    try:
+        price = int(json['price'])
+
+    except:
+        return make_response({"error" : "Invalid price."}, 400)
     
     inventory.remove_item(item_type=item, amount=amount)
 
