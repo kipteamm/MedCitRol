@@ -11,13 +11,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/basics.css') }}">
 
     <script src="{{ url_for('static', filename='js/map.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='js/character.js') }}"></script>
     <script src="{{ url_for('static', filename='js/work.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/game.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/components.js') }}"></script>
     <script src="{{ url_for('static', filename='js/build.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/market.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/basics.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/character.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/game_socket.js') }}" defer></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
@@ -31,6 +31,11 @@
     </script>
 </head>
 <body>
+    <div class="sleep-overlay{% if character.asleep %} active{% endif %}" id="sleep-overlay">
+        <h2>Zzzz...</h2>
+        <button onclick="sleep()">Wake up</button>
+    </div>
+
     <div class="night" id="night"></div>
 
     <div class="ui alert" id="alert"></div>

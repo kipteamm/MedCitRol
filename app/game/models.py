@@ -9,7 +9,7 @@ import random
 import string
 
 
-initial_current_time = datetime(1100, 5, 8, 0, 0, 0, tzinfo=timezone.utc)
+initial_current_time = datetime(1100, 5, 8, 6, 0, 0, tzinfo=timezone.utc)
 
 
 class World(db.Model):
@@ -79,7 +79,7 @@ class Character(db.Model):
 
     # properties
     hunger = db.Column(db.Integer, default=24)
-    fatigue = db.Column(db.Integer, default=8)
+    fatigue = db.Column(db.Integer, default=24)
     health = db.Column(db.Float, default=100)
     happiness = db.Column(db.Integer, default=0)
     pennies = db.Column(db.Integer, default=12) # 1 brood = 4 pennies
@@ -87,6 +87,10 @@ class Character(db.Model):
     
     profession = db.Column(db.String(120))
     task_index = db.Column(db.Integer, default=0)
+
+    end_sleep = db.Column(DateTime(timezone=True), default=None)
+    start_sleep = db.Column(DateTime(timezone=True), default=None)
+
 
 class AccessKey(db.Model):
     __tablename__ = 'access_key'

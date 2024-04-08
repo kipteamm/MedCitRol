@@ -25,6 +25,8 @@ from .extensions import db, socketio
 
 from datetime import datetime, timedelta
 
+import math
+
 
 active_connections = {}
 
@@ -103,9 +105,23 @@ def create_app():
 
                     character = Character.query.filter_by(user_id=user['id'], world_id=user['active_world']).first()
 
-                    character.hunger -= 1
-                    character.fatigue -= 1
-                    character.health -= 0.25
+                    if character.hunger > 0:
+                        character.hunger -= 1
+
+                    if character.health > 0:
+                        character.health -= 0.25
+
+                    if character.end_sleep:
+                        world = World.query.get(user['active_world'])
+
+                        if world.current_time >= character.end_sleep:
+                            character.fatigue += math.floor((character.end_sleep - character.start_sleep).total_seconds() / 3600)
+
+                            character.start_sleep = None
+                            character.end_sleep = None
+
+                    elif character.fatigue > 0:
+                        character.fatigue -= 1
 
                     socketio.emit('update_character', properties_serializer(character), room=character.settlement_id) #type: ignore
 

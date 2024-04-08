@@ -2,11 +2,13 @@ const defaultData = {access_key : getCookie('psk'), world_id : world.id, settlem
 const socket = io();
 
 socket.on('connect', function() {
+    console.log('connect');
     socket.emit('join', defaultData);
 })
 
 socket.on('disconnect', function() {
-    return window.location.href = '/home';
+    console.log('disconnect');
+    //return window.location.href = '/home';
 })
 
 socket.on('update_time', function(data) {
@@ -55,6 +57,12 @@ socket.on('update_character', function(data) {
 
     for (const [key, value] of Object.entries(data)) {
         if (key === "id") continue;
+
+        if (key === "asleep") {
+            sleeping(value);
+
+            continue;
+        }
         
         updateProperty(key, value, true)
     }

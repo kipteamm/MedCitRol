@@ -1,5 +1,7 @@
 from app.game.models import Character
 
+import math
+
 
 class Properties:
     def __init__(self, character: Character) -> None:
@@ -27,22 +29,22 @@ class Properties:
         return "stuffed"
     
     def fatigue(self) -> str:
-        if self._fatigue < 0:
+        if self._fatigue < 3:
             return "severely sleep deprived"
 
-        if self._fatigue < 3:
+        if self._fatigue < 6:
             return "sleep deprived"
         
-        if self._fatigue < 5:
+        if self._fatigue < 10:
             return "very tired"
         
-        if self._fatigue < 7:
+        if self._fatigue < 14:
             return "tired"
         
-        if self._fatigue < 10:
+        if self._fatigue < 24:
             return "well and alert"
         
-        if self._fatigue < 12:
+        if self._fatigue < 28:
             return "overslept"
         
         return "Very overslept"
@@ -73,3 +75,6 @@ class Properties:
             return "happy"
         
         return "really happy"
+    
+    def get_hours_of_sleep(self) -> int:
+        return ((8 - self._fatigue) + 8) * 2

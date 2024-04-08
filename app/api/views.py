@@ -2,11 +2,16 @@ from flask import Blueprint, request, make_response
 
 from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer
 from app.utils.professions import Profession
+from app.utils.properties import Properties
 from app.utils.inventory import Inventory
 from app.teacher.models import Task
-from app.game.models import AccessKey, Character, InventoryItem, MarketItem
+from app.game.models import AccessKey, Character, MarketItem, World
 
 from app.extensions import db, socketio
+
+from datetime import timedelta
+
+import math
 
 
 api_blueprint = Blueprint('api', __name__, url_prefix="/api")
@@ -248,6 +253,43 @@ def eat():
 
     elif character.hunger > 28:
         character.health -= 1
+    
+    db.session.commit()
+
+    socketio.emit("update_character", properties_serializer(character), room=character.settlement_id) # type: ignore
+
+    return make_response({"success" : True}, 204)
+
+
+@api_blueprint.route("/character/sleep", methods=["POST"])
+def sleep():
+    authorization = request.headers.get('Authorization')
+
+    access_key = None
+
+    if authorization:
+        access_key = AccessKey.query.filter_by(key=authorization).first()
+
+    if not access_key:
+        return make_response({"error" : "Invalid authentication."}, 401)
+    
+    character = Character.query.get(access_key.character_id)
+    world = World.query.get(character.world_id)
+    properties = Properties(character)
+
+    if character.end_sleep:
+        if world.current_time > character.end_sleep:
+            character.fatigue += math.floor((character.end_sleep - character.start_sleep).total_seconds() / 3600)
+
+        else:
+            character.fatigue += math.floor(world.current_time - character.start_sleep)
+
+        character.start_sleep = None
+        character.end_sleep = None
+
+    else:
+        character.start_sleep = world.current_time
+        character.end_sleep = world.current_time + timedelta(hours=properties.get_hours_of_sleep())
     
     db.session.commit()
 
