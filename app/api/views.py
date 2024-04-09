@@ -1,7 +1,8 @@
-from flask import Blueprint, request, make_response
+from flask import Blueprint, request, make_response, g
 
 from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer
 from app.utils.professions import Profession
+from app.utils.decorators import character_auhtorized
 from app.utils.properties import Properties
 from app.utils.inventory import Inventory
 from app.teacher.models import Task
@@ -18,18 +19,10 @@ api_blueprint = Blueprint('api', __name__, url_prefix="/api")
 
 
 @api_blueprint.route("/task", methods=["GET"])
-def task():
-    authorization = request.headers.get('Authorization')
-
-    access_key = None
-
-    if authorization:
-        access_key = AccessKey.query.filter_by(key=authorization).first()
-
-    if not authorization or not access_key:
-        return make_response({"error" : "Invalid authentication."}, 401)
-    
-    character = Character.query.get(access_key.character_id)
+@character_auhtorized
+def task(): 
+    access_key = g.access_key
+    character = g.character
 
     if not character.profession:
         return make_response({"error" : "You have no profession."}, 400)
@@ -43,18 +36,10 @@ def task():
 
 
 @api_blueprint.route("/task/submit", methods=["POST"])
+@character_auhtorized
 def submit_task():
-    authorization = request.headers.get('Authorization')
-
-    access_key = None
-
-    if authorization:
-        access_key = AccessKey.query.filter_by(key=authorization).first()
-
-    if not authorization or not access_key:
-        return make_response({"error" : "Invalid authentication."}, 401)
-    
-    character = Character.query.get(access_key.character_id)
+    access_key = g.access_key
+    character = g.character
 
     if not character.profession:
         return make_response({"error" : "You have no profession."}, 400)
@@ -70,25 +55,16 @@ def submit_task():
 
 
 @api_blueprint.route("/profession/set", methods=["PUT"])
+@character_auhtorized
 def set_profession():
-    authorization = request.headers.get('Authorization')
-
-    access_key = None
-
-    if authorization:
-        access_key = AccessKey.query.filter_by(key=authorization).first()
-
-    if not authorization or not access_key:
-        return make_response({"error" : "Invalid authentication."}, 401)
-    
-    character = Character.query.get(access_key.character_id)
-
     json = request.json
 
     if not json or 'profession' not in json:
         return make_response({"error" : "Invalid profession."}, 400)
     
     profession = json['profession']
+
+    character = g.character
 
     character.profession = profession
 
@@ -107,40 +83,25 @@ def set_profession():
 
 
 @api_blueprint.route("/settlement/market", methods=["GET"])
+@character_auhtorized
 def get_market():
-    authorization = request.headers.get('Authorization')
+    access_key = g.access_key
 
-    access_key = None
-
-    if authorization:
-        access_key = AccessKey.query.filter_by(key=authorization).first()
-
-    if not authorization or not access_key:
-        return make_response({"error" : "Invalid authentication."}, 401)
-    
     market_data = [market_item_serializer(market_item) for market_item in MarketItem.query.filter_by(settlement_id=access_key.settlement_id).all()]
 
     return make_response(market_data, 200)
 
 
 @api_blueprint.route("/settlement/market/sell", methods=["POST"])
+@character_auhtorized
 def sell_item():
-    authorization = request.headers.get('Authorization')
-        
-    access_key = None
-
-    if authorization:
-        access_key = AccessKey.query.filter_by(key=authorization).first()
-
-    if not authorization or not access_key:
-        return make_response({"error" : "Invalid authentication."}, 401)
-    
-    character = Character.query.get(access_key.character_id)
-
     json = request.json
 
     if not json or not "item_type" in json or not "amount" in json or not "price" in json:
         return make_response({"error" : "Invalid item."}, 400)
+    
+    access_key = g.access_key
+    character = g.character
     
     inventory = Inventory(character.settlement_id, None, character.id)
 
@@ -185,23 +146,15 @@ def sell_item():
 
 
 @api_blueprint.route("/settlement/market/buy", methods=["POST"])
+@character_auhtorized
 def buy_item():
-    authorization = request.headers.get('Authorization')
-
-    access_key = None
-
-    if authorization:
-        access_key = AccessKey.query.filter_by(key=authorization).first()
-
-    if not access_key:
-        return make_response({"error" : "Invalid authentication."}, 401)
-    
     json = request.json
 
     if not json or not "item_id" in json:
         return make_response({"error" : "Invalid item."}, 400)
     
-    character = Character.query.get(access_key.character_id)
+    character = g.character
+    
     item = MarketItem.query.get(json["item_id"])
 
     if character.pennies < item.price:
@@ -227,18 +180,10 @@ def buy_item():
 
 
 @api_blueprint.route("/character/eat", methods=["POST"])
+@character_auhtorized
 def eat():
-    authorization = request.headers.get('Authorization')
+    character = g.character
 
-    access_key = None
-
-    if authorization:
-        access_key = AccessKey.query.filter_by(key=authorization).first()
-
-    if not access_key:
-        return make_response({"error" : "Invalid authentication."}, 401)
-    
-    character = Character.query.get(access_key.character_id)
     inventory = Inventory(character.settlement_id, None, character.id)
 
     if not inventory.has_items('bread', 1):
@@ -262,18 +207,9 @@ def eat():
 
 
 @api_blueprint.route("/character/sleep", methods=["POST"])
+@character_auhtorized
 def sleep():
-    authorization = request.headers.get('Authorization')
-
-    access_key = None
-
-    if authorization:
-        access_key = AccessKey.query.filter_by(key=authorization).first()
-
-    if not access_key:
-        return make_response({"error" : "Invalid authentication."}, 401)
-    
-    character = Character.query.get(access_key.character_id)
+    character = g.character
     world = World.query.get(character.world_id)
     properties = Properties(character)
 
