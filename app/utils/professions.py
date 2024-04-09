@@ -69,7 +69,7 @@ class Profession:
 
         print(current_time, farmer.date, time_difference.days)
 
-        if time_difference.days < 36 and farmer.stage != "rye_harvestable":  
+        if time_difference.days < 36:  
             self._update_tiles(tiles, "rye_harvestable")
 
             farmer.stage = "rye_harvestable"

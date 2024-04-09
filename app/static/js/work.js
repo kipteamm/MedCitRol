@@ -1,7 +1,7 @@
 const workContent = document.getElementById('work-content');
 const workPanel = document.getElementById('work-panel');
 
-let activeTask;
+let activeTask = null;
 
 // working
 async function work() {
@@ -24,6 +24,8 @@ async function work() {
         if (json.error === "You have no profession.") {
             return chooseProfession(2);
         }
+
+        activeTask = null;
 
         sendAlert("error", json.error);
 
