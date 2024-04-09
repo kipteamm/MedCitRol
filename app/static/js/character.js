@@ -1,8 +1,6 @@
 function updateProperty(property, value, reset=false) {
     character[property] = reset? value : character[property] + value;
 
-    console.log(property, value)
-
     document.getElementById(property).innerText = `${character[property]}`;
 }
 

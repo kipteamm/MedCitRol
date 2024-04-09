@@ -22,7 +22,7 @@ async function work() {
 
     if (!response.ok) {
         if (json.error === "You have no profession.") {
-            return chooseProfession(4);
+            return chooseProfession(2);
         }
 
         sendAlert("error", json.error);
@@ -40,7 +40,7 @@ function stopWorking() {
 }
 
 // professions
-let professions = ["Farmer", "Miller", "Baker", "Stonemason", "Woodcutter", "Carpenter", "Shoemaker", "Blacksmith", "Tailor", "Armourer", "Merchant"]
+let professions = ["Farmer", "Miller", "Baker", "Merchant", "Shoemaker", "Tanner", "Weaver", "Birdcatcher"]
 
 function chooseProfession(level) {
     const availableProfessions = professions.slice(0, level + 1);

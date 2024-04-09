@@ -1,6 +1,6 @@
 from app.game.models import Character
 
-import math
+import random
 
 
 class Properties:
@@ -32,19 +32,19 @@ class Properties:
         if self._fatigue < 3:
             return "severely sleep deprived"
 
-        if self._fatigue < 6:
+        if self._fatigue < 5:
             return "sleep deprived"
         
-        if self._fatigue < 10:
+        if self._fatigue < 7:
             return "very tired"
         
-        if self._fatigue < 14:
+        if self._fatigue < 12:
             return "tired"
         
-        if self._fatigue < 24:
+        if self._fatigue < 26:
             return "well and alert"
         
-        if self._fatigue < 28:
+        if self._fatigue < 30:
             return "overslept"
         
         return "Very overslept"
@@ -77,4 +77,6 @@ class Properties:
         return "really happy"
     
     def get_hours_of_sleep(self) -> int:
-        return ((8 - self._fatigue) + 8) * 2
+        hours = ((8 - self._fatigue) + 8) * 2
+
+        return hours if hours > 0 else random.randint(2, 5)

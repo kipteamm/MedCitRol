@@ -38,7 +38,7 @@ def character_serializer(character: Character) -> dict:
         'house_id' : character.house_id,
         'profession' : character.profession,
         'task_index' : character.task_index,
-        'asleep' : character.end_sleep is not None,
+        'asleep' : character.start_sleep is not None,
         'inventory' : [inventory_item_serializer(inventory_item) for inventory_item in InventoryItem.query.filter_by(character_id=character.id).all()]
     }
 
@@ -54,7 +54,7 @@ def properties_serializer(character: Character) -> dict:
         'happiness' : properties.happiness(),
         'pennies' : character.pennies,
         'profession' : character.profession,
-        'asleep' : character.end_sleep is not None,
+        'asleep' : character.start_sleep is not None,
     }
 
 

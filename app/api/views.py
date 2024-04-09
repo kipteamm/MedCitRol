@@ -277,19 +277,21 @@ def sleep():
     world = World.query.get(character.world_id)
     properties = Properties(character)
 
-    if character.end_sleep:
+    if character.start_sleep:
         if world.current_time > character.end_sleep:
-            character.fatigue += math.floor((character.end_sleep - character.start_sleep).total_seconds() / 3600)
+            character.fatigue += math.floor((character.end_sleep - character.start_sleep).total_seconds() / 3600) + 1
 
         else:
-            character.fatigue += math.floor(world.current_time - character.start_sleep)
+            character.fatigue += math.floor((world.current_time - character.start_sleep).total_seconds() / 3600) + 1
 
         character.start_sleep = None
-        character.end_sleep = None
 
-    else:
+    elif not character.end_sleep or (character.end_sleep + timedelta(hours=4) < world.current_time):
         character.start_sleep = world.current_time
         character.end_sleep = world.current_time + timedelta(hours=properties.get_hours_of_sleep())
+
+    else:
+        return make_response({"error" : "You just got up, you are not really sleepy."}, 400)
     
     db.session.commit()
 

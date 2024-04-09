@@ -111,14 +111,13 @@ def create_app():
                     if character.health > 0:
                         character.health -= 0.25
 
-                    if character.end_sleep:
+                    if character.start_sleep:
                         world = World.query.get(user['active_world'])
 
                         if world.current_time >= character.end_sleep:
-                            character.fatigue += math.floor((character.end_sleep - character.start_sleep).total_seconds() / 3600)
+                            character.fatigue += math.floor((character.end_sleep - character.start_sleep).total_seconds() / 3600) + 1
 
                             character.start_sleep = None
-                            character.end_sleep = None
 
                     elif character.fatigue > 0:
                         character.fatigue -= 1
