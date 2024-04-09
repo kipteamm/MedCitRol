@@ -1,4 +1,5 @@
 from app.utils.serializers import tile_serializer
+from app.utils.rulers import Ruler
 from app.game.models import World, Settlement, Character, AccessKey, Tile
 from app.auth.models import User
 from app.extensions import db, socketio
@@ -9,6 +10,7 @@ from typing import Optional
 
 import secrets
 import random
+import json
 
 
 settlement_colours = ['cyan', 'lime', 'purple', 'red', 'brown']
@@ -29,6 +31,8 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
             db.session.add(settlement)
             db.session.commit()
 
+            Ruler().create(settlement.id)
+
             tile = Tile(settlement_id=settlement.id, pos_x=37, pos_y=37, tile_type="well")
             
             db.session.add(tile)
@@ -43,6 +47,8 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
 
                     db.session.add(settlement)
                     db.session.commit()
+
+                    Ruler().create(settlement.id)
 
                     tile = Tile(settlement_id=settlement.id, pos_x=37, pos_y=37, tile_type="well")
                     
@@ -77,7 +83,7 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
         pos_x, pos_y = None, None
 
         while pos_x is None or pos_y is None:
-            pos_x, pos_y = generateRandomCoordinates(37, 37, 5, True, settlement.id)
+            pos_x, pos_y = generateRandomCoordinates(25, 35, 5, True, settlement.id)
 
         house = Tile(character_id=character.id, settlement_id=settlement.id, pos_x=pos_x, pos_y=pos_y, tile_type="hut")
 

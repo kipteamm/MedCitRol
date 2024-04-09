@@ -68,6 +68,22 @@ class Settlement(db.Model):
     colour = db.Column(db.String(120), nullable=False)
 
 
+class SettlementRuler(db.Model):
+    __tablename__ = 'settlement_ruler'
+
+    id = db.Column(db.Integer, primary_key=True)
+    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+
+    name = db.Column(db.String(120), nullable=False)
+    surname = db.Column(db.String(120), nullable=False)
+
+    # characteristics
+    tyranny = db.Column(db.Integer, default=0)
+    economy = db.Column(db.Integer, default=0)
+    religion = db.Column(db.Integer, default=0)
+    social = db.Column(db.Integer, default=0)
+
+
 class Character(db.Model):
     __tablename__ = 'character'
 

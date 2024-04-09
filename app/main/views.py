@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect
 
 from app.teacher.models import Task
 
-from app.game.models import World, Settlement, Character, AccessKey, Tile, InventoryItem, Farmer, MarketItem
+from app.game.models import World, Settlement, SettlementRuler, Character, AccessKey, Tile, InventoryItem, Farmer, MarketItem
 
 from app.extensions import db
 
@@ -25,6 +25,9 @@ def reset():
 
     for settlement in Settlement.query.all():
         db.session.delete(settlement)
+
+    for settlement_ruler in SettlementRuler.query.all():
+        db.session.delete(settlement_ruler)
 
     for character in Character.query.all():
         db.session.delete(character)

@@ -61,7 +61,7 @@ async function sellItem() {
     if (inventoryItem.amount < amountInput.value) return sendAlert("error", `You only have ${inventoryItem.amount} ${inventoryItem.item_type}.`);
     if (!Number.isInteger(priceInput.value)) return sendAlert("error", "Price must be a number.");
 
-    const response = await fetch("/api/settlement/market/sell", {
+    const response = await fetch(`/api/${market}/market/sell`, {
         method: "POST",
         body: JSON.stringify({item_type: inventoryItem.item_type, amount: amountInput.value, price: priceInput.value}),
         headers: {
@@ -103,7 +103,7 @@ async function buyItem(id) {
         document.getElementById(`amount-${id}`).innerText = `${marketItem.amount}x`;
     }
 
-    const response = await fetch("/api/settlement/market/buy", {
+    const response = await fetch(`/api/${market}/market/sell`, {
         method: "POST",
         body: JSON.stringify({item_id: marketItem.id}),
         headers: {
