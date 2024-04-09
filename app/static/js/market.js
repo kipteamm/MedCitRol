@@ -1,14 +1,26 @@
 const marketPanel = document.getElementById("market-panel");
 const marketContent = marketPanel.querySelector('.content');
+const marketType = document.getElementById("market-type");
 
 let marketItems = [];
+let market = "settlement";
+
+function switchMarket() {
+    market = market === "settlement"? "world" : "settlement";
+
+    marketType.innerText = `${market === "settlement"? "Local" : "Global"} market`;
+
+    marketContent.innerHTML = '';
+
+    return openMarket();
+}
 
 async function openMarket() {
     cancelBuild()
 
     marketPanel.classList.add("active");
 
-    const response = await fetch("/api/settlement/market", {
+    const response = await fetch(`/api/${market}/market`, {
         method: "GET",
         headers: {
             "Authorization" : getCookie("psk")

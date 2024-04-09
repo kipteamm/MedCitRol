@@ -84,7 +84,7 @@ def set_profession():
 
 @api_blueprint.route("/settlement/market", methods=["GET"])
 @character_auhtorized
-def get_market():
+def get_settlement_market():
     access_key = g.access_key
 
     market_data = [market_item_serializer(market_item) for market_item in MarketItem.query.filter_by(settlement_id=access_key.settlement_id).all()]
@@ -235,3 +235,12 @@ def sleep():
 
     return make_response({"success" : True}, 204)
     
+
+@api_blueprint.route("/world/market", methods=["GET"])
+@character_auhtorized
+def get_world_market():
+    access_key = g.access_key
+
+    market_data = [market_item_serializer(market_item) for market_item in MarketItem.query.filter_by(world_id=access_key.world_id).all()]
+
+    return make_response(market_data, 200)
