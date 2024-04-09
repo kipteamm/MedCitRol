@@ -49,7 +49,7 @@ function confirmBuild() {
 
     document.querySelector(`.inventory-item.active`)?.classList.remove("active");
 
-    build = null;
+    building = null;
 
     buildings = [];
 }
