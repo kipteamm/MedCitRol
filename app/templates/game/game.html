@@ -57,6 +57,10 @@
         <li>Wealth <b id="pennies">{{ character.pennies }} penningen</b></li>
         <li>Profession <b id="profession">{% if character.profession %}{{ character.profession }}{% else %}Unemployed{% endif %}</b></li>
 
+        {% if character.taxes > 0 %}
+            <li>Taxes <b id="taxes">{{ character.taxes }} penningen</b> <button onclick="payTaxes()">Pay</button></li>
+        {% endif %}
+
         <button onclick="eat()">Eat</button>
         <button onclick="sleep()">Sleep</button>
         <button onclick="work()">Work</button>

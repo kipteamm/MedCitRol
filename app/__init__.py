@@ -9,13 +9,14 @@ from flask import Flask, redirect, url_for, flash, request
 from .teacher.views import teacher_blueprint
 
 from .utils.serializers import properties_serializer
+from .utils.rulers import Ruler
 
 from .auth.models import User
 from .auth.views import auth_blueprint
 
 from .game.views import game_blueprint
 from .game.events import register_events
-from .game.models import World, Character
+from .game.models import World, SettlementRuler, Character
 
 from .main.views import main_blueprint
 
@@ -29,6 +30,7 @@ import math
 
 
 active_connections = {}
+active_worlds = []
 
 
 def create_app():
@@ -75,31 +77,29 @@ def create_app():
     def handle_disconnect():
         active_connections.pop(request.sid, None) # type: ignore
 
-    if not scheduler.get_job('update_time'):
-        @scheduler.task('interval', id='update_time', minutes=1)
-        def update_time():
+    if not scheduler.get_job('update_worlds'):
+        @scheduler.task('interval', id='update_worlds', minutes=1)
+        def update_worlds():
             with app.app_context():
-                print(f"[{datetime.now()}] updated time")
-                
-                for world in World.query.all():
-                    world.current_time += timedelta(hours=1)
-                    world.last_time_update = datetime.now()
+                print(f"[{datetime.now()}] updated worlds")
 
-                    socketio.emit('update_time', {'current_time' : world.get_world_time()}, room=world.id) #type: ignore
-
-                db.session.commit()
-
-                pass
-
-    if not scheduler.get_job('update_characters'):
-        @scheduler.task('interval', id='update_characters', minutes=2)
-        def update_characters():
-            with app.app_context():
-                print(f"[{datetime.now()}] updated characters")
-
+                worlds = []
+                settlements = []
                 user_ids = []
 
                 for sid, user in active_connections.items():
+                    world = World.query.get(user['active_world'])
+
+                    if not user['active_world'] in worlds:
+                        world.current_time += timedelta(hours=1)
+                        world.last_time_update = datetime.now()
+
+                        db.session.commit()
+
+                        socketio.emit('update_time', {'current_time' : world.get_world_time()}, room=world.id) #type: ignore
+
+                        worlds.append(user['active_world'])
+
                     if user['id'] in user_ids:
                         continue
 
@@ -112,8 +112,6 @@ def create_app():
                         character.health -= 0.25
 
                     if character.start_sleep:
-                        world = World.query.get(user['active_world'])
-
                         if world.current_time >= character.end_sleep:
                             character.fatigue += math.floor((character.end_sleep - character.start_sleep).total_seconds() / 3600) + 1
 
@@ -121,6 +119,11 @@ def create_app():
 
                     elif character.fatigue > 0:
                         character.fatigue -= 1
+
+                    if not character.settlement_id in settlements:
+                        Ruler(SettlementRuler.query.filter_by(settlement_id=character.settlement_id).first()).work(world.current_time)
+
+                        settlements.append(character.settlement_id)
 
                     socketio.emit('update_character', properties_serializer(character), room=character.settlement_id) #type: ignore
 

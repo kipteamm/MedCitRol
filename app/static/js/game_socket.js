@@ -63,6 +63,12 @@ socket.on('update_character', function(data) {
 
             continue;
         }
+
+        if (key === "taxes" && value > 0) {
+            sendAlert("error", `Your ruler requested ${value} pennies in taxes.`);
+
+            continue;
+        }
         
         updateProperty(key, value, true)
     }
