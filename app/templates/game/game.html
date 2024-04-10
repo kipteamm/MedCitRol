@@ -55,7 +55,7 @@
         <li>Health <b id="health">{{ character.health }}</b></li>
         <li>Happiness <b id="happiness">{{ character.happiness }}</b></li>
         <li>Wealth <b id="pennies">{{ character.pennies }} penningen</b></li>
-        <li>Profession <b id="profession">{{ character.profession }}</b></li>
+        <li>Profession <b id="profession">{% if character.profession %}{{ character.profession }}{% else %}Unemployed{% endif %}</b></li>
 
         <button onclick="eat()">Eat</button>
         <button onclick="sleep()">Sleep</button>

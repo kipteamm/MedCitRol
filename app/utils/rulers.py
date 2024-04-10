@@ -6,7 +6,7 @@ from typing import Optional
 import random
 import json
 
-CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social']
+CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social', 'carelessness']
 
 class Ruler:
     def __init__(self, ruler: Optional[SettlementRuler]=None) -> None:
@@ -18,10 +18,10 @@ class Ruler:
 
     def create(self, settlement_id: int) -> None:
         random.shuffle(CHARACTERISTICS)
-        points_left = 200
+        points_left = 250
 
         for i in range(len(CHARACTERISTICS) - 1):
-            random_value = random.randint(0, points_left)
+            random_value = random.randint(0, min(points_left, 100))
             self.characteristics[CHARACTERISTICS[i]] = random_value
             points_left -= random_value
 

@@ -82,6 +82,9 @@ class SettlementRuler(db.Model):
     economy = db.Column(db.Integer, default=0)
     religion = db.Column(db.Integer, default=0)
     social = db.Column(db.Integer, default=0)
+    carelessness = db.Column(db.Integer, default=0)
+
+    last_action = db.Column(db.DateTime, default=None)
 
 
 class Character(db.Model):
