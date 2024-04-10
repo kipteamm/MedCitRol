@@ -8,10 +8,15 @@ function updateClock(timestamp) {
     
     clockElement.innerText = `${String(hours).padStart(2, '0')}:00`;
 
-    if (hours > 19 || hours < 6) {
-        night.classList.add('active');
+    if (hours == 20) {
+        night.classList.remove("no-delay");
+        night.classList.add("active");
+    } else if (hours > 19 || hours < 6) {
+        night.classList.add("no-delay");
+        night.classList.add("active");
     } else {
-        night.classList.remove('active');
+        night.classList.remove("no-delay");
+        night.classList.remove("active")
     }
 }
 

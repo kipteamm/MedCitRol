@@ -12,6 +12,9 @@ body {
     opacity: 0;
     transition: 15s;
 }
+.night.no-delay {
+    transition: 0s;
+}
 .night.active {
     opacity: .85;
 }

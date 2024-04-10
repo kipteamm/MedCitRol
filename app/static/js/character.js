@@ -40,6 +40,28 @@ async function sleep() {
     }
 }
 
+async function payTaxes() {
+    const response = await fetch('/api/character/taxes/pay', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${getCookie('psk')}`,
+        },
+    });
+
+    if (!response.ok) {
+        const json = await response.json();
+
+        sendAlert("error", json.error);
+
+        return;
+    }
+
+    sendAlert("success", "You paid your taxes.");
+
+    taxes(0);
+}
+
 const sleepOverlay = document.getElementById("sleep-overlay");
 
 function sleeping(isSleeping) {
