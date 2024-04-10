@@ -24,6 +24,7 @@
     opacity: 1;
 }
 
+/* UI */
 .information {
     left: 12.5px;
     top: 12.5px;
@@ -34,6 +35,15 @@
     bottom: 12.5px;
 }
 
+li#taxes {
+    display: none;
+}
+
+li#taxes.active {
+    display: list-item;
+}
+
+/* PANELS */
 .work-panel,
 .market-panel {
     bottom: -100%;

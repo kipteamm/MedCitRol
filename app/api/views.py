@@ -6,7 +6,7 @@ from app.utils.decorators import character_auhtorized
 from app.utils.properties import Properties
 from app.utils.inventory import Inventory
 from app.teacher.models import Task
-from app.game.models import AccessKey, Character, MarketItem, World
+from app.game.models import Settlement, Character, MarketItem, World
 
 from app.extensions import db, socketio
 
@@ -218,7 +218,7 @@ def sleep():
             character.fatigue += math.floor((character.end_sleep - character.start_sleep).total_seconds() / 3600) + 1
 
         else:
-            character.fatigue += math.floor((world.current_time - character.start_sleep).total_seconds() / 3600) + 1
+            character.fatigue += math.floor((world.current_time - character.start_sleep).total_seconds() / 3600) - 1
 
         character.start_sleep = None
 
@@ -228,6 +228,30 @@ def sleep():
 
     else:
         return make_response({"error" : "You just got up, you are not really sleepy."}, 400)
+    
+    db.session.commit()
+
+    socketio.emit("update_character", properties_serializer(character), room=character.settlement_id) # type: ignore
+
+    return make_response({"success" : True}, 204)
+
+
+@api_blueprint.route("/character/taxes/pay", methods=["POST"])
+@character_auhtorized
+def pay_taxes():
+    character = g.character
+
+    if character.taxes == 0:
+        return make_response({"error" : "You have no taxes to pay"}, 400)
+    
+    if character.taxes > character.pennies:
+        return make_response({"error" : "You don't have enough money to pay your taxes"}, 400)
+    
+    character.pennies -= character.taxes
+
+    Settlement.query.get(character.settlement_id).taxes += character.taxes
+
+    character.taxes = 0
     
     db.session.commit()
 

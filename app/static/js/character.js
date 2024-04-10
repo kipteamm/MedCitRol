@@ -49,3 +49,17 @@ function sleeping(isSleeping) {
         sleepOverlay.classList.remove("active");
     }
 }
+
+const taxesElement = document.getElementById("taxes");
+
+function taxes(value) {
+    if (value > 0) {
+        sendAlert("error", `Your ruler requested ${value} pennies in taxes.`);
+
+        taxesElement.classList.add("active")
+
+        return
+    }
+    
+    taxesElement.classList.remove("active")
+}
