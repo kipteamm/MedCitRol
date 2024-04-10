@@ -29,7 +29,7 @@ class Action(Enum):
     #UPGRADE_CHURCH_1 = {"characteristics": ["religion", "social"], "price": 10, "previous" : None, "repeatable" : False}
     #UPGRADE_CHURCH_2 = {"characteristics": ["religion", "social"], "price": 30, "previous" : "UPGRADE_CHURCH_1", "repeatable" : False}
     #TRADEROUTE = {"characteristics": ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
-    #HALLMARK = {"characteristics": ["social", "economy"], "price": 0, "previous" : None, "repeatable" : False}
+    #HALLMARK = {"characteristics": ["social", "economy"], "price": 0, "previous" : None, "repeatable" : True}
     #UPGRADE_BOURSE_1 = {"characteristics": ["economy"], "price": 10, "previous" : None, "repeatable" : False}
     #UPGRADE_BOURSE_2 = {"characteristics": ["economy"], "price": 30, "previous" : "UPGRADE_BOURSE_1", "repeatable" : False}
     #UPGRADE_BOURSE_3 = {"characteristics": ["economy"], "price": 60, "previous" : "UPGRADE_BOURSE_2", "repeatable" : False}

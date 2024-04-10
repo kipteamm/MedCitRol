@@ -79,6 +79,7 @@ function taxes(value) {
         sendAlert("error", `Your ruler requested ${value} pennies in taxes.`);
 
         taxesElement.classList.add("active")
+        taxesElement.innerHTML = `Taxes <b>${value} penningen</b> <button onclick="payTaxes()">Pay</button>`
 
         return
     }
