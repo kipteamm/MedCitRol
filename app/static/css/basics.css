@@ -1,9 +1,24 @@
+:root {
+    --font: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0px;
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: var(--font);
     color: #000;
+    
+}
+
+button {
+    font-family: var(--font);
+    font-size: 18px;
+    border: none;
+}
+
+button:hover {
+    cursor: pointer;
 }

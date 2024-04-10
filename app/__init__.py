@@ -121,7 +121,10 @@ def create_app():
                         character.fatigue -= 1
 
                     if not character.settlement_id in settlements:
-                        Ruler(SettlementRuler.query.filter_by(settlement_id=character.settlement_id).first()).work(world.current_time)
+                        settlement_ruler = SettlementRuler.query.filter_by(settlement_id=character.settlement_id).first()
+
+                        if settlement_ruler.last_action + timedelta(days=2) < world.current_time:
+                            Ruler(settlement_ruler).work(world.current_time)
 
                         settlements.append(character.settlement_id)
 
