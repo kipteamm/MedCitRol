@@ -192,6 +192,8 @@ class Ruler:
             return
         
         if not action.repeatable:
+            print(self._actions, self._actions.append(action.name))
+
             self._ruler.actions = json.dumps(self._actions.append(action.name))
 
             db.session.commit()

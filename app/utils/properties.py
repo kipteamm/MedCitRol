@@ -78,7 +78,7 @@ class Properties:
         return "really happy"
     
     def get_hours_of_sleep(self, current_hours: int) -> int:
-        hours = ((8 - self._fatigue) + 8) * 2
+        hours = 14 - self._fatigue
 
         if current_hours < 6:
             hours -= (6 - current_hours)

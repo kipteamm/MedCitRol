@@ -146,7 +146,7 @@ def invite(invite):
 
     db.session.commit()
 
-    return redirect(f'/game/{user_world.world_id}')
+    return redirect(f'/game/{world.id}')
 
 
 @game_blueprint.route('/game/create')
@@ -183,6 +183,6 @@ def game(id):
 
     response.set_cookie('psk', get_key(current_user.id, world.id, settlement.id, character.id))
 
-    #Ruler(SettlementRuler.query.filter_by(settlement_id=settlement.id).first()).work(world.current_time)
+    #Ruler(SettlementRuler.query.filter_by(settlement_id=settlement.id).first().actions).work(world.current_time)
 
     return response
