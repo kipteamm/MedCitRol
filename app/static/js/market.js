@@ -11,7 +11,7 @@ if (settlement.merchant) {
 function switchMarket(marketType) {
     market = marketType;
 
-    document.querySelector('.market-button:disabled').disabled = false;
+    document.querySelector('.market-btn:disabled').disabled = false;
     document.getElementById(`${marketType}-market-btn`).disabled = true;
 
     marketContent.innerHTML = '';
@@ -39,9 +39,15 @@ async function openMarket() {
         return;
     }
 
+    let items = json;
+
+    if (market === "merchant") {
+        items = json.items;
+    }
+
     marketContent.innerHTML = '';
 
-    json.forEach(item => {
+    items.forEach(item => {
         marketItems.push(item);
 
         marketContent.appendChild(marketItemComponent(item));
@@ -107,7 +113,7 @@ async function buyItem(id) {
         document.getElementById(`amount-${id}`).innerText = `${marketItem.amount}x`;
     }
 
-    const response = await fetch(`/api/${market}/market/sell`, {
+    const response = await fetch(`/api/${market}/market/buy`, {
         method: "POST",
         body: JSON.stringify({item_id: marketItem.id}),
         headers: {

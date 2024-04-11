@@ -1,12 +1,12 @@
 from flask import Blueprint, request, make_response, g
 
-from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer
+from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer
 from app.utils.professions import Profession
 from app.utils.decorators import character_auhtorized
 from app.utils.properties import Properties
 from app.utils.inventory import Inventory
 from app.teacher.models import Task
-from app.game.models import Settlement, Character, MarketItem, World
+from app.game.models import Settlement, Character, MarketItem, World, Merchant
 
 from app.extensions import db, socketio
 
@@ -266,5 +266,20 @@ def get_world_market():
     access_key = g.access_key
 
     market_data = [market_item_serializer(market_item) for market_item in MarketItem.query.filter_by(world_id=access_key.world_id).all()]
+
+    return make_response(market_data, 200)
+
+
+@api_blueprint.route("/merchant/market", methods=["GET"])
+@character_auhtorized
+def get_merchant_market():
+    access_key = g.access_key
+
+    merchant = Merchant.query.filter_by(settlement_id=access_key.settlement_id).first()
+
+    if not merchant:
+        return make_response({"error", "No merchant is currently in town."}, 400)
+
+    market_data = merchant_serializer(merchant)
 
     return make_response(market_data, 200)

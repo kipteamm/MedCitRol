@@ -81,9 +81,9 @@
     </div>
 
     <div class="ui market-panel" id="market-panel">
-        <button onclick="switchMarket('settlement')" id="settlement-market-btn">Local market</button>
-        <button onclick="switchMarket('merchant')" id="merchant-market-btn" style="display: none;">Merchant</button>
-        <button onclick="switchMarket('global')" id="global-market-btn">Global market</button>
+        <button class="market-btn" onclick="switchMarket('settlement')" id="settlement-market-btn" disabled>Local market</button>
+        <button class="market-btn" onclick="switchMarket('merchant')" id="merchant-market-btn" style="display: none;">Merchant</button>
+        <button class="market-btn" onclick="switchMarket('world')" id="world-market-btn">Global market</button>
 
         <button class="close" onclick="closeMarket()">Close</button>
         

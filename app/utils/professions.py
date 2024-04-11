@@ -57,7 +57,7 @@ class Profession:
             db.session.delete(farmer)
             db.session.commit()
 
-            Inventory(self._character.settlement_id, None, self._character.id).add_item("rye", len(tiles) * 20)
+            Inventory(self._character.settlement_id, None, self._character.id).add_item("rye", len(tiles) * random.randint(15, 20))
 
             return
 

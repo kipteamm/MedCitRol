@@ -54,7 +54,7 @@ function marketItemComponent(item) {
         ${item.item_type}
         <b id="amount-${item.id}">${item.amount}x</b>
         <b>${item.price}pennies</b>
-        ${item.character_id !== character.id? `<button onclick="buyItem(${item.id})">Buy</button>` : ""}
+        ${item.character_id !== character.id? `<button onclick="buyItem('${item.id}')">Buy</button>` : ""}
     `;
 
     return wrapper;

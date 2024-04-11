@@ -98,6 +98,26 @@ def market_item_serializer(market_item: MarketItem) -> dict:
     }
 
 
+def merchant_serializer(merchant: Merchant) -> dict:
+    data = {
+        "id" : merchant.id,
+        "settlement_id" : merchant.settlement_id,
+        "end_date" : merchant.end_date,
+        "items" : []
+    }
+
+    if merchant.merchant_type == "grain":
+        for item, price in {"rye" : 2, "rye_flour" : 3, "bread" : 5}.items():
+            data["items"].append({
+                "id" : item,
+                "item_type" : item,
+                "amount" : 10000,
+                "price" : price
+            })
+
+    return data
+
+
 def task_serializer(task: Task) -> dict:
     return {
         'id' : task.id,

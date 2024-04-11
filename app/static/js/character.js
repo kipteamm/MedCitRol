@@ -1,7 +1,7 @@
 function updateProperty(property, value, reset=false) {
     character[property] = reset? value : character[property] + value;
 
-    document.getElementById(property).innerText = `${character[property]}`;
+    document.getElementById(property).innerText = `${character[property]}${property === "pennies"? " penningen" : ""}`;
 }
 
 async function eat() {
