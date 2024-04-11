@@ -1,6 +1,7 @@
 from app.game.models import Character
 
 import random
+import math
 
 
 class Properties:
@@ -81,5 +82,8 @@ class Properties:
 
         if current_hours < 6:
             hours -= (6 - current_hours)
+
+        if current_hours >= 6 and current_hours < 20:
+            hours = math.ceil(hours / 2)
 
         return hours if hours > 0 else random.randint(2, 5)

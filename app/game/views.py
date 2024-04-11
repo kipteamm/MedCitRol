@@ -122,10 +122,31 @@ def home():
     for world in current_user.worlds:
         worlds.append({
             'id': world.id,
+            'user_id': world.user_id,
             'code': world.code
         })
 
     return render_template("game/home.html", worlds=worlds)
+
+
+@game_blueprint.route('/invite/<invite>')
+@login_required
+def invite(invite):
+    world = World.query.filter_by(code=invite).first()
+
+    if not world:
+        return redirect(url_for('game.home'))
+    
+    user_world = UserWorlds.query.filter_by(user_id=current_user.id, world_id=world.id).first()
+
+    if user_world:
+        return redirect(f'/game/{user_world.world_id}')
+    
+    current_user.worlds.append(world)
+
+    db.session.commit()
+
+    return redirect(f'/game/{user_world.world_id}')
 
 
 @game_blueprint.route('/game/create')
