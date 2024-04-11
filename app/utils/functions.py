@@ -1,4 +1,4 @@
-from app.game.models import AccessKey, Tile
+from app.game.models import AccessKey, Tile, Merchant
 from app.extensions import db
 
 from datetime import datetime, timezone, timedelta
@@ -77,3 +77,10 @@ def get_coordinates(center_x: int, center_y: int, radius: int) -> list[tuple[int
                 coordinates.append((x, y))
                 
     return coordinates
+
+
+def get_merchandise(merchant: Merchant) -> dict[str, int]:
+    if merchant.merchant_type == "grain":
+        return {"rye" : 2, "rye_flour" : 3, "bread" : 5} 
+    
+    return {}

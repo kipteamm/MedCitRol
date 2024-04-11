@@ -1,5 +1,6 @@
-from app.teacher.models import Task, TaskField, TaskOption
 from app.utils.properties import Properties
+from app.teacher.models import Task, TaskField, TaskOption
+from app.utils.functions import get_merchandise
 from app.utils.tiles import get_tile_index
 from app.game.models import World, Settlement, Character, Tile, InventoryItem, MarketItem, Merchant
 
@@ -107,7 +108,7 @@ def merchant_serializer(merchant: Merchant) -> dict:
     }
 
     if merchant.merchant_type == "grain":
-        for item, price in {"rye" : 2, "rye_flour" : 3, "bread" : 5}.items():
+        for item, price in get_merchandise(merchant).items():
             data["items"].append({
                 "id" : item,
                 "item_type" : item,

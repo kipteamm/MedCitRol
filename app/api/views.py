@@ -5,6 +5,7 @@ from app.utils.professions import Profession
 from app.utils.decorators import character_auhtorized
 from app.utils.properties import Properties
 from app.utils.inventory import Inventory
+from app.utils.functions import get_merchandise
 from app.teacher.models import Task
 from app.game.models import Settlement, Character, MarketItem, World, Merchant
 
@@ -283,3 +284,37 @@ def get_merchant_market():
     market_data = merchant_serializer(merchant)
 
     return make_response(market_data, 200)
+
+
+@api_blueprint.route("/merchant/market/buy", methods=["POST"])
+@character_auhtorized
+def merchant_buy_item():
+    json = request.json
+
+    if not json or not "item_id" in json:
+        return make_response({"error" : "Invalid item."}, 400)
+    
+    merchant = Merchant.query.filter_by(settlement_id=g.access_key.settlement_id).first()
+
+    if not merchant:
+        return make_response({"error", "No merchant is currently in town."}, 400)
+    
+    merchandise = get_merchandise(merchant)
+
+    item = json['item_id']
+
+    if not item in merchandise:
+        return make_response({"error" : "Invalid item."}, 400)
+    
+    character = g.character
+
+    if character.pennies < merchandise[item]:
+        return make_response({"error" : "You don't have enough money."}, 400)
+    
+    character.pennies -= merchandise[item]
+    
+    Inventory(character.settlement_id, None, character.id).add_item(item, 1)
+
+    db.session.commit()
+
+    return make_response({"success" : True}, 204)
