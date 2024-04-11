@@ -188,7 +188,7 @@ def eat():
     inventory = Inventory(character.settlement_id, None, character.id)
 
     if not inventory.has_items('bread', 1):
-        return make_response({"error" : "You don't have any bread."}, 400)
+        return make_response({"error" : "You don't have any food."}, 400)
     
     inventory.remove_item('bread', 1)
 
