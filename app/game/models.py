@@ -175,3 +175,15 @@ class MarketItem(db.Model):
     item_type = db.Column(db.String(120), nullable=False)
     amount = db.Column(db.Integer, default=0)
     price = db.Column(db.Integer, default=0)
+
+
+class Merchant(db.Model):
+    __tablename__ = 'merchant'
+
+    id = db.Column(db.Integer, primary_key=True)
+    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+
+    merchant_type = db.Column(db.String(120), nullable=False)
+
+    start_date = db.Column(db.DateTime, nullable=False)
+    end_date = db.Column(db.DateTime, nullable=False)

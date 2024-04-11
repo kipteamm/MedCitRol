@@ -1,7 +1,7 @@
 from app.teacher.models import Task, TaskField, TaskOption
 from app.utils.properties import Properties
 from app.utils.tiles import get_tile_index
-from app.game.models import World, Settlement, Character, Tile, InventoryItem, MarketItem
+from app.game.models import World, Settlement, Character, Tile, InventoryItem, MarketItem, Merchant
 
 def world_serializer(world: World) -> dict:
     return {
@@ -18,6 +18,7 @@ def settlement_serializer(settlement: Settlement) -> dict:
         'world_id' : settlement.world_id,
         'name' : settlement.name,
         'colour' : settlement.colour,
+        'merchant' : Merchant.query.filter_by(settlement_id=settlement.id).exists(),
         'inventory' : [inventory_item_serializer(inventory_item) for inventory_item in InventoryItem.query.filter_by(settlement_id=settlement.id).all()]
     }
 

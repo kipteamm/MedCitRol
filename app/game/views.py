@@ -8,7 +8,9 @@ from app.utils.rulers import Ruler
 from app.auth.models import User
 from app.extensions import db, socketio
 
-from .models import World, Settlement, Character, Tile, SettlementRuler
+from .models import World, Settlement, Character, Tile, SettlementRuler, Merchant
+
+from datetime import timedelta
 
 
 game_blueprint = Blueprint('game', __name__)
@@ -40,6 +42,11 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
             db.session.add(tile)
             db.session.commit()
 
+            merchant = Merchant(settlement_id=settlement.id, merchant_type="grain", start_date=world.current_time, end_date=(world.current_time + timedelta(days=14)))
+
+            db.session.add(merchant)
+            db.session.commit()
+
         elif len(settlements) < len(settlement_colours):
             i = len(settlements)
 
@@ -55,6 +62,11 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
                     tile = Tile(settlement_id=settlement.id, pos_x=37, pos_y=37, tile_type="well")
                     
                     db.session.add(tile)
+                    db.session.commit()
+
+                    merchant = Merchant(settlement_id=settlement.id, merchant_type="grain", start_date=world.current_time, end_date=(world.current_time + timedelta(days=14)))
+
+                    db.session.add(merchant)
                     db.session.commit()
 
                     break

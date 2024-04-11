@@ -21,7 +21,7 @@ class Action(Enum):
     CLAIM_LAND = {"characteristics": ["tyranny", "military"], "price": 0, "previous" : None, "repeatable" : False}
     SAVE_TAXES = {"characteristics": ["social", "economy"], "price": 0, "previous" : None, "repeatable" : True}
     COLLECT_TAXES = {"characteristics": ["tyranny", "military", "religion", "economy"], "price": 0, "previous" : None, "repeatable" : True}
-    #UPGRADE_FORT_1 = {"characteristics": ["tyranny", "military"], "price": 10, "previous" : None, "repeatable" : False}
+    #UPGRADE_FORT_1 = {"characteristics": ["tyranny", "military"], "price": 10, "previous" : "CLAIM_LAND", "repeatable" : False}
     #UPGRADE_FORT_2 = {"characteristics": ["tyranny", "military"], "price": 30, "previous" : "UPGRADE_FORT_1", "repeatable" : False}
     #UPGRADE_FORT_3 = {"characteristics": ["tyranny", "military"], "price": 60, "previous" : "UPGRADE_FORT_2", "repeatable" : False}
     #UPGRADE_FORT_4 = {"characteristics": ["tyranny", "military"], "price": 90, "previous" : "UPGRADE_FORT_3", "repeatable" : False}
@@ -34,6 +34,7 @@ class Action(Enum):
     #UPGRADE_BOURSE_2 = {"characteristics": ["economy"], "price": 30, "previous" : "UPGRADE_BOURSE_1", "repeatable" : False}
     #UPGRADE_BOURSE_3 = {"characteristics": ["economy"], "price": 60, "previous" : "UPGRADE_BOURSE_2", "repeatable" : False}
     #WAR = {"characteristics": ["tyranny", "military"], "price": 100, "previous" : None, "repeatable" : True}
+    #FAIR = {"characteristics": ["economy", "social"], "price": 25, "previous" : None, "repeatable" : True}
 
     @property
     def characteristics(self):
@@ -140,9 +141,9 @@ class Ruler:
 
             tiles.append(tile_serializer(tile))
 
-        socketio.emit('update_tiles', tiles, room=self._ruker.settlement_id) # type: ignore
-
         db.session.commit()
+
+        socketio.emit('update_tiles', tiles, room=self._ruler.settlement_id) # type: ignore
 
         return
     

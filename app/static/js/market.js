@@ -1,14 +1,18 @@
 const marketPanel = document.getElementById("market-panel");
 const marketContent = marketPanel.querySelector('.content');
-const marketType = document.getElementById("market-type");
 
 let marketItems = [];
 let market = "settlement";
 
-function switchMarket() {
-    market = market === "settlement"? "world" : "settlement";
+if (settlement.merchant) {
+    document.getElementById("merchant-market-btn").style.display = "inline-block";
+}
 
-    marketType.innerText = `${market === "settlement"? "Local" : "Global"} market`;
+function switchMarket(marketType) {
+    market = marketType;
+
+    document.querySelector('.market-button:disabled').disabled = false;
+    document.getElementById(`${marketType}-market-btn`).disabled = true;
 
     marketContent.innerHTML = '';
 
@@ -16,14 +20,14 @@ function switchMarket() {
 }
 
 async function openMarket() {
-    cancelBuild()
+    cancelBuild();
 
     marketPanel.classList.add("active");
 
     const response = await fetch(`/api/${market}/market`, {
         method: "GET",
         headers: {
-            "Authorization" : getCookie("psk")
+            "Authorization" : getCookie("psk"),
         }
     });
 
