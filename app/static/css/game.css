@@ -39,6 +39,12 @@ body {
     pointer-events: all;
     opacity: .99;
 }
+.sleep-overlay.tired-overlay {
+    height: 0%;
+}
+.sleep-overlay.tirede-overlay.active {
+    height: 100%;
+}
 
 .sleep-overlay h2 {
     margin-bottom: 25px;

@@ -84,6 +84,12 @@ socket.on('merchant_visit', function() {
     sendAlert("success", "A merchant is in town.")
 })
 
+socket.on('close_eyes', function(data) {
+    if (character.id !== data.id) return;
+
+    closeEyes()
+})
+
 function send(event, data) {
     eventData = defaultData
     eventData.event_data = data

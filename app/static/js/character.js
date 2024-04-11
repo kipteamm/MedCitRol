@@ -86,3 +86,13 @@ function taxes(value) {
     
     taxesElement.classList.remove("active")
 }
+
+const tiredOverlay = document.getElementById("tired-overlay");
+
+function closeEyes() {
+    tiredOverlay.classList.add("active");
+
+    setTimeout(() => {
+        tiredOverlay.classList.remove("active");
+    }, 1000);
+}
