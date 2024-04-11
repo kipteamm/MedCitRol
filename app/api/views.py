@@ -224,7 +224,7 @@ def sleep():
 
     elif not character.end_sleep or (character.end_sleep + timedelta(hours=4) < world.current_time):
         character.start_sleep = world.current_time
-        character.end_sleep = world.current_time + timedelta(hours=properties.get_hours_of_sleep())
+        character.end_sleep = world.current_time + timedelta(hours=properties.get_hours_of_sleep(world.current_time.hour))
 
     else:
         return make_response({"error" : "You just got up, you are not really sleepy."}, 400)

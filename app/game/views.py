@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, redirect, url_for, make_response
 from app.utils.serializers import world_serializer, settlement_serializer, character_serializer, tile_serializer
 from app.utils.functions import get_key, generateRandomCoordinates
 from app.utils.rulers import Ruler
-from app.auth.models import User
+from app.auth.models import User, UserWorlds
 from app.extensions import db, socketio
 
 from .models import World, Settlement, Character, Tile, SettlementRuler, Merchant
@@ -145,11 +145,13 @@ def create_game():
 @game_blueprint.route('/game/<id>')
 @login_required
 def game(id):
-    world = World.query.filter_by(id=id).first()
+    user_world = UserWorlds.query.filter_by(user_id=current_user.id, world_id=id).first()
 
-    if not world:
+    if not user_world:
         return redirect(url_for('game.home'))
     
+    world = World.query.get(id)
+
     world.update_time()
 
     settlement, character = get_presence(world, current_user) # type: ignore
