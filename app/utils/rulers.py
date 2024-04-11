@@ -198,6 +198,8 @@ class Ruler:
 
             db.session.commit()
 
+        print(self._ruler.last_action, current_time)
+
         self._ruler.last_action = current_time
 
         db.session.commit()

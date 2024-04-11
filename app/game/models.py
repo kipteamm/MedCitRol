@@ -185,5 +185,4 @@ class Merchant(db.Model):
 
     merchant_type = db.Column(db.String(120), nullable=False)
 
-    start_date = db.Column(db.DateTime, nullable=False)
     end_date = db.Column(db.DateTime, nullable=False)

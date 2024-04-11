@@ -16,7 +16,7 @@ from .auth.views import auth_blueprint
 
 from .game.views import game_blueprint
 from .game.events import register_events
-from .game.models import World, SettlementRuler, Character
+from .game.models import World, SettlementRuler, Character, Merchant
 
 from .main.views import main_blueprint
 
@@ -35,7 +35,7 @@ active_worlds = []
 
 def create_app():
     app = Flask(__name__)
-    app.config["DEBUG"] = True
+    #app.config["DEBUG"] = True
     app.config["SECRET_KEY"] = "secret"
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./database.db'
 
@@ -77,7 +77,7 @@ def create_app():
     def handle_disconnect():
         active_connections.pop(request.sid, None) # type: ignore
 
-    if not scheduler.get_job('update_worlds') and False:
+    if not scheduler.get_job('update_worlds'):
         @scheduler.task('interval', id='update_worlds', minutes=1)
         def update_worlds():
             with app.app_context():
@@ -123,10 +123,22 @@ def create_app():
                     if not character.settlement_id in settlements:
                         settlement_ruler = SettlementRuler.query.filter_by(settlement_id=character.settlement_id).first()
 
-                        if settlement_ruler.last_action + timedelta(days=2) < world.current_time:
+                        print(settlement_ruler)
+
+                        if not settlement_ruler.last_action or settlement_ruler.last_action + timedelta(days=2) < world.current_time:
                             Ruler(settlement_ruler).work(world.current_time)
 
                         settlements.append(character.settlement_id)
+
+                        merchant = Merchant.query.filter(
+                            Merchant.settlement_id == character.settlement_id,
+                            Merchant.end_date < world.current_time
+                        ).first()
+
+                        if merchant:
+                            db.session.delete(merchant)
+
+                            socketio.emit("merchant_leave", room=character.settlement_id) # type: ignore
 
                     socketio.emit('update_character', properties_serializer(character), room=character.settlement_id) #type: ignore
 

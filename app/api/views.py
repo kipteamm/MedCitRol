@@ -279,7 +279,7 @@ def get_merchant_market():
     merchant = Merchant.query.filter_by(settlement_id=access_key.settlement_id).first()
 
     if not merchant:
-        return make_response({"error", "No merchant is currently in town."}, 400)
+        return make_response({"error" : "No merchant is currently in town."}, 400)
 
     market_data = merchant_serializer(merchant)
 
@@ -297,7 +297,7 @@ def merchant_buy_item():
     merchant = Merchant.query.filter_by(settlement_id=g.access_key.settlement_id).first()
 
     if not merchant:
-        return make_response({"error", "No merchant is currently in town."}, 400)
+        return make_response({"error" : "No merchant is currently in town."}, 400)
     
     merchandise = get_merchandise(merchant)
 

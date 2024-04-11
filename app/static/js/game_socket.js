@@ -74,6 +74,16 @@ socket.on('update_character', function(data) {
     }
 });
 
+socket.on('merchant_leave', function() {
+    document.getElementById("merchant-market-btn").style.display = "none";
+})
+
+socket.on('merchant_visit', function() {
+    document.getElementById("merchant-market-btn").style.display = "inline-block";
+
+    sendAlert("success", "A merchant is in town.")
+})
+
 function send(event, data) {
     eventData = defaultData
     eventData.event_data = data
