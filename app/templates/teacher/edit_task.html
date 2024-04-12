@@ -4,6 +4,8 @@
     <script src="{{ url_for('static', filename='js/components.js') }}"></script>
     <script src="{{ url_for('static', filename='js/editTask.js') }}" defer></script>
 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tasks.css') }}">
+
     <div>
         <a href="/teacher/{{ world.id }}/tasks">Tasks</a>
     </div>
@@ -15,7 +17,7 @@
 
         <div>
             <button onclick="addField('text')">Text</button>
-            <input type="file" accept="image/*" name="images" id="images" onchange="handleImage(this.files)">
+            <input type="file" accept="image/*" name="images" id="images" onchange="handleImage(event)">
         </div>
         <div>
             <button>Multiplechoice (1 answer)</button>
@@ -30,8 +32,6 @@
 
         {{ task.fields|tojson }}.forEach(field => {
             const taskField = editableTaskFieldComponent(field);
-
-            console.log(taskField);
             
             task.appendChild(taskField);    
         });

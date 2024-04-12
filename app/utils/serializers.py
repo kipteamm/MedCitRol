@@ -130,15 +130,19 @@ def task_serializer(task: Task) -> dict:
 
 def task_field_serializer(task_field: TaskField) -> dict:
     options = []
+    content = task_field.content
 
     if task_field.field_type == "multiplechoice" or task_field.field_type == "checkboxes" or task_field.field_type == "connect" or task_field.field_type == "order":
         options = [task_option_serializer(task_option) for task_option in TaskOption.query.filter_by(task_field_id=task_field.id)]
+
+    elif task_field.field_type == "image":
+        content = f'/media/tasks/{content}'
 
     return { 
         'id' : task_field.id,
         'task_id' : task_field.task_id,
         'field_type' : task_field.field_type,
-        'content' : task_field.content,
+        'content' : content,
         'options' : options
     }
 

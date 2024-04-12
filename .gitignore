@@ -9,3 +9,6 @@ venv/
 
 # Ignore migrations folder
 migrations/*
+
+# Ignore media
+media/*

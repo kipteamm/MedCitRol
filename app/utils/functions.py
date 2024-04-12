@@ -52,6 +52,18 @@ def authenticated(data: dict) -> bool:
     return True
 
 
+def get_access_key(key: Optional[str]) -> Optional[AccessKey]:
+    if not key:
+        return
+
+    access_key = AccessKey.query.filter_by(key=key).first()
+
+    if access_key.key_date.replace(tzinfo=timezone.utc) - datetime.now(timezone.utc) > timedelta(hours=12):
+        return
+    
+    return access_key
+
+
 def generateRandomCoordinates(center_x: int, center_y: int, deviation: int, empty: bool=False, settlement_id: Optional[int]=None) -> tuple[Optional[int], Optional[int]]:
     pos_x = center_x + random.randint(-deviation, deviation)
     pos_y = center_y + random.randint(-deviation, deviation)

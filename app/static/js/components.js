@@ -18,8 +18,6 @@ function professionComponent(profession) {
 function taskComponent(task) {
     const wrapper = document.createElement("div");
 
-    console.log(task)
-
     wrapper.classList.add("task");
     
     task.fields.forEach(field => {
@@ -39,6 +37,10 @@ function taskFieldcomponent(taskField) {
         wrapper.innerHTML = `
             <p>${taskField.content? taskField.content : ""}</p>
         `;
+    } else if (taskField.field_type === "image") {
+        wrapper.innerHTML = `
+            <img src="${taskField.content? taskField.content : "/static/images/tasks/notfound.webp"}"/>
+        `;
     }
 
     return wrapper;
@@ -53,6 +55,10 @@ function editableTaskFieldComponent(taskField) {
     if (taskField.field_type === "text") {
         wrapper.innerHTML = `
             <textarea onchange="editField(${taskField.id}, this.value)">${taskField.content? taskField.content : ""}</textarea>
+        `;
+    } else if (taskField.field_type === "image") {
+        wrapper.innerHTML = `
+            <img src="${taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/tasks/notfound.webp"}"/>
         `;
     }
 

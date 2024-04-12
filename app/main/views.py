@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, redirect
+from flask import Blueprint, render_template, redirect, send_from_directory, request, make_response
 
-from app.teacher.models import Task
-
+from app.utils.functions import get_access_key
+from app.teacher.models import Task, TaskField
 from app.game.models import World, Settlement, SettlementRuler, Character, AccessKey, Tile, InventoryItem, Farmer, MarketItem
-
 from app.extensions import db
+
+import os
 
 
 main_blueprint = Blueprint('main', __name__)
@@ -19,6 +20,9 @@ def index():
 def reset():
     for task in Task.query.all():
         db.session.delete(task)
+
+    for task_field in TaskField.query.all():
+        db.session.delete(task_field)
 
     for world in World.query.all():
         db.session.delete(world)
@@ -50,3 +54,13 @@ def reset():
     db.session.commit()
 
     return redirect('/')
+
+
+@main_blueprint.route('/media/tasks/<path:filename>')
+def serve_task_image(filename):
+    if not get_access_key(request.args.get('psk')):
+        return make_response({"error" : "Invalid authorization"}, 401)
+
+    tasks_dir = os.path.join(os.getcwd(), 'media', 'tasks')
+
+    return send_from_directory(tasks_dir, filename)

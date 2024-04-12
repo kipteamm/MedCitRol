@@ -13,7 +13,10 @@ from app.extensions import db, socketio
 
 from datetime import timedelta
 
+import random
+import string
 import math
+import os
 
 
 api_blueprint = Blueprint('api', __name__, url_prefix="/api")
@@ -392,11 +395,45 @@ def add_field():
     return make_response(task_field_serializer(task_field), 200)
 
 
+@api_blueprint.route('/task/image/add', methods=["POST"])
+@authorized
+def upload_file():
+    if 'image' not in request.files:
+        return make_response({"error" : "no image 1"}, 400)
+
+    file = request.files['image']
+
+    if not file.filename:
+        return make_response({"error" : "no image 2"}, 400)
+
+    task = Task.query.get(request.form.get('task_id'))
+
+    while True:
+        name = f"{''.join(random.choices(string.ascii_letters, k=16))}.{file.filename.split('.')[1]}"
+
+        if not TaskField.query.filter_by(field_type="image", content=name).first():
+            break
+
+    task_field = TaskField(task_id=task.id, field_type="image", content=name)
+
+    db.session.add(task_field)
+    db.session.commit()
+
+    tasks_dir = os.path.join(os.getcwd(), 'media', 'tasks')
+
+    os.makedirs(tasks_dir, exist_ok=True)
+
+    file_path = os.path.join(tasks_dir, name)
+    file.save(file_path)
+
+    return make_response(task_field_serializer(task_field), 200)
+
+
 @api_blueprint.route('/task/field/edit', methods=["PATCH"])
 @authorized
 def edit_field():
     json = request.json
-    
+
     if not json or not "field_id" in json:
         return make_response({"error" : "invalid json"}, 400)
     
