@@ -80,16 +80,16 @@
     </div>
 
     <div class="ui build-panel" id="build-panel">
+        <button onclick="cancelBuild()">Cancel</button>
         <h2>Your buildables</h2>
         <div class="content"></div>
 
+        <button onclick="confirmBuild()">Confirm build</button>
+
         <h2>Purchase</h2>
         <div>
-            Marketstall <b>20 penningen</b> <button onclick="buyBuildable('marketstall')">Buy</button>
+            Marketstall <b>20 penningen</b> <button onclick="buyBuildable('market_stall', 20)">Buy</button>
         </div>
-
-        <button onclick="confirmBuild()">Confirm build</button>
-        <button onclick="cancelBuild()">Cancel</button>
     </div>
 
     <div class="ui market-panel" id="market-panel">

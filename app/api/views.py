@@ -1,6 +1,6 @@
 from flask import Blueprint, request, make_response, g
 
-from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer
+from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, inventory_item_serializer
 from app.utils.professions import Profession
 from app.utils.decorators import character_auhtorized
 from app.utils.properties import Properties
@@ -299,7 +299,7 @@ def merchant_buy_item():
     if not merchant:
         return make_response({"error" : "No merchant is currently in town."}, 400)
     
-    merchandise = get_merchandise(merchant)
+    merchandise = get_merchandise(merchant.merchant_type)
 
     item = json['item_id']
 
@@ -316,5 +316,38 @@ def merchant_buy_item():
     Inventory(character.settlement_id, None, character.id).add_item(item, 1)
 
     db.session.commit()
+
+    socketio.emit("update_character", properties_serializer(seller), room=seller.settlement_id) # type: ignore
+
+    return make_response({"success" : True}, 204)
+
+
+@api_blueprint.route("/buildable/purchase", methods=["POST"])
+@character_auhtorized
+def purchase_buildable():
+    json = request.json
+
+    if not json or not "item_type" in json:
+        return make_response({"error" : "Invalid item."}, 400)
+    
+    merchandise = get_merchandise("buildable")
+
+    item = json['item_type']
+
+    if not item in merchandise:
+        return make_response({"error" : "Invalid item."}, 400)
+    
+    character = g.character
+
+    if character.pennies < merchandise[item]:
+        return make_response({"error" : "You don't have enough money."}, 400)
+    
+    character.pennies -= merchandise[item]
+    
+    Inventory(character.settlement_id, None, character.id).add_item(item, 1)
+
+    db.session.commit()
+
+    socketio.emit("update_character", properties_serializer(character), room=character.settlement_id) # type: ignore
 
     return make_response({"success" : True}, 204)

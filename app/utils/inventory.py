@@ -6,7 +6,7 @@ from typing import Optional
 
 
 class Inventory:
-    BUILDABLE_TYPES = {'farm_land', 'windmill', 'bakery'}
+    BUILDABLE_TYPES = {'farm_land', 'windmill', 'bakery', 'market_stall'}
 
     def __init__(self, room_id: int, settlement_id: Optional[int]=None, character_id: Optional[int]=None) -> None:
         self._room_id = room_id

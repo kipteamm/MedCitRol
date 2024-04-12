@@ -72,6 +72,15 @@ function cancelBuild() {
     buildings = [];
 }
 
-async function buyBuildable(type) {
-    
+async function buyBuildable(type, price) {
+    if (character.pennies < price) return sendAlert("error", "You don't have enough pennies.");
+
+    const response = await fetch('/api/buildable/purchase', {
+        method: "POST",
+        body: JSON.stringify({item_type: type}),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${getCookie('psk')}`,
+        },
+    })
 }

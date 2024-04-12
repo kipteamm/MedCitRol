@@ -79,8 +79,11 @@ def get_coordinates(center_x: int, center_y: int, radius: int) -> list[tuple[int
     return coordinates
 
 
-def get_merchandise(merchant: Merchant) -> dict[str, int]:
-    if merchant.merchant_type == "grain":
+def get_merchandise(merchant_type: str) -> dict[str, int]:
+    if merchant_type == "grain":
         return {"rye" : 2, "rye_flour" : 3, "bread" : 5} 
+    
+    if merchant_type == "buildable":
+        return {"market_stall" : 20}
     
     return {}
