@@ -6,7 +6,7 @@ from app.utils.decorators import character_auhtorized, authorized
 from app.utils.properties import Properties
 from app.utils.inventory import Inventory
 from app.utils.functions import get_merchandise
-from app.teacher.models import Task, TaskField
+from app.teacher.models import Task, TaskField, TaskOption
 from app.game.models import Settlement, Character, MarketItem, World, Merchant, Tile
 
 from app.extensions import db, socketio
@@ -384,12 +384,32 @@ def add_field():
 
     field_type = json["field_type"]
 
-    if not field_type in ["text", "image"]:
+    if not field_type in ["text", "image", "multiplechoice", "checkboxes", "connect", "order"]:
         return make_response({"error" : "invalid field type"}, 400)
 
     task_field = TaskField(task_id=json["task_id"], field_type=field_type)
 
     db.session.add(task_field)
+    db.session.commit()
+
+    return make_response(task_field_serializer(task_field), 200)
+
+
+@api_blueprint.route('/task/field/edit', methods=["PATCH"])
+@authorized
+def edit_field():
+    json = request.json
+
+    if not json or not "field_id" in json:
+        return make_response({"error" : "invalid json"}, 400)
+    
+    task_field = TaskField.query.get(json["field_id"])
+
+    if task_field.field_type == "text" and not "content" in json:
+        return make_response({"error", "missing content"})
+
+    task_field.content = json["content"] if json["content"] else None
+
     db.session.commit()
 
     return make_response(task_field_serializer(task_field), 200)
@@ -429,9 +449,9 @@ def upload_file():
     return make_response(task_field_serializer(task_field), 200)
 
 
-@api_blueprint.route('/task/field/edit', methods=["PATCH"])
+@api_blueprint.route('/task/option/add', methods=["POST"])
 @authorized
-def edit_field():
+def add_option():
     json = request.json
 
     if not json or not "field_id" in json:
@@ -439,11 +459,33 @@ def edit_field():
     
     task_field = TaskField.query.get(json["field_id"])
 
-    if task_field.field_type == "text" and not "content" in json:
-        return make_response({"error", "missing content"})
+    if TaskOption.query.filter_by(task_field_id=json["field_id"], content=None).first():
+        return make_response({"error" : "already have an empty option"}, 400)
 
-    task_field.content = json["content"] if json["content"] else None
+    task_option = TaskOption(task_field_id=json["field_id"])
 
+    db.session.add(task_option)
     db.session.commit()
 
     return make_response(task_field_serializer(task_field), 200)
+
+
+@api_blueprint.route('/task/option/edit', methods=["PATCH"])
+@authorized
+def edit_option():
+    json = request.json
+
+    if not json or not "option_id" in json or not "content" in json:
+        return make_response({"error" : "invalid json"}, 400)
+    
+    task_option = TaskOption.query.get(json["option_id"])
+    content = json["content"]
+
+    if TaskOption.query.filter_by(task_field_id=task_option.task_field_id, content=content).first():
+        return make_response({"error" : "you already have this option"}, 400)
+
+    task_option.content = content
+
+    db.session.commit()
+
+    return make_response(task_field_serializer(TaskField.query.get(task_option.task_field_id)), 200)

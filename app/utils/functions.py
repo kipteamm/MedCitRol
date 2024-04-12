@@ -38,7 +38,13 @@ def get_key(user_id: int, world_id: Optional[int]=None, settlement_id: Optional[
         access_key.key = secrets.token_hex(nbytes=64)
         access_key.key_date = now
 
-        db.session.commit()
+    if settlement_id and not access_key.settlement_id:
+        access_key.settlement_id = settlement_id
+    
+    if character_id and not access_key.character_id:
+        access_key.character_id = character_id
+
+    db.session.commit()
 
     return access_key.key
 

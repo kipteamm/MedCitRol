@@ -23,4 +23,4 @@ class TaskOption(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     task_field_id = db.Column(db.Integer, db.ForeignKey('task_field.id'), nullable=False)
-    content = db.Column(db.Text, nullable=False)
+    content = db.Column(db.Text)

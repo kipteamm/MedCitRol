@@ -29,7 +29,7 @@ async function editField(fieldId, value) {
         return console.log(response, await response.json());
     }
 
-    return task.replaceChild(editableTaskFieldComponent(await response.json()), document.getElementById(`task-${fieldId}`));
+    return task.replaceChild(editableTaskFieldComponent(await response.json()), document.getElementById(`task-field-${fieldId}`));
 }
 
 function handleImage(event) {
@@ -73,4 +73,40 @@ async function uploadFile(file) {
     }
 
     return task.appendChild(editableTaskFieldComponent(await response.json()));
+}
+
+async function addOption(fieldId) {
+    const response = await fetch("/api/task/option/add", {
+        method: "POST",
+        body: JSON.stringify({field_id: fieldId}),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${getCookie('psk')}`,
+        },
+    })
+
+    if (!response.ok) {
+        return console.log(response, await response.json());
+    }
+
+    return task.replaceChild(editableTaskFieldComponent(await response.json()), document.getElementById(`task-field-${fieldId}`));
+}
+
+async function editOption(optionId, value) {
+    const response = await fetch("/api/task/option/edit", {
+        method: "PATCH",
+        body: JSON.stringify({option_id: optionId, content: value}),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${getCookie('psk')}`,
+        },
+    })
+
+    if (!response.ok) {
+        return console.log(response, await response.json());
+    }
+
+    const json = await response.json();
+
+    return task.replaceChild(editableTaskFieldComponent(json), document.getElementById(`task-field-${json.id}`));
 }

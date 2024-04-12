@@ -30,7 +30,7 @@ function taskComponent(task) {
 function taskFieldcomponent(taskField) {
     const wrapper = document.createElement("div");
 
-    wrapper.id = `task-${taskField.id}`;
+    wrapper.id = `task-field-${taskField.id}`;
     wrapper.classList.add("task-field");
 
     if (taskField.field_type === "text") {
@@ -39,8 +39,16 @@ function taskFieldcomponent(taskField) {
         `;
     } else if (taskField.field_type === "image") {
         wrapper.innerHTML = `
-            <img src="${taskField.content? taskField.content : "/static/images/tasks/notfound.webp"}"/>
+        <img src="${taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/tasks/notfound.webp"}"/>
         `;
+    } else if (taskField.field_type === "multiplechoice") {
+        taskField.options.forEach(option => {
+            wrapper.innerHTML += `
+                <div>
+                    ${option.content? option.content : ''}
+                </div>
+            `
+        })
     }
 
     return wrapper;
@@ -49,7 +57,7 @@ function taskFieldcomponent(taskField) {
 function editableTaskFieldComponent(taskField) {
     const wrapper = document.createElement("div");
 
-    wrapper.id = `task-${taskField.id}`;
+    wrapper.id = `task-field-${taskField.id}`;
     wrapper.classList.add("task-field");
 
     if (taskField.field_type === "text") {
@@ -60,6 +68,18 @@ function editableTaskFieldComponent(taskField) {
         wrapper.innerHTML = `
             <img src="${taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/tasks/notfound.webp"}"/>
         `;
+    } else if (taskField.field_type === "multiplechoice") {
+        taskField.options.forEach(option => {
+            wrapper.innerHTML += `
+                <div>
+                    <input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}"/>
+                </div>
+            `
+        })
+
+        wrapper.innerHTML += `
+            <button onclick="addOption(${taskField.id})">Add option</button>
+        `
     }
 
     return wrapper;
