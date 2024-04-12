@@ -73,7 +73,7 @@ def get_coordinates(center_x: int, center_y: int, radius: int) -> list[tuple[int
 
     for x in range(center_x - radius, center_x + radius + 1):
         for y in range(center_y - radius, center_y + radius + 1):
-            if (x - center_x) ** 2 + (y - center_y) ** 2 <= radius ** 2:
+            if abs(x) == radius or abs(y) == radius:
                 coordinates.append((x, y))
                 
     return coordinates

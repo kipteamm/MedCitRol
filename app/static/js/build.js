@@ -71,3 +71,7 @@ function cancelBuild() {
 
     buildings = [];
 }
+
+async function buyBuildable(type) {
+    
+}

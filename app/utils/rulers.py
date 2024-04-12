@@ -35,6 +35,11 @@ class Action(Enum):
     #UPGRADE_BOURSE_3 = {"characteristics": ["economy"], "price": 60, "previous" : "UPGRADE_BOURSE_2", "repeatable" : False}
     #WAR = {"characteristics": ["tyranny", "military"], "price": 100, "previous" : None, "repeatable" : True}
     #FAIR = {"characteristics": ["economy", "social"], "price": 25, "previous" : None, "repeatable" : True}
+    #JAIL_1 = {"characteristics": ["tyranny", "military"], "price": 5, "previous" : None, "repeatable" : False}
+    #JAIL_2 = {"characteristics": ["tyranny", "military"], "price": 25, "previous" : "JAIL_1", "repeatable" : False}
+    #JAIL_3 = {"characteristics": ["tyranny", "military"], "price": 60, "previous" : "JAIL_2", "repeatable" : False}
+    #JAIL_4 = {"characteristics": ["tyranny", "military"], "price": 150, "previous" : "JAIL_3", "repeatable" : False}
+    #WAREHOUSE = {"characteristics": ["economy", "social"], "price": 10, "previous" : None, "repeatable" : True}
 
     @property
     def characteristics(self):
@@ -159,9 +164,10 @@ class Ruler:
     def _collect_taxes(self) -> None:
         for character in Character.query.filter_by(settlement_id=self._ruler.settlement_id).all():
             if character.taxes > 0:
-                # jail character
+                if not "JAIL_1" in self._actions:
+                    continue
 
-                continue
+                # jail character
 
             character.taxes = random.randint(2, 3) if self._characteristics['tyranny'] > self._characteristics['social'] else 2
 
