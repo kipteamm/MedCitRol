@@ -1,5 +1,6 @@
 const marketPanel = document.getElementById("market-panel");
 const marketContent = marketPanel.querySelector('.content');
+const marketSell = document.getElementById("market-sell");
 
 let marketItems = [];
 let market = "settlement";
@@ -22,9 +23,15 @@ function switchMarket(marketType) {
 async function openMarket() {
     cancelBuild();
 
+    if (market === "settlement" || (market === "world" && tiles.some(tile => tile.tile_type === "market_stall" && tile.character_id === character.id))) {
+        marketSell.style.display = "block";
+    } else {
+        marketSell.style.display = "none";
+    }
+
     marketPanel.classList.add("active");
 
-    const response = await fetch(`/api/${market}/market`, {
+    const response = await fetch(market === "merchant"? "/api/merchant" : `/api/market/${market}`, {
         method: "GET",
         headers: {
             "Authorization" : getCookie("psk"),
@@ -69,9 +76,9 @@ async function sellItem() {
 
     if (!inventoryItem) return;
     if (inventoryItem.amount < amountInput.value) return sendAlert("error", `You only have ${inventoryItem.amount} ${inventoryItem.item_type}.`);
-    if (!Number.isInteger(priceInput.value)) return sendAlert("error", "Price must be a number.");
+    if (isNaN(priceInput.value)) return sendAlert("error", "Price must be a number.");
 
-    const response = await fetch(`/api/${market}/market/sell`, {
+    const response = await fetch(`/api/market/${market}/sell`, {
         method: "POST",
         body: JSON.stringify({item_type: inventoryItem.item_type, amount: amountInput.value, price: priceInput.value}),
         headers: {
@@ -98,6 +105,10 @@ async function sellItem() {
 }
 
 async function buyItem(id) {
+    if (!isNaN(id)) {
+        id = parseInt(id)
+    }
+
     const marketItem = marketItems.find(item => item.id === id);
 
     if (!marketItem) return;
@@ -113,7 +124,7 @@ async function buyItem(id) {
         document.getElementById(`amount-${id}`).innerText = `${marketItem.amount}x`;
     }
 
-    const response = await fetch(`/api/${market}/market/buy`, {
+    const response = await fetch(market === "merchant"? "/api/merchant/buy" : `/api/market/${market}/buy`, {
         method: "POST",
         body: JSON.stringify({item_id: marketItem.id}),
         headers: {

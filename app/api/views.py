@@ -7,7 +7,7 @@ from app.utils.properties import Properties
 from app.utils.inventory import Inventory
 from app.utils.functions import get_merchandise
 from app.teacher.models import Task
-from app.game.models import Settlement, Character, MarketItem, World, Merchant
+from app.game.models import Settlement, Character, MarketItem, World, Merchant, Tile
 
 from app.extensions import db, socketio
 
@@ -83,19 +83,31 @@ def set_profession():
     return make_response({"success" : True}, 204)
 
 
-@api_blueprint.route("/settlement/market", methods=["GET"])
+@api_blueprint.route("/market/<market_type>", methods=["GET"])
 @character_auhtorized
-def get_settlement_market():
+def get_settlement_market(market_type):
+    if market_type != "settlement" and market_type != "world":
+        return make_response({"error" : "Invalid market type."}, 400)
+    
     access_key = g.access_key
 
-    market_data = [market_item_serializer(market_item) for market_item in MarketItem.query.filter_by(settlement_id=access_key.settlement_id).all()]
+    if market_type == "settlement":
+        market_items = MarketItem.query.filter_by(settlement_id=access_key.settlement_id).all()
+
+    else:
+        market_items = MarketItem.query.filter_by(world_id=access_key.world_id).all()
+
+    market_data = [market_item_serializer(market_item) for market_item in market_items]
 
     return make_response(market_data, 200)
 
 
-@api_blueprint.route("/settlement/market/sell", methods=["POST"])
+@api_blueprint.route("/market/<market_type>/sell", methods=["POST"])
 @character_auhtorized
-def sell_item():
+def sell_item(market_type):
+    if market_type != "settlement" and market_type != "world":
+        return make_response({"error" : "Invalid market type."}, 400)
+
     json = request.json
 
     if not json or not "item_type" in json or not "amount" in json or not "price" in json:
@@ -103,6 +115,9 @@ def sell_item():
     
     access_key = g.access_key
     character = g.character
+
+    if market_type == "world" and not Tile.query.filter_by(settlement_id=character.settlement_id, character_id=character.id, tile_type="market_stall").first():
+        return make_response({"error", "You don't own a market stall."})
     
     inventory = Inventory(character.settlement_id, None, character.id)
 
@@ -130,10 +145,18 @@ def sell_item():
 
     db.session.commit()
 
-    market_item = MarketItem.query.filter_by(character_id=character.id, settlement_id=access_key.settlement_id, item_type=json["item_type"]).first()
+    if market_type == "settlement":
+        market_item = MarketItem.query.filter_by(character_id=character.id, settlement_id=access_key.settlement_id, item_type=json["item_type"]).first()
+
+    else:
+        market_item = MarketItem.query.filter_by(character_id=character.id, world_id=access_key.world_id, item_type=json["item_type"]).first()
 
     if not market_item:
-        market_item = MarketItem(character_id=character.id, settlement_id=access_key.settlement_id, item_type=json["item_type"])
+        if market_type == "settlement":
+            market_item = MarketItem(character_id=character.id, settlement_id=access_key.settlement_id, item_type=json["item_type"])
+        
+        else:
+            market_item = MarketItem(character_id=character.id, world_id=access_key.world_id, item_type=json["item_type"])
 
         db.session.add(market_item)
         db.session.commit()
@@ -146,9 +169,12 @@ def sell_item():
     return make_response(market_item_serializer(market_item), 200)  
 
 
-@api_blueprint.route("/settlement/market/buy", methods=["POST"])
+@api_blueprint.route("/market/<market_type>/buy", methods=["POST"])
 @character_auhtorized
-def buy_item():
+def buy_item(market_type):
+    if market_type != "settlement" and market_type != "world":
+        return make_response({"error" : "Invalid market type."}, 400)
+    
     json = request.json
 
     if not json or not "item_id" in json:
@@ -259,19 +285,9 @@ def pay_taxes():
     socketio.emit("update_character", properties_serializer(character), room=character.settlement_id) # type: ignore
 
     return make_response({"success" : True}, 204)
-    
-
-@api_blueprint.route("/world/market", methods=["GET"])
-@character_auhtorized
-def get_world_market():
-    access_key = g.access_key
-
-    market_data = [market_item_serializer(market_item) for market_item in MarketItem.query.filter_by(world_id=access_key.world_id).all()]
-
-    return make_response(market_data, 200)
 
 
-@api_blueprint.route("/merchant/market", methods=["GET"])
+@api_blueprint.route("/merchant", methods=["GET"])
 @character_auhtorized
 def get_merchant_market():
     access_key = g.access_key
@@ -286,7 +302,7 @@ def get_merchant_market():
     return make_response(market_data, 200)
 
 
-@api_blueprint.route("/merchant/market/buy", methods=["POST"])
+@api_blueprint.route("/merchant/buy", methods=["POST"])
 @character_auhtorized
 def merchant_buy_item():
     json = request.json

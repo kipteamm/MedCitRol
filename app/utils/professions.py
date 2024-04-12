@@ -61,6 +61,8 @@ class Profession:
 
             Inventory(self._character.settlement_id, None, self._character.id).add_item("rye", len(tiles) * random.randint(15, 20))
 
+            socketio.emit("alert", {"id" : self._character.id, "type" : "success", "message" : "You had a successfull harvest."})
+
             return
 
         farmer.date -= timedelta(days=14)
