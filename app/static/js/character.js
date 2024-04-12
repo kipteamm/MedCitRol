@@ -94,5 +94,5 @@ function closeEyes() {
 
     setTimeout(() => {
         tiredOverlay.classList.remove("active");
-    }, 1000);
+    }, 5000);
 }

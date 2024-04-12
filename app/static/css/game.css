@@ -37,12 +37,12 @@ body {
 }
 .sleep-overlay.active {
     pointer-events: all;
-    opacity: .99;
+    opacity: .97;
 }
 .sleep-overlay.tired-overlay {
     height: 0%;
 }
-.sleep-overlay.tirede-overlay.active {
+.sleep-overlay.tired-overlay.active {
     height: 100%;
 }
 

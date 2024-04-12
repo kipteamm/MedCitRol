@@ -42,7 +42,7 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
             db.session.add(tile)
             db.session.commit()
 
-            merchant = Merchant(settlement_id=settlement.id, merchant_type="grain", start_date=world.current_time, end_date=(world.current_time + timedelta(days=14)))
+            merchant = Merchant(settlement_id=settlement.id, merchant_type="grain", end_date=(world.current_time + timedelta(days=14)))
 
             db.session.add(merchant)
             db.session.commit()
@@ -64,7 +64,7 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
                     db.session.add(tile)
                     db.session.commit()
 
-                    merchant = Merchant(settlement_id=settlement.id, merchant_type="grain", start_date=world.current_time, end_date=(world.current_time + timedelta(days=14)))
+                    merchant = Merchant(settlement_id=settlement.id, merchant_type="grain", end_date=(world.current_time + timedelta(days=14)))
 
                     db.session.add(merchant)
                     db.session.commit()
