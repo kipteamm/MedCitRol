@@ -90,6 +90,12 @@ socket.on('close_eyes', function(data) {
     closeEyes()
 })
 
+socket.on('alert', function(data) {
+    if (data.id && character.id !== data.id) return;
+
+    sendAlert(data.type, data.message)
+})
+
 function send(event, data) {
     eventData = defaultData
     eventData.event_data = data

@@ -40,6 +40,8 @@ class Profession:
         tiles = Tile.query.filter_by(settlement_id=self._character.settlement_id, character_id=self._character.id, tile_type=farmer.stage).all()
 
         if not tiles:
+            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to place your farmland first (see build menu)."})
+
             return
 
         if farmer.stage == "farm_land":
@@ -92,6 +94,8 @@ class Profession:
         tile = Tile.query.filter_by(settlement_id=self._character.settlement_id, character_id=self._character.id, tile_type="windmill").first()
 
         if not tile:
+            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to build your mind first (see build menu)."})
+
             return
         
         inventory = Inventory(self._character.settlement_id, None, self._character.id)
@@ -110,6 +114,8 @@ class Profession:
         tile = Tile.query.filter_by(settlement_id=self._character.settlement_id, character_id=self._character.id, tile_type="bakery").first()
 
         if not tile:
+            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to build your bakery first (see build menu)."})
+
             return
         
         inventory = Inventory(self._character.settlement_id, None, self._character.id)

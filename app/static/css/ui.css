@@ -97,6 +97,7 @@ li#taxes.active {
     height: 100vh;
     background-color: white;
     transition: .3s;
+    color: #000;
 }
 .build-panel.active {
     right: 0px;
