@@ -8,7 +8,7 @@
         <a href="/teacher/{{ world.id }}/tasks">Tasks</a>
     </div>
 
-    {{ task }}
+    <div id="task"></div>
 
     <div>
         <h2>Add</h2>
@@ -24,4 +24,16 @@
             <button>Connect</button>
         </div>
     </div>
+
+    <script>
+        const task = document.getElementById("task");
+
+        {{ task.fields|tojson }}.forEach(field => {
+            const taskField = editableTaskFieldComponent(field);
+
+            console.log(taskField);
+            
+            task.appendChild(taskField);    
+        });
+    </script>
 {% endblock %}

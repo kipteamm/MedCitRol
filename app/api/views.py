@@ -1,12 +1,12 @@
 from flask import Blueprint, request, make_response, g
 
-from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, inventory_item_serializer
+from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, task_field_serializer
 from app.utils.professions import Profession
-from app.utils.decorators import character_auhtorized
+from app.utils.decorators import character_auhtorized, authorized
 from app.utils.properties import Properties
 from app.utils.inventory import Inventory
 from app.utils.functions import get_merchandise
-from app.teacher.models import Task
+from app.teacher.models import Task, TaskField
 from app.game.models import Settlement, Character, MarketItem, World, Merchant, Tile
 
 from app.extensions import db, socketio
@@ -367,3 +367,26 @@ def purchase_buildable():
     socketio.emit("update_character", properties_serializer(character), room=character.settlement_id) # type: ignore
 
     return make_response({"success" : True}, 204)
+
+
+@api_blueprint.route('/task/field/add', methods=["POST"])
+@authorized
+def add_field():
+    json = request.json
+
+    if not json or not "field_type" in json or not "task_id" in json:
+        return make_response({"error" : "invalid json"}, 400)
+    
+    task = Task.query.get(json["task_id"])
+
+    field_type = json["field_type"]
+
+    if not field_type in ["text", "image"]:
+        return make_response({"error" : "invalid field type"}, 400)
+
+    task_field = TaskField(task_id=json["task_id"], field_type=field_type)
+
+    db.session.add(task_field)
+    db.session.commit()
+
+    return make_response(task_field_serializer(task_field), 200)

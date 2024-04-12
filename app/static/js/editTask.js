@@ -1,7 +1,7 @@
 async function addField(fieldType) {
     const response = await fetch("/api/task/field/add", {
         method: "POST",
-        body: {field_type: fieldType},
+        body: JSON.stringify({task_id: parseInt(getCookie('task')), field_type: fieldType}),
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `${getCookie('psk')}`,
@@ -9,10 +9,10 @@ async function addField(fieldType) {
     })
 
     if (!response.ok) {
-        return console.log(response);
+        return console.log(response, await response.json());
     }
 
-    return taskFieldComponent(await response.json());
+    return task.appendChild(editableTaskFieldComponent(await response.json()));
 }
 
 function handleFiles(files) {

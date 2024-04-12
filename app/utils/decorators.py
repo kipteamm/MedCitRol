@@ -5,7 +5,7 @@ from app.game.models import AccessKey, Character
 
 def character_auhtorized(f):
     @wraps(f)
-    def _decoratod_function(*args, **kwargs):
+    def _decorated_function(*args, **kwargs):
         authorization = request.headers.get('Authorization')
 
         access_key = None
@@ -26,4 +26,24 @@ def character_auhtorized(f):
         
         return f(*args, **kwargs)
     
-    return _decoratod_function
+    return _decorated_function
+
+
+def authorized(f):
+    @wraps(f)
+    def _decorated_function(*args, **kwargs):
+        authorization = request.headers.get('Authorization')
+
+        access_key = None
+
+        if authorization:
+            access_key = AccessKey.query.filter_by(key=authorization).first()
+
+        if not access_key:
+            return make_response({"error" : "Invalid authentication."}, 401)
+        
+        g.access_key = access_key
+
+        return f(*args, **kwargs)
+    
+    return _decorated_function

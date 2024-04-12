@@ -131,7 +131,7 @@ def task_serializer(task: Task) -> dict:
 def task_field_serializer(task_field: TaskField) -> dict:
     options = []
 
-    if task_field.field_type == "multiplechoice" or task_field.field_type == "checkboxes" or task_field.field_type == "connect" or task_field.type == "order":
+    if task_field.field_type == "multiplechoice" or task_field.field_type == "checkboxes" or task_field.field_type == "connect" or task_field.field_type == "order":
         options = [task_option_serializer(task_option) for task_option in TaskOption.query.filter_by(task_field_id=task_field.id)]
 
     return { 

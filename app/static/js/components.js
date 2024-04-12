@@ -21,23 +21,38 @@ function taskComponent(task) {
     console.log(task)
 
     wrapper.classList.add("task");
-    wrapper.innerHTML = `
-        task
-        ${task}
-    `;
+    
+    task.fields.forEach(field => {
+        wrapper.appendChild(taskFieldcomponent(field));
+    })
 
     return wrapper;
 }
 
-function taskFieldComponent(taskField) {
+function taskFieldcomponent(taskField) {
     const wrapper = document.createElement("div");
 
-    console.log(taskField)
+    wrapper.classList.add("task-field");
+
+    if (taskField.field_type === "text") {
+        wrapper.innerHTML = `
+            <p>${taskField.content? taskField.content : ""}</p>
+        `;
+    }
+
+    return wrapper;
+}
+
+function editableTaskFieldComponent(taskField) {
+    const wrapper = document.createElement("div");
 
     wrapper.classList.add("task-field");
-    wrapper.innerHTML = `
-        ${taskField}
-    `;
+
+    if (taskField.field_type === "text") {
+        wrapper.innerHTML = `
+            <textarea>${taskField.content? taskField.content : ""}</textarea>
+        `;
+    }
 
     return wrapper;
 }

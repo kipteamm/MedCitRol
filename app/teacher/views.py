@@ -1,9 +1,10 @@
 from flask_login import current_user, login_required
 
-from flask import Blueprint, redirect, url_for, render_template
+from flask import Blueprint, redirect, url_for, render_template, make_response
 
+from app.utils.serializers import task_serializer
+from app.utils.functions import get_key
 from app.game.models import World
-
 from app.extensions import db
 
 from .models import Task
@@ -64,4 +65,9 @@ def edit_task(world_id, task_id):
     
     task = Task.query.get(task_id)
 
-    return render_template('teacher/edit_task.html', world=world, task=task)
+    response = make_response(render_template('teacher/edit_task.html', world=world, task=task_serializer(task)))
+
+    response.set_cookie('psk', get_key(current_user.id, world.id))
+    response.set_cookie('task', str(task.id))
+
+    return response
