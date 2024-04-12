@@ -121,8 +121,8 @@ def create_app():
                     elif character.fatigue > 0:
                         character.fatigue -= 1
 
-                        if character.fatigue < 7 and random.randint(1, 4) == 2:
-                            socketio.emit("close_eyes", {"id" : character.id}, room=character.settlement_id) # type: ignore
+                    if character.fatigue < 7 and random.randint(1, 4) == 2:
+                        socketio.emit("close_eyes", {"id" : character.id}, room=character.settlement_id) # type: ignore
 
                     if not character.settlement_id in settlements:
                         settlement_ruler = SettlementRuler.query.filter_by(settlement_id=character.settlement_id).first()

@@ -228,7 +228,7 @@ def sleep():
         character.end_sleep = world.current_time + timedelta(hours=properties.get_hours_of_sleep(world.current_time.hour))
 
     else:
-        return make_response({"error" : "You just got up, you are not really sleepy."}, 400)
+        return make_response({"error" : "You just got up, you are not feeling sleepy."}, 400)
     
     db.session.commit()
 

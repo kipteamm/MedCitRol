@@ -39,15 +39,39 @@ body {
     pointer-events: all;
     opacity: .97;
 }
-.sleep-overlay.tired-overlay {
-    height: 0%;
-}
-.sleep-overlay.tired-overlay.active {
-    height: 100%;
-}
 
 .sleep-overlay h2 {
     margin-bottom: 25px;
+}
+
+.tired-overlay {
+    pointer-events: none;
+}
+.tired-overlay.active {
+    pointer-events: all;
+}
+
+.tired-overlay div {
+    z-index: 100000;
+    position: absolute;
+    height: 0;
+    background-color: #000;
+    transition: .3s;
+    width: 100vw;
+}
+
+.tired-overlay .bottom {
+    bottom: 0;
+}
+.tired-overlay.active .bottom {
+    height: 50vh;
+}
+
+.tired-overlay .top {
+    top: 0;
+}
+.tired-overlay.active .top {
+    height: 50vh;
 }
 
 .map-container {

@@ -94,5 +94,9 @@ function closeEyes() {
 
     setTimeout(() => {
         tiredOverlay.classList.remove("active");
-    }, 5000);
+
+        setTimeout(() => {
+            sendAlert("success", "<i>yaaaaawn</i>, you feel tired.")
+        }, 500);
+    }, 1500);
 }
