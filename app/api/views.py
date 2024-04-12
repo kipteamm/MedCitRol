@@ -390,3 +390,23 @@ def add_field():
     db.session.commit()
 
     return make_response(task_field_serializer(task_field), 200)
+
+
+@api_blueprint.route('/task/field/edit', methods=["PATCH"])
+@authorized
+def edit_field():
+    json = request.json
+    
+    if not json or not "field_id" in json:
+        return make_response({"error" : "invalid json"}, 400)
+    
+    task_field = TaskField.query.get(json["field_id"])
+
+    if task_field.field_type == "text" and not "content" in json:
+        return make_response({"error", "missing content"})
+
+    task_field.content = json["content"] if json["content"] else None
+
+    db.session.commit()
+
+    return make_response(task_field_serializer(task_field), 200)

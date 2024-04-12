@@ -32,6 +32,7 @@ function taskComponent(task) {
 function taskFieldcomponent(taskField) {
     const wrapper = document.createElement("div");
 
+    wrapper.id = `task-${taskField.id}`;
     wrapper.classList.add("task-field");
 
     if (taskField.field_type === "text") {
@@ -46,11 +47,12 @@ function taskFieldcomponent(taskField) {
 function editableTaskFieldComponent(taskField) {
     const wrapper = document.createElement("div");
 
+    wrapper.id = `task-${taskField.id}`;
     wrapper.classList.add("task-field");
 
     if (taskField.field_type === "text") {
         wrapper.innerHTML = `
-            <textarea>${taskField.content? taskField.content : ""}</textarea>
+            <textarea onchange="editField(${taskField.id}, this.value)">${taskField.content? taskField.content : ""}</textarea>
         `;
     }
 

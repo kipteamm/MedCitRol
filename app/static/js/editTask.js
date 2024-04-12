@@ -15,6 +15,24 @@ async function addField(fieldType) {
     return task.appendChild(editableTaskFieldComponent(await response.json()));
 }
 
+async function editField(fieldId, value) {
+    const response = await fetch("/api/task/field/edit", {
+        method: "PATCH",
+        body: JSON.stringify({field_id: fieldId, content: value}),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${getCookie('psk')}`,
+        },
+    })
+
+    if (!response.ok) {
+        return console.log(response, await response.json());
+    }
+
+    return task.replaceChild(editableTaskFieldComponent(await response.json()), document.getElementById(`task-${fieldId}`));
+}
+
+
 function handleFiles(files) {
     uploadLabel.style.display = 'none';
     spinner.style.display = 'block';
