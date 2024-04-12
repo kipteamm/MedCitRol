@@ -29,6 +29,19 @@ function taskComponent(task) {
     return wrapper;
 }
 
+function taskFieldComponent(taskField) {
+    const wrapper = document.createElement("div");
+
+    console.log(taskField)
+
+    wrapper.classList.add("task-field");
+    wrapper.innerHTML = `
+        ${taskField}
+    `;
+
+    return wrapper;
+}
+
 function inventoryItem(item, building) {
     const wrapper = document.createElement("div");
 

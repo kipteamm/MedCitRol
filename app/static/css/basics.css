@@ -10,12 +10,13 @@ body {
     margin: 0px;
     font-family: var(--font);
     color: #000;
-    
 }
 
 button {
     font-family: var(--font);
     border: none;
+    padding: 6.25px 12.5px;
+    font-size: 14px;
 }
 
 button:hover {

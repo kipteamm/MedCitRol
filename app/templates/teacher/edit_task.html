@@ -1,7 +1,27 @@
 {% extends "/teacher/teacher_base.html" %}
 
 {% block content %}
-    <a href="/teacher/{{ world.id }}/tasks">Tasks</a>
+    <script src="{{ url_for('static', filename='js/components.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/editTask.js') }}" defer></script>
+
+    <div>
+        <a href="/teacher/{{ world.id }}/tasks">Tasks</a>
+    </div>
 
     {{ task }}
+
+    <div>
+        <h2>Add</h2>
+
+        <div>
+            <button onclick="addField('text')">Text</button>
+            <input type="file" accept="image/*" name="images" id="images" onchange="handleImage(this.files)">
+        </div>
+        <div>
+            <button>Multiplechoice (1 answer)</button>
+            <button>Multiplechoice (multiple answers)</button>
+            <button>Order</button>
+            <button>Connect</button>
+        </div>
+    </div>
 {% endblock %}
