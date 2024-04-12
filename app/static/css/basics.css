@@ -6,6 +6,11 @@
     box-sizing: border-box;
 }
 
+/* width */
+*::-webkit-scrollbar {
+    width: 0px;
+}
+
 body {
     margin: 0px;
     font-family: var(--font);
@@ -21,4 +26,13 @@ button {
 
 button:hover {
     cursor: pointer;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    padding: 0px 1px;
+    width: 6px;
 }

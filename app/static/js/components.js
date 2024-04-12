@@ -27,11 +27,14 @@ function taskComponent(task) {
     return wrapper;
 }
 
+let taskIndex = 1;
+
 function taskFieldcomponent(taskField) {
     const wrapper = document.createElement("div");
 
     wrapper.id = `task-field-${taskField.id}`;
     wrapper.classList.add("task-field");
+    wrapper.innerHTML = `<span>Vraag ${taskIndex}</span>`
 
     if (taskField.field_type === "text") {
         wrapper.innerHTML = `
@@ -39,9 +42,11 @@ function taskFieldcomponent(taskField) {
         `;
     } else if (taskField.field_type === "image") {
         wrapper.innerHTML = `
-        <img src="${taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/tasks/notfound.webp"}"/>
+            <img src="${taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/assets/notfound.webp"}"/>
         `;
-    } else if (taskField.field_type === "multiplechoice") {
+    } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes") {
+        taskIndex++
+
         taskField.options.forEach(option => {
             wrapper.innerHTML += `
                 <div>
@@ -66,9 +71,9 @@ function editableTaskFieldComponent(taskField) {
         `;
     } else if (taskField.field_type === "image") {
         wrapper.innerHTML = `
-            <img src="${taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/tasks/notfound.webp"}"/>
+            <img src="${taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/assets/notfound.webp"}"/>
         `;
-    } else if (taskField.field_type === "multiplechoice") {
+    } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes") {
         taskField.options.forEach(option => {
             wrapper.innerHTML += `
                 <div>

@@ -1,3 +1,34 @@
+.task {
+    display: flex;
+    flex-direction: column;
+}
+
+.task-field {
+    padding: 25px;
+    font-size: 16px;
+}
+
+.task-field span {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.task-field:not(:last-child) {
+    border-bottom: 2px solid #000;
+}
+
+.task-field p {
+    font-size: 18px;
+    font-style: italic;
+    margin-top: 0px;
+}
+
+.task-field p:last-child {
+    margin-bottom: 0px;
+}
+
 .task-field img {
     width: 100%;
+    border-radius: 12.5px;
 }

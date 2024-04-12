@@ -74,13 +74,13 @@
         <canvas id="map"></canvas>
     </div>
 
-    <div class="ui work-panel" id="work-panel">
+    <div class="work-panel" id="work-panel">
         <button class="close" onclick="stopWorking()">Close</button>
-
+        
         <div class="work-content" id="work-content"></div>
     </div>
 
-    <div class="ui build-panel" id="build-panel">
+    <div class="build-panel" id="build-panel">
         <button onclick="cancelBuild()">Cancel</button>
         <h2>Your buildables</h2>
         <div class="content"></div>
@@ -89,11 +89,11 @@
 
         <h2>Purchase</h2>
         <div>
-            Marketstall <b>20 penningen</b> <button onclick="buyBuildable('market_stall', 20)">Buy</button>
+            Market stall <b>20 penningen</b> <button onclick="buyBuildable('market_stall', 20)">Buy</button>
         </div>
     </div>
 
-    <div class="ui market-panel" id="market-panel">
+    <div class="market-panel" id="market-panel">
         <button class="market-btn" onclick="switchMarket('settlement')" id="settlement-market-btn" disabled>Local market</button>
         <button class="market-btn" onclick="switchMarket('merchant')" id="merchant-market-btn" style="display: none;">Merchant</button>
         <button class="market-btn" onclick="switchMarket('world')" id="world-market-btn">Global market</button>

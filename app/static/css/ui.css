@@ -46,6 +46,7 @@ li#taxes.active {
 /* PANELS */
 .work-panel,
 .market-panel {
+    position: fixed;
     bottom: -100%;
     width: 100vw;
     height: 100vh;
@@ -63,7 +64,7 @@ li#taxes.active {
 .work-panel button.close {
     position: absolute;
     top: 25px;
-    right: 25px;
+    left: 25px;
 }
 
 .work-content.profession-selector {
@@ -91,7 +92,23 @@ li#taxes.active {
     opacity: 0.7;
 }
 
+.work-panel h2 {
+    text-align: center;
+}
+
+.work-content {
+    height: 100%;
+    max-width: 1200px;
+    margin: 0px auto;
+    overflow-y: scroll;
+}
+
+.work-content button {
+    margin-bottom: 50px;
+}
+
 .build-panel {
+    position: fixed;
     right: -100%;
     width: 400px;
     height: 100vh;
