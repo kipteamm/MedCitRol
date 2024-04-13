@@ -302,6 +302,7 @@ def get_merchant_market():
 
     market_data = merchant_serializer(merchant)
 
+
     return make_response(market_data, 200)
 
 

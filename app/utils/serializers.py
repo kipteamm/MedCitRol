@@ -108,7 +108,7 @@ def merchant_serializer(merchant: Merchant) -> dict:
     }
 
     if merchant.merchant_type == "grain":
-        for item, price in get_merchandise(merchant).items():
+        for item, price in get_merchandise(merchant.merchant_type).items():
             data["items"].append({
                 "id" : item,
                 "item_type" : item,

@@ -81,6 +81,8 @@ async function updateProfession(profession) {
     }
     
     activeTask = null;
+    
+    workContent.classList.remove("profession-selector");
 
     return work();
 }
