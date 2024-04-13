@@ -69,12 +69,3 @@
 .task-field .option:not(:last-child) {
     margin-bottom: 12.5px;
 }
-
-.task-field .option .counter {
-    color: var(--secondary-font-clr);
-    transition: .3s;
-}
-
-.task-field .option:hover .counter {
-    color: var(--primary-font-clr);
-}

@@ -53,7 +53,7 @@ function taskFieldcomponent(taskField) {
 
         wrapper.classList.add(taskField.field_type)
 
-        taskField.options.forEach(option => {
+        shuffle(taskField.options).forEach(option => {
             wrapper.innerHTML += `
                 <div class="choice" onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}">
                     <div class="indicator"></div>
@@ -66,9 +66,9 @@ function taskFieldcomponent(taskField) {
 
         let optionCounter = 1;
 
-        taskField.options.forEach(option => {
+        shuffle(taskField.options).forEach(option => {
             wrapper.innerHTML += `
-                <div class="option">
+            <div class="option" id="task-option-${option.id}" draggable="true" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" task-id="${taskField.id}">
                     <div class="counter">${optionCounter++}</div>
                     <div>${option.content? option.content : ''}</div>
                 </div>
@@ -119,7 +119,7 @@ function editableTaskFieldComponent(taskField) {
 
         taskField.options.forEach(option => {
             wrapper.innerHTML += `
-                <div class="option">
+                <div class="option" id="task-option-${option.id}" draggable="true" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" task-id="${taskField.id}">
                     <div class="counter">${optionCounter++}</div>
                     <input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}"/>
                 </div>
