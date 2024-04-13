@@ -137,7 +137,7 @@ class Ruler:
         tiles = []
 
         for coordinate in coordinates:
-            if Tile.query.filter_by(pos_x=coordinate[0], pos_y=coordinate[1]).first():
+            if Tile.query.filter_by(settlement_id=self._ruler.settlement_id, pos_x=coordinate[0], pos_y=coordinate[1]).first():
                 continue
 
             tile = Tile(pos_x=coordinate[0], pos_y=coordinate[1], settlement_id=self._ruler.settlement_id, tile_type="claimed")
