@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, send_from_directory, req
 
 from app.utils.functions import get_access_key
 from app.teacher.models import Task, TaskField
-from app.game.models import World, Settlement, SettlementRuler, Character, AccessKey, Tile, InventoryItem, Farmer, MarketItem
+from app.game.models import World, Settlement, SettlementRuler, Character, AccessKey, Tile, InventoryItem, Farmer, MarketItem, Merchant
 from app.extensions import db
 
 import os
@@ -50,6 +50,9 @@ def reset():
 
     for item in MarketItem.query.all():
         db.session.delete(item)
+
+    for merchant in Merchant.query.all():
+        db.session.delete(merchant)
 
     db.session.commit()
 

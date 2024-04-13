@@ -21,11 +21,11 @@ class Action(Enum):
     CLAIM_LAND = {"characteristics": ["tyranny", "military"], "price": 0, "previous" : None, "repeatable" : False}
     SAVE_TAXES = {"characteristics": ["social", "economy"], "price": 0, "previous" : None, "repeatable" : True}
     COLLECT_TAXES = {"characteristics": ["tyranny", "military", "religion", "economy"], "price": 0, "previous" : None, "repeatable" : True}
-    #UPGRADE_FORT_1 = {"characteristics": ["tyranny", "military"], "price": 10, "previous" : "CLAIM_LAND", "repeatable" : False}
-    #UPGRADE_FORT_2 = {"characteristics": ["tyranny", "military"], "price": 30, "previous" : "UPGRADE_FORT_1", "repeatable" : False}
-    #UPGRADE_FORT_3 = {"characteristics": ["tyranny", "military"], "price": 60, "previous" : "UPGRADE_FORT_2", "repeatable" : False}
-    #UPGRADE_FORT_4 = {"characteristics": ["tyranny", "military"], "price": 90, "previous" : "UPGRADE_FORT_3", "repeatable" : False}
-    #UPGRADE_FORT_5 = {"characteristics": ["tyranny", "military"], "price": 120, "previous" : "UPGRADE_FORT_4", "repeatable" : False}
+    UPGRADE_FORT_1 = {"characteristics": ["tyranny", "military"], "price": 10, "previous" : "CLAIM_LAND", "repeatable" : False}
+    UPGRADE_FORT_2 = {"characteristics": ["tyranny", "military"], "price": 30, "previous" : "UPGRADE_FORT_1", "repeatable" : False}
+    UPGRADE_FORT_3 = {"characteristics": ["tyranny", "military"], "price": 60, "previous" : "UPGRADE_FORT_2", "repeatable" : False}
+    UPGRADE_FORT_4 = {"characteristics": ["tyranny", "military"], "price": 90, "previous" : "UPGRADE_FORT_3", "repeatable" : False}
+    UPGRADE_FORT_5 = {"characteristics": ["tyranny", "military"], "price": 120, "previous" : "UPGRADE_FORT_4", "repeatable" : False}
     #UPGRADE_CHURCH_1 = {"characteristics": ["religion", "social"], "price": 10, "previous" : None, "repeatable" : False}
     #UPGRADE_CHURCH_2 = {"characteristics": ["religion", "social"], "price": 30, "previous" : "UPGRADE_CHURCH_1", "repeatable" : False}
     #TRADEROUTE = {"characteristics": ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
@@ -176,6 +176,23 @@ class Ruler:
             socketio.emit('update_character', properties_serializer(character), room=self._ruler.settlement_id) # type: ignore
 
         return
+    
+    def _upgrade_fort(self, level: str) -> None:
+        random_value = random.randint(0, 1)
+
+        tile_changes = {
+            "UPGRADE_FORT_1": [(37, 37, "small_fort")],
+            "UPGRADE_FORT_2": [(37, 37, f"fort_top_left_{random_value}"), (38, 37, f"fort_top_right_{random_value}"), (37, 36, f"fort_bottom_left_{random_value}"), (38, 36, f"fort_bottom_right_{random_value}")],
+            "UPGRADE_FORT_3": [(36, 38, f"tower_right_{random_value}"), (39, 38, f"tower_left_{random_value}"), (36, 35, f"tower_right_{random_value}"), (39, 35, f"tower_left_{random_value}")],
+            "UPGRADE_FORT_4": [(36, 37, "wall_vertical"), (36, 36, "wall_vertical"), (37, 38, "wall_horizontal"), (38, 38, "wall_horizontal"), (39, 37, "wall_vertical"), (39, 36, "wall_vertical"), (37, 35, "wall_horizontal"), (36, 35, "wall_horizontal")]
+        }
+        
+        changes = tile_changes.get(level)
+        if changes:
+            for pos_x, pos_y, tile_type in changes:
+                Tile.query.filter_by(settlement_id=self._ruler.settlement_id, pos_x=pos_x, pos_y=pos_y).first().tile_type = tile_type
+
+        db.session.commit()
 
     def work(self, current_time) -> None:
         print(f"{self._ruler.name} {self._ruler.surname} started working")
@@ -220,5 +237,8 @@ class Ruler:
         
         if action == Action.COLLECT_TAXES:
             return self._collect_taxes()
+        
+        if "UPGRADE_FORT " in action.name:
+            return self._upgrade_fort(action.name)
         
         # ...
