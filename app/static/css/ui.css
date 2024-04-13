@@ -50,10 +50,10 @@ li#taxes.active {
     bottom: -100%;
     width: 100vw;
     height: 100vh;
-    background-color: white;
+    background-color: var(--primary-bg);
     transition: .3s;
     z-index: 100;
-    color: #000;
+    color: var(--primary-font-clr);
 }
 
 .work-panel.active,
@@ -112,9 +112,9 @@ li#taxes.active {
     right: -100%;
     width: 400px;
     height: 100vh;
-    background-color: white;
+    background-color: var(--primary-bg);
     transition: .3s;
-    color: #000;
+    color: var(--primary-font-clr);
 }
 .build-panel.active {
     right: 0px;
@@ -125,5 +125,5 @@ li#taxes.active {
 }
 
 .inventory-item.active {
-    background-color: rgb(217, 227, 236);
+    background-color: var(--secondary-bg);
 }

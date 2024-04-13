@@ -47,10 +47,13 @@ function taskFieldcomponent(taskField) {
     } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes") {
         taskIndex++
 
+        wrapper.classList.add(taskField.field_type)
+
         taskField.options.forEach(option => {
             wrapper.innerHTML += `
-                <div>
-                    ${option.content? option.content : ''}
+                <div class="option" onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}">
+                    <div class="indicator"></div>
+                    <div class="content">${option.content? option.content : ''}</div>
                 </div>
             `
         })
@@ -74,10 +77,13 @@ function editableTaskFieldComponent(taskField) {
             <img src="${taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/assets/notfound.webp"}"/>
         `;
     } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes") {
+        wrapper.classList.add(taskField.field_type)
+
         taskField.options.forEach(option => {
             wrapper.innerHTML += `
-                <div>
-                    <input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}"/>
+                <div class="option">
+                    <div class="indicator"></div>
+                    <div class="content"><input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}"/></div>
                 </div>
             `
         })

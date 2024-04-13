@@ -180,7 +180,7 @@ class Ruler:
     def work(self, current_time) -> None:
         print(f"{self._ruler.name} {self._ruler.surname} started working")
 
-        if self._ruler.last_action and (self._ruler.last_action + timedelta(days=2)) > current_time:
+        if self._ruler.last_action and (self._ruler.last_action + timedelta(days=1)) > current_time:
             print("waiting")
 
             return None

@@ -15,7 +15,7 @@
 }
 
 .task-field:not(:last-child) {
-    border-bottom: 2px solid #000;
+    border-bottom: 2px solid var(--secondary-bg);
 }
 
 .task-field p {
@@ -31,4 +31,30 @@
 .task-field img {
     width: 100%;
     border-radius: 12.5px;
+}
+
+.task-field .option {
+    padding: 12.5px 0px;
+    display: flex;
+    align-items: center;
+    gap: 18.75px;
+}
+.task-field .option:hover {
+    cursor: pointer;
+}
+
+.task-field .option .indicator {
+    width: 25px;
+    height: 25px;
+    border: 2px solid var(--secondary-bg);
+    border-radius: 6.25px;
+}
+
+.task-field.multiplechoice .option .indicator {
+    border-radius: 100%;
+}
+
+.task-field.checkboxes .option.active .indicator,
+.task-field.multiplechoice .option.active .indicator {
+    background-color: var(--primary-clr);
 }
