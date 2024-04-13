@@ -459,6 +459,9 @@ def add_option():
     
     task_field = TaskField.query.get(json["field_id"])
 
+    if task_field.field_type not in ["multiplechoice", "checkboxes", "connect", "order"]:
+        return make_response({"error", "you cannot add an option to this field"}, 400)
+
     if TaskOption.query.filter_by(task_field_id=json["field_id"], content=None).first():
         return make_response({"error" : "already have an empty option"}, 400)
 

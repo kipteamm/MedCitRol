@@ -55,9 +55,22 @@ function taskFieldcomponent(taskField) {
 
         taskField.options.forEach(option => {
             wrapper.innerHTML += `
-                <div class="option" onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}">
+                <div class="choice" onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}">
                     <div class="indicator"></div>
                     <div class="content">${option.content? option.content : ''}</div>
+                </div>
+            `
+        })
+    } else if (taskField.field_type === "connect" || taskField.field_type === "order") {
+        wrapper.classList.add(taskField.field_type)
+
+        let optionCounter = 1;
+
+        taskField.options.forEach(option => {
+            wrapper.innerHTML += `
+                <div class="option">
+                    <div class="counter">${optionCounter++}</div>
+                    <div>${option.content? option.content : ''}</div>
                 </div>
             `
         })
@@ -89,9 +102,26 @@ function editableTaskFieldComponent(taskField) {
 
         taskField.options.forEach(option => {
             wrapper.innerHTML += `
-                <div class="option">
+                <div class="choice">
                     <div class="indicator"></div>
                     <div class="content"><input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}"/></div>
+                </div>
+            `
+        })
+
+        wrapper.innerHTML += `
+            <button onclick="addOption(${taskField.id})">Add option</button>
+        `
+    } else if (taskField.field_type === "connect" || taskField.field_type === "order") {
+        wrapper.classList.add(taskField.field_type)
+
+        let optionCounter = 1;
+
+        taskField.options.forEach(option => {
+            wrapper.innerHTML += `
+                <div class="option">
+                    <div class="counter">${optionCounter++}</div>
+                    <input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}"/>
                 </div>
             `
         })
