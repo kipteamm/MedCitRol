@@ -43,6 +43,10 @@ async function work() {
 
 function stopWorking() {
     workPanel.classList.remove("active");
+
+    workContent.innerHTML = '';
+
+    activeTask = null;
 }
 
 // professions

@@ -7,7 +7,9 @@ from app.utils.functions import get_key
 from app.game.models import World
 from app.extensions import db
 
-from .models import Task
+from .models import Task, TaskField, TaskOption
+
+import os
 
 
 teacher_blueprint = Blueprint('teacher', __name__, url_prefix="/teacher")
@@ -71,3 +73,33 @@ def edit_task(world_id, task_id):
     response.set_cookie('task', str(task.id))
 
     return response
+
+
+@teacher_blueprint.route('/<world_id>/task/<task_id>/delete')
+@login_required
+def delete_task(world_id, task_id):
+    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
+
+    if not world:
+        return redirect(url_for('game.home'))
+    
+    world.question_index -= 1
+    
+    task = Task.query.get(task_id)
+
+    for field in TaskField.query.filter_by(task_id=task.id).all():
+        for option in TaskOption.query.filter_by(task_field_id=field.id).all():
+            db.session.delete(option)
+
+        if field.field_type == "image":
+            path = os.path.join(os.getcwd(), 'media', 'tasks', field.content)
+
+            if os.path.exists(path):
+                os.remove(path)
+
+        db.session.delete(field)
+
+    db.session.delete(task)
+    db.session.commit()
+
+    return redirect(f"/teacher/{world_id}/tasks")

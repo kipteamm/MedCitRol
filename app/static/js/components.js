@@ -34,7 +34,7 @@ function taskFieldcomponent(taskField) {
 
     wrapper.id = `task-field-${taskField.id}`;
     wrapper.classList.add("task-field");
-    wrapper.innerHTML = `<span>Vraag ${taskIndex}</span>`
+    wrapper.innerHTML = `<span>(vraag ${taskIndex})</span>`
 
     if (taskField.field_type === "header") {
         wrapper.innerHTML = `
@@ -42,7 +42,7 @@ function taskFieldcomponent(taskField) {
         `;
     } else if (taskField.field_type === "text") {
         wrapper.innerHTML = `
-            <p>${taskField.content? taskField.content : ""}</p>
+            <p>${taskField.content? taskField.content.replace(/\n+/g, '</p><p>') : ""}</p>
         `;
     } else if (taskField.field_type === "image") {
         wrapper.innerHTML = `
@@ -52,6 +52,7 @@ function taskFieldcomponent(taskField) {
         taskIndex++
 
         wrapper.classList.add(taskField.field_type)
+        wrapper.classList.add("question")
 
         shuffle(taskField.options).forEach(option => {
             wrapper.innerHTML += `
@@ -63,12 +64,13 @@ function taskFieldcomponent(taskField) {
         })
     } else if (taskField.field_type === "connect" || taskField.field_type === "order") {
         wrapper.classList.add(taskField.field_type)
+        wrapper.classList.add("question")
 
         let optionCounter = 1;
 
         shuffle(taskField.options).forEach(option => {
             wrapper.innerHTML += `
-            <div class="option" id="task-option-${option.id}" draggable="true" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" task-id="${taskField.id}">
+                <div class="option" id="task-option-${option.id}" draggable="true" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" task-id="${taskField.id}">
                     <div class="counter">${optionCounter++}</div>
                     <div>${option.content? option.content : ''}</div>
                 </div>
@@ -99,6 +101,7 @@ function editableTaskFieldComponent(taskField) {
         `;
     } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes") {
         wrapper.classList.add(taskField.field_type)
+        wrapper.classList.add("question")
 
         taskField.options.forEach(option => {
             wrapper.innerHTML += `
@@ -114,6 +117,7 @@ function editableTaskFieldComponent(taskField) {
         `
     } else if (taskField.field_type === "connect" || taskField.field_type === "order") {
         wrapper.classList.add(taskField.field_type)
+        wrapper.classList.add("question")
 
         let optionCounter = 1;
 

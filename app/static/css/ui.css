@@ -54,7 +54,6 @@ li#taxes.active {
     transition: .3s;
     z-index: 100;
     color: var(--primary-font-clr);
-    padding: 75px 0px;
 }
 
 .work-panel.active,
@@ -105,7 +104,7 @@ li#taxes.active {
 }
 
 .work-content button {
-    margin: 25px 0px 50px 0px;
+    margin: 25px 0px 75px 0px;
 }
 
 .build-panel {

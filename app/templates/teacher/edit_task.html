@@ -11,21 +11,23 @@
         <a href="/teacher/{{ world.id }}/tasks">Tasks</a>
     </div>
 
-    <div id="task"></div>
-
-    <div>
-        <h2>Add</h2>
+    <div class="task edit">
+        <div class="task" id="task"></div>
 
         <div>
-            <button onclick="addField('header')">Header</button>
-            <button onclick="addField('text')">Text</button>
-            <input type="file" accept="image/*" name="images" id="images" onchange="handleImage(event)">
-        </div>
-        <div>
-            <button onclick="addField('multiplechoice')">multiplechoice</button>
-            <button onclick="addField('checkboxes')">checkboxes</button>
-            <button>connect (to be continued)</button>
-            <button onclick="addField('order')">order</button>
+            <h2>Add</h2>
+    
+            <div>
+                <button onclick="addField('header')">Header</button>
+                <button onclick="addField('text')">Text</button>
+                <input type="file" accept="image/*" name="images" id="images" onchange="handleImage(event)">
+            </div>
+            <div>
+                <button onclick="addField('multiplechoice')">multiplechoice</button>
+                <button onclick="addField('checkboxes')">checkboxes</button>
+                <button>connect (to be continued)</button>
+                <button onclick="addField('order')">order</button>
+            </div>
         </div>
     </div>
 

@@ -4,16 +4,32 @@
     user-select: none;
 }
 
+.task.edit {
+    width: 1200px;
+    margin: 0px auto;
+}
+
 .task-field {
+    position: relative;
     padding: 25px;
     font-size: 16px;
+}
+
+.task-field:first-child {
+    margin-top: 75px
+}
+
+.task-field.question {
     border-bottom: 2px solid var(--secondary-bg);
 }
 
 .task-field span {
+    position: absolute;
+    top: 12.5px;
+    left: 25px;
     text-transform: uppercase;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .task-field p {
@@ -29,6 +45,13 @@
 .task-field img {
     width: 100%;
     border-radius: 12.5px;
+}
+
+.task-field.checkboxes,
+.task-field.multiplechoice {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12.5px;
 }
 
 .task-field .option,
