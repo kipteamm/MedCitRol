@@ -35,6 +35,7 @@ textarea {
     border: 1px solid var(--secondary-bg);
     border-radius: 6.25px;
     transition: .3s;
+    resize: none;
 }
 
 input:hover,

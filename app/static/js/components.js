@@ -36,7 +36,11 @@ function taskFieldcomponent(taskField) {
     wrapper.classList.add("task-field");
     wrapper.innerHTML = `<span>Vraag ${taskIndex}</span>`
 
-    if (taskField.field_type === "text") {
+    if (taskField.field_type === "header") {
+        wrapper.innerHTML = `
+            <h2>${taskField.content? taskField.content : ""}</h2>
+        `;
+    } else if (taskField.field_type === "text") {
         wrapper.innerHTML = `
             <p>${taskField.content? taskField.content : ""}</p>
         `;
@@ -68,7 +72,11 @@ function editableTaskFieldComponent(taskField) {
     wrapper.id = `task-field-${taskField.id}`;
     wrapper.classList.add("task-field");
 
-    if (taskField.field_type === "text") {
+    if (taskField.field_type === "header") {
+        wrapper.innerHTML = `
+            <h2><input onchange="editField(${taskField.id}, this.value)" value="${taskField.content? taskField.content : ""}"/></h2>
+        `;
+    } else if (taskField.field_type === "text") {
         wrapper.innerHTML = `
             <textarea onchange="editField(${taskField.id}, this.value)">${taskField.content? taskField.content : ""}</textarea>
         `;

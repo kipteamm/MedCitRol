@@ -384,7 +384,7 @@ def add_field():
 
     field_type = json["field_type"]
 
-    if not field_type in ["text", "image", "multiplechoice", "checkboxes", "connect", "order"]:
+    if not field_type in ["header", "text", "image", "multiplechoice", "checkboxes", "connect", "order"]:
         return make_response({"error" : "invalid field type"}, 400)
 
     task_field = TaskField(task_id=json["task_id"], field_type=field_type)
@@ -405,7 +405,7 @@ def edit_field():
     
     task_field = TaskField.query.get(json["field_id"])
 
-    if task_field.field_type == "text" and not "content" in json:
+    if task_field.field_type in ["header", "text"] and not "content" in json:
         return make_response({"error", "missing content"})
 
     task_field.content = json["content"] if json["content"] else None
