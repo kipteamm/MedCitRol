@@ -33,10 +33,11 @@ class Action(Enum):
     UPGRADE_BOURSE_3 = {"characteristics": ["economy"], "price": 40, "previous" : "UPGRADE_BOURSE_2", "repeatable" : False}
     UPGRADE_BOURSE_4 = {"characteristics": ["economy"], "price": 70, "previous" : "UPGRADE_BOURSE_3", "repeatable" : False}
     UPGRADE_BOURSE_5 = {"characteristics": ["economy"], "price": 120, "previous" : "UPGRADE_BOURSE_4", "repeatable" : False}
-    #JAIL_1 = {"characteristics": ["tyranny", "military"], "price": 5, "previous" : None, "repeatable" : False}
-    #JAIL_2 = {"characteristics": ["tyranny", "military"], "price": 25, "previous" : "JAIL_1", "repeatable" : False}
-    #JAIL_3 = {"characteristics": ["tyranny", "military"], "price": 60, "previous" : "JAIL_2", "repeatable" : False}
-    #JAIL_4 = {"characteristics": ["tyranny", "military"], "price": 150, "previous" : "JAIL_3", "repeatable" : False}
+    UPGRADE_JAIL_1 = {"characteristics": ["tyranny", "military"], "price": 5, "previous" : None, "repeatable" : False}
+    UPGRADE_JAIL_2 = {"characteristics": ["tyranny", "military"], "price": 15, "previous" : "UPGRADE_JAIL_1", "repeatable" : False}
+    UPGRADE_JAIL_3 = {"characteristics": ["tyranny", "military"], "price": 40, "previous" : "UPGRADE_JAIL_2", "repeatable" : False}
+    UPGRADE_JAIL_4 = {"characteristics": ["tyranny", "military"], "price": 70, "previous" : "UPGRADE_JAIL_3", "repeatable" : False}
+    UPGRADE_JAIL_5 = {"characteristics": ["tyranny", "military"], "price": 120, "previous" : "UPGRADE_JAIL_4", "repeatable" : False}
     #WAREHOUSE = {"characteristics": ["economy", "social"], "price": 10, "previous" : None, "repeatable" : True}
     #TRADEROUTE = {"characteristics": ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
     #HALLMARK = {"characteristics": ["social", "economy"], "price": 0, "previous" : None, "repeatable" : True}
@@ -154,7 +155,7 @@ class Ruler:
         return True
     
     def _save_taxes(self) -> bool:
-        self._settlement.taxes = self._settlement.taxes + math.ceil(self._settlement.taxes * 0.15) + (1 if self._settlement.taxes == 0 else 0)
+        self._settlement.taxes = self._settlement.taxes + math.ceil(self._settlement.taxes * 0.15 * (0 if self._settlement.taxes > 100 else 1)) + (1 if self._settlement.taxes == 0 else 0)
 
         db.session.commit()
 
@@ -163,7 +164,7 @@ class Ruler:
     def _collect_taxes(self) -> bool:
         for character in Character.query.filter_by(settlement_id=self._settlement.id).all():
             if character.taxes > 0:
-                if not "JAIL_1" in self._actions:
+                if not "UPGRADE_JAIL_1" in self._actions:
                     continue
 
                 # jail character
@@ -325,6 +326,49 @@ class Ruler:
         socketio.emit('update_tiles', tiles, room=self._settlement.id) # type: ignore
 
         return True
+    
+    def _upgrade_jail(self, level: str) -> bool:
+        tiles = []
+
+        if level == "UPGRADE_JAIL_1":
+            coordinates = [[0, 0], [1, 0], [0, 1], [1, 1]]
+
+            pos_x, pos_y = self._random_house_coordinates(coordinates)
+
+            if not pos_x or not pos_y:
+                return False
+            
+            for i in range(len(coordinates)):
+                coordinate = coordinates[i]
+
+                tile = Tile(settlement_id=self._settlement.id, pos_x=pos_x + coordinate[0], pos_y=pos_y + coordinate[1], tile_type="claimed", future=f"jail_{i}")
+
+                db.session.add(tile)
+                db.session.commit()
+
+                tiles.append(tile_serializer(tile))
+
+        else:
+            tile_type_mapping = {
+                "UPGRADE_JAIL_2": "jail_0",
+                "UPGRADE_JAIL_3": "jail_1",
+                "UPGRADE_JAIL_4": "jail_2",
+                "UPGRADE_JAIL_5": "jail_3"
+            }
+            
+            tile_type = tile_type_mapping.get(level)
+
+            tile = Tile.query.filter_by(settlement_id=self._settlement.id, tile_type="claimed", future=tile_type).first()
+
+            tile.tile_type = tile_type
+
+            tiles.append(tile_serializer(tile))
+
+        db.session.commit()
+
+        socketio.emit('update_tiles', tiles, room=self._settlement.id) # type: ignore
+
+        return True
 
     def work(self, current_time) -> None:
         print(f"{self._ruler.name} {self._ruler.surname} started working")
@@ -365,6 +409,9 @@ class Ruler:
 
         if "UPGRADE_BOURSE_" in action.name:
             success = self._upgrade_bourse(action.name)
+
+        if "UPGRADE_JAIL_" in action.name:
+            success = self._upgrade_jail(action.name)
 
         if not success:
             print(f"no success on {action.name}")
