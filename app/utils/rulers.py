@@ -26,8 +26,9 @@ class Action(Enum):
     UPGRADE_FORT_3 = {"characteristics": ["tyranny", "military"], "price": 60, "previous" : "UPGRADE_FORT_2", "repeatable" : False}
     UPGRADE_FORT_4 = {"characteristics": ["tyranny", "military"], "price": 90, "previous" : "UPGRADE_FORT_3", "repeatable" : False}
     UPGRADE_FORT_5 = {"characteristics": ["tyranny", "military"], "price": 120, "previous" : "UPGRADE_FORT_4", "repeatable" : False}
-    #UPGRADE_CHURCH_1 = {"characteristics": ["religion", "social"], "price": 10, "previous" : None, "repeatable" : False}
-    #UPGRADE_CHURCH_2 = {"characteristics": ["religion", "social"], "price": 30, "previous" : "UPGRADE_CHURCH_1", "repeatable" : False}
+    UPGRADE_CHURCH_1 = {"characteristics": ["religion", "social"], "price": 5, "previous" : None, "repeatable" : False}
+    UPGRADE_CHURCH_2 = {"characteristics": ["religion", "social"], "price": 10, "previous" : "UPGRADE_CHURCH_1", "repeatable" : False}
+    UPGRADE_CHURCH_3 = {"characteristics": ["religion", "social"], "price": 30, "previous" : "UPGRADE_CHURCH_1", "repeatable" : False}
     #TRADEROUTE = {"characteristics": ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
     #HALLMARK = {"characteristics": ["social", "economy"], "price": 0, "previous" : None, "repeatable" : True}
     #UPGRADE_BOURSE_1 = {"characteristics": ["economy"], "price": 10, "previous" : None, "repeatable" : False}
@@ -188,16 +189,58 @@ class Ruler:
         }
         
         changes = tile_changes.get(level)
+
         if changes:
             for pos_x, pos_y, tile_type in changes:
                 Tile.query.filter_by(settlement_id=self._ruler.settlement_id, pos_x=pos_x, pos_y=pos_y).first().tile_type = tile_type
 
         db.session.commit()
 
+    def _upgrade_church(self, level: str) -> None:
+        if level == "UPGRADE_CHURCH_1":
+            house_count = Tile.query.filter_by(settlement_id=self._ruler.settlement_id, tile_type="house").count()
+
+            if house_count < 1:
+                print("no houses")
+
+                return
+
+            house = Tile.query.filter_by(settlement_id=self._ruler.settlement_id, tile_type="house").offset(random.randint(0, house_count - 1)).first()
+
+            if not house:
+                print("no random house")
+
+                return
+
+            while True:
+                pos_x = random.randint(abs(37 - house.pos_x), 33)
+                pos_y = random.randint(20, 40)
+
+                if not Tile.query.filter_by(settlement_id=self._ruler.settlement_id, pos_x=pos_x, pos_y=pos_y) and not not Tile.query.filter_by(settlement_id=self._ruler.settlement_id, pos_x=pos_x + 1, pos_y=pos_y):
+                    break
+
+            tile_1 = Tile(Settlement_id=self._ruler.settlement_id, pos_x=pos_x, pos_y=pos_y, tile_type="claimed", future="church_chapel")
+
+            db.session.add(tile_1)
+
+            tile_2 = Tile(Settlement_id=self._ruler.settlement_id, pos_x=pos_x + 1, pos_y=pos_y, tile_type="claimed", future="church_tower")
+
+            db.session.add(tile_2)
+
+        if level == "UPGRADE_CHURCH_2":
+            Tile.query.filter_by(settlement_id=self._ruler.settlement_id, future="church_chapel").tile_type = "church_chapel"
+
+        if level == "UPGRADE_CHURCH_3":
+            Tile.query.filter_by(settlement_id=self._ruler.settlement_id, future="church_tower").tile_type = "church_tower"
+
+        db.session.commit()
+
+        return
+
     def work(self, current_time) -> None:
         print(f"{self._ruler.name} {self._ruler.surname} started working")
 
-        if self._ruler.last_action and (self._ruler.last_action + timedelta(days=1)) > current_time:
+        if self._ruler.last_action and (self._ruler.last_action + timedelta(days=1)) > current_time and False:
             print("waiting")
 
             return None
@@ -238,7 +281,10 @@ class Ruler:
         if action == Action.COLLECT_TAXES:
             return self._collect_taxes()
         
-        if "UPGRADE_FORT " in action.name:
+        if "UPGRADE_FORT_" in action.name:
             return self._upgrade_fort(action.name)
+        
+        if "UPGRADE_CHURCH_" in action.name:
+            return self._upgrade_church(action.name)
         
         # ...

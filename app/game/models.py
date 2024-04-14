@@ -140,6 +140,7 @@ class Tile(db.Model):
     pos_y = db.Column(db.Integer, nullable=False)
 
     tile_type = db.Column(db.String(128))
+    future = db.Column(db.String(128))
     
 
 class InventoryItem(db.Model):
