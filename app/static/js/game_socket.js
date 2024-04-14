@@ -27,9 +27,17 @@ socket.on('new_tiles', function(data) {
 })
 
 socket.on('update_tiles', function(data) {
-    data.forEach(tile => {     
-        tiles[tiles.findIndex(_tile => _tile.id === tile.id)] = tile;
+    console.log(data)
 
+    data.forEach(tile => {     
+        const tileIndex = tiles.findIndex(_tile => _tile.id === tile.id)
+
+        if (tileIndex === -1) {
+            tiles.push(tile)
+        } else {
+            tiles[tileIndex] = tile;
+        }
+        
         terrain[tile.pos_x][tile.pos_y] = tile.tile_index;
 
         drawTilesetImage(terrainTileSet, tile.tile_index, tile.pos_x, tile.pos_y, tileSize, 1);

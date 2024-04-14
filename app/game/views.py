@@ -12,6 +12,8 @@ from .models import World, Settlement, Character, Tile, SettlementRuler, Merchan
 
 from datetime import timedelta
 
+import json
+
 
 game_blueprint = Blueprint('game', __name__)
 
@@ -177,12 +179,26 @@ def game(id):
 
     settlement, character = get_presence(world, current_user) # type: ignore
 
+    #settlement.taxes = 10000
+
+    #db.session.commit()
+
     tiles = [tile_serializer(tile) for tile in Tile.query.filter_by(settlement_id=settlement.id).all()]
 
     response = make_response(render_template('game/game.html', tiles=tiles, world=world_serializer(world), settlement=settlement_serializer(settlement), character=character_serializer(character)))
 
     response.set_cookie('psk', get_key(current_user.id, world.id, settlement.id, character.id))
 
-    Ruler(SettlementRuler.query.filter_by(settlement_id=settlement.id).first()).work(world.current_time)
-
     return response
+
+
+@game_blueprint.route('/ruler')
+@login_required
+def ruler():
+    #SettlementRuler.query.filter_by(settlement_id=1).first().actions = "[]"
+
+    #db.session.commit()
+
+    Ruler(SettlementRuler.query.filter_by(settlement_id=1).first()).work(World.query.get(1).current_time)
+
+    return "<h1>yes</h1>"

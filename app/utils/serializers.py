@@ -72,6 +72,7 @@ def tile_serializer(tile: Tile) -> dict:
         'pos_y' : tile.pos_y,
         'tile_type' : tile.tile_type,
         'tile_index' : get_tile_index(tile.tile_type),
+        'future' : tile.future
     }
 
 

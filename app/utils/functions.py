@@ -86,15 +86,15 @@ def generateRandomCoordinates(center_x: int, center_y: int, deviation: int, empt
     return pos_x, pos_y
 
 
-def get_coordinates(center_x: int, center_y: int, radius: int) -> list[tuple[int, int]]:
-    coordinates = []
+def get_coordinates(x: int, y: int, radius: int) -> list[tuple[int, int]]:
+    tiles = []
 
-    for x in range(center_x - radius, center_x + radius + 1):
-        for y in range(center_y - radius, center_y + radius + 1):
-            if abs(x) == radius or abs(y) == radius:
-                coordinates.append((x, y))
-                
-    return coordinates
+    for i in range(-radius, radius + 1):
+        for j in range(-radius, radius + 1):
+            if abs(i) == radius or abs(j) == radius:
+                tiles.append((x + i, y + j))
+
+    return tiles
 
 
 def get_merchandise(merchant_type: str) -> dict[str, int]:
