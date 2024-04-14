@@ -106,6 +106,8 @@ def create_app():
 
                     character = Character.query.filter_by(user_id=user['id'], world_id=user['active_world']).first()
 
+                    character.last_update = world.current_time
+
                     if character.hunger > 0:
                         character.hunger -= 1
 

@@ -113,9 +113,18 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
     else:
         settlement = Settlement.query.filter_by(world_id=world.id, id=character.settlement_id).first()
 
-        if world.current_time >= character.jail_end:
-            character.jailed = False
-            character.jail_end = None
+        if character.jailed and world.current_time >= character.jail_end:
+                character.jailed = False
+                character.jail_end = None
+
+        if character.last_update:
+            hours_passed = round((world.current_time - character.last_update).total_seconds() / 3600)
+
+            character.hunger -= min(hours_passed, 16)
+            character.health -= min(hours_passed * 0.25, 16)
+            character.fatigue -= min(hours_passed, 16)
+
+            character.last_update = world.current_time
 
         db.session.commit()
 
