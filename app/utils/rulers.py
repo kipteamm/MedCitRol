@@ -3,7 +3,7 @@ from app.utils.functions import get_coordinates
 from app.game.models import Settlement, SettlementRuler, Character, Tile
 from app.extensions import db, socketio
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from typing import Optional
 
@@ -161,15 +161,16 @@ class Ruler:
 
         return True
     
-    def _collect_taxes(self) -> bool:
+    def _collect_taxes(self, current_time: datetime) -> bool:
         for character in Character.query.filter_by(settlement_id=self._settlement.id).all():
             if character.taxes > 0:
-                if not "UPGRADE_JAIL_1" in self._actions:
-                    continue
+                if "UPGRADE_JAIL_2" in self._actions:
+                    character.jailed = True
+                    character.jail_end = current_time + timedelta(hours=random.randint(12, 24) if self._characteristics['tyranny'] > self._characteristics['social'] else random.randint(1, 12))
+                    character.taxes = 0
 
-                # jail character
-
-            character.taxes = random.randint(2, 3) if self._characteristics['tyranny'] > self._characteristics['social'] else 2
+            else:
+                character.taxes = random.randint(2, 3) if self._characteristics['tyranny'] > self._characteristics['social'] else 2
 
             db.session.commit()
 
@@ -370,7 +371,7 @@ class Ruler:
 
         return True
 
-    def work(self, current_time) -> None:
+    def work(self, current_time: datetime) -> None:
         print(f"{self._ruler.name} {self._ruler.surname} started working")
 
         if self._ruler.last_action and (self._ruler.last_action + timedelta(days=1)) > current_time and False:
@@ -399,7 +400,7 @@ class Ruler:
             success = self._save_taxes()
         
         if action == Action.COLLECT_TAXES:
-            success = self._collect_taxes()
+            success = self._collect_taxes(current_time)
         
         if "UPGRADE_FORT_" in action.name:
             success = self._upgrade_fort(action.name)

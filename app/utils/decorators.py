@@ -18,8 +18,12 @@ def character_auhtorized(f):
         
         character = Character.query.get(access_key.character_id)
 
-        if character.start_sleep and request.path != "/api/character/sleep":
-            return make_response({"error" : "You are sleeping."}, 400)
+        if request.path != "/api/character/sleep":
+            if character.start_sleep:
+                return make_response({"error" : "You are sleeping."}, 400)
+            
+            if character.jailed and request.path != "/api/character/eat":
+                return make_response({"error", "You are in jail."})
         
         g.character = character
         g.access_key = access_key

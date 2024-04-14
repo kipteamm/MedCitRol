@@ -99,6 +99,7 @@ class Character(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     world_id = db.Column(db.Integer, db.ForeignKey('world.id'), nullable=False)
     settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+    last_update = db.Column(DateTime(timezone=True), default=None)
 
     # properties
     hunger = db.Column(db.Integer, default=24)
@@ -114,6 +115,9 @@ class Character(db.Model):
 
     end_sleep = db.Column(DateTime(timezone=True), default=None)
     start_sleep = db.Column(DateTime(timezone=True), default=None)
+
+    jailed = db.Column(db.Boolean, default=False)
+    jail_end = db.Column(DateTime(timezone=True), default=None)
 
 
 class AccessKey(db.Model):

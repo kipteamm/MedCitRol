@@ -72,6 +72,17 @@ function sleeping(isSleeping) {
     }
 }
 
+const jailOverlay = document.getElementById("jail-overlay");
+
+function jailed(isJailed) {
+    if (isJailed) {
+        jailOverlay.classList.add("active");
+    } else {
+        jailOverlay.classList.remove("active");
+    }
+}
+
+
 const taxesElement = document.getElementById("taxes");
 
 function taxes(value) {

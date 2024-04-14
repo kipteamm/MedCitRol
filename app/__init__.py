@@ -124,6 +124,11 @@ def create_app():
                     if character.fatigue < 7 and random.randint(1, 4) == 2 and not character.start_sleep:
                         socketio.emit("close_eyes", {"id" : character.id}, room=character.settlement_id) # type: ignore
 
+                    if character.jailed:
+                        if world.current_time >= character.end_jail:
+                            character.jailed = False
+                            character.end_jail = None
+
                     if not character.settlement_id in settlements:
                         settlement_ruler = SettlementRuler.query.filter_by(settlement_id=character.settlement_id).first()
 

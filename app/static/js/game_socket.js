@@ -72,6 +72,12 @@ socket.on('update_character', function(data) {
             continue;
         }
 
+        if (key === "jailed") {
+            jailed(value);
+
+            continue;
+        }
+
         if (key === "taxes") {
             taxes(value)
 

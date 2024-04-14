@@ -42,6 +42,7 @@ def character_serializer(character: Character) -> dict:
         'profession' : character.profession if character.profession else "Unemployed",
         'task_index' : character.task_index,
         'asleep' : character.start_sleep is not None,
+        'jailed' : character.jailed,
         'taxes' : character.taxes,
         'inventory' : [inventory_item_serializer(inventory_item) for inventory_item in InventoryItem.query.filter_by(character_id=character.id).all()],
     }
