@@ -85,10 +85,16 @@
 }
 
 .task-field .option {
+    margin: 12.5px 0px;
     padding: 12.5px;
     border: 2px solid var(--secondary-bg);
     border-radius: 12.5px;
 }
 .task-field .option:not(:last-child) {
     margin-bottom: 12.5px;
+}
+
+.task-field .arrow {
+    text-align: center;
+    font-weight: bold;
 }

@@ -21,7 +21,6 @@ def settlement_serializer(settlement: Settlement) -> dict:
         'name' : settlement.name,
         'colour' : settlement.colour,
         'merchant' : Merchant.query.filter_by(settlement_id=settlement.id).first() is not None,
-        'inventory' : [inventory_item_serializer(inventory_item) for inventory_item in InventoryItem.query.filter_by(settlement_id=settlement.id).all()]
     }
 
 
@@ -81,7 +80,7 @@ def inventory_item_serializer(inventory_item: InventoryItem) -> dict:
     return {
         'id' : inventory_item.id,
         'character_id' : inventory_item.character_id,
-        'settlement_id' : inventory_item.settlement_id,
+        'warehouse_id' : inventory_item.warehouse_id,
         'item_type' : inventory_item.item_type,
         'amount' : inventory_item.amount,
         'buildable' : inventory_item.buildable,
