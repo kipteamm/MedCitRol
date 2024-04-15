@@ -152,7 +152,7 @@ class InventoryItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     character_id = db.Column(db.Integer, db.ForeignKey('character.id'))
-    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'))
+    warehouse_id = db.Column(db.Integer, db.ForeignKey('warehouse.id'))
 
     item_type = db.Column(db.String(120), nullable=False)
     amount = db.Column(db.Integer, default=0)
@@ -191,3 +191,13 @@ class Merchant(db.Model):
     merchant_type = db.Column(db.String(120), nullable=False)
 
     end_date = db.Column(db.DateTime, nullable=False)
+
+
+class Warehouse(db.Model):
+    __tablename__ = 'warehouse'
+
+    id = db.Column(db.Integer, primary_key=True)
+    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+    tile_id = db.Column(db.Integer, db.ForeignKey('tile.id'), nullable=False)
+
+    capacity = db.Column(db.Integer, default=0)

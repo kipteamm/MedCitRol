@@ -2,7 +2,7 @@ from flask_apscheduler import APScheduler
 
 from flask_migrate import Migrate
 
-from flask_login import LoginManager, current_user
+from flask_login import LoginManager, current_user, AnonymousUserMixin
 
 from flask import Flask, redirect, url_for, flash, request
 
@@ -36,7 +36,7 @@ active_worlds = []
 
 def create_app():
     app = Flask(__name__)
-    #app.config["DEBUG"] = True
+    app.config["DEBUG"] = True
     app.config["SECRET_KEY"] = "secret"
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./database.db'
 
@@ -72,13 +72,19 @@ def create_app():
 
     @socketio.on('connect')
     def handle_connect():
+        if isinstance(current_user, AnonymousUserMixin):
+            return
+
         active_connections[request.sid] = {'id' : current_user.id, 'active_world' : current_user.active_world} # type: ignore
 
     @socketio.on('disconnect')
     def handle_disconnect():
+        if isinstance(current_user, AnonymousUserMixin):
+            return
+
         active_connections.pop(request.sid, None) # type: ignore
 
-    if not scheduler.get_job('update_worlds'):
+    if not scheduler.get_job('update_worlds') and False:
         @scheduler.task('interval', id='update_worlds', minutes=1)
         def update_worlds():
             with app.app_context():

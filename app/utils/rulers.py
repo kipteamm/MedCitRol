@@ -1,6 +1,6 @@
 from app.utils.serializers import properties_serializer, tile_serializer
 from app.utils.functions import get_coordinates
-from app.game.models import Settlement, SettlementRuler, Character, Tile
+from app.game.models import Settlement, SettlementRuler, Character, Tile, Warehouse
 from app.extensions import db, socketio
 
 from datetime import timedelta, datetime
@@ -13,6 +13,8 @@ import random
 import json
 import math
 
+
+# 13, 12, 4, 7, 12 -> MORE SOCIAL AND RELIGION
 
 CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social', 'military', 'carelessness']
 
@@ -38,9 +40,10 @@ class Action(Enum):
     UPGRADE_JAIL_3 = {"characteristics": ["tyranny", "military"], "price": 40, "previous" : "UPGRADE_JAIL_2", "repeatable" : False}
     UPGRADE_JAIL_4 = {"characteristics": ["tyranny", "military"], "price": 70, "previous" : "UPGRADE_JAIL_3", "repeatable" : False}
     UPGRADE_JAIL_5 = {"characteristics": ["tyranny", "military"], "price": 120, "previous" : "UPGRADE_JAIL_4", "repeatable" : False}
-    #WAREHOUSE = {"characteristics": ["economy", "social"], "price": 10, "previous" : None, "repeatable" : True}
-    #TRADEROUTE = {"characteristics": ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
-    #HALLMARK = {"characteristics": ["social", "economy"], "price": 0, "previous" : None, "repeatable" : True}
+    WAREHOUSE = {"characteristics": ["tyranny", "economy"], "price": 10, "previous" : None, "repeatable" : True}
+    #STOCK_ITEMS = {"characteristics": ["tyranny", "economy", "social"], "price" : 1, "previous" : "WAREHOUSE", "repeatable" : True}
+    #TRADEROUTE = {"characteristics": ["economy"], "price": 0, "previous" : None, "repeatable" : True}
+    #HALLMARK = {"characteristics": ["tyranny", "economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
     #WAR = {"characteristics": ["tyranny", "military"], "price": 100, "previous" : None, "repeatable" : True}
     #FAIR = {"characteristics": ["economy", "social"], "price": 25, "previous" : None, "repeatable" : True}
 
@@ -118,6 +121,9 @@ class Ruler:
                 continue
 
             if action.previous and not action.previous in self._actions:
+                continue
+
+            if action.name == "WAREHOUSE" and Tile.query.filter_by(settlement_id=self._settlement.id, tile_type="warehouse").count() >= 4:
                 continue
 
             eligible_actions.append(action)
@@ -371,6 +377,26 @@ class Ruler:
 
         return True
 
+    def _warehouse(self) -> bool:
+        pos_x, pos_y = self._random_house_coordinates([0, 0])
+
+        if not pos_x or not pos_y:
+            return False
+        
+        tile = Tile(settlement_id=self._settlement.id, pos_x=pos_x, pos_y=pos_y, tile_type="warehouse")
+
+        db.session.add(tile)
+        db.session.commit()
+
+        warehouse = Warehouse(settlement_id=self._settlement.id, tile=tile.id)
+
+        db.session.add(warehouse)
+        db.session.commit()
+
+        socketio.emit('update_tiles', [tile_serializer(tile)], room=self._settlement.id) # type: ignore
+
+        return True
+
     def work(self, current_time: datetime) -> None:
         print(f"{self._ruler.name} {self._ruler.surname} started working")
 
@@ -413,6 +439,9 @@ class Ruler:
 
         if "UPGRADE_JAIL_" in action.name:
             success = self._upgrade_jail(action.name)
+
+        if action == Action.WAREHOUSE:
+            success = self._warehouse()
 
         if not success:
             print(f"no success on {action.name}")
