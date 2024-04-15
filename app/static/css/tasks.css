@@ -47,11 +47,16 @@
     border-radius: 12.5px;
 }
 
+.task-field.connect,
 .task-field.checkboxes,
 .task-field.multiplechoice {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12.5px;
+}
+
+.task-field.connect {
+    column-gap: 75px;
 }
 
 .task-field .option,
@@ -82,6 +87,10 @@
 .task-field.checkboxes .choice.active .indicator,
 .task-field.multiplechoice .choice.active .indicator {
     background-color: var(--primary-clr);
+}
+
+.task-field.connect .choice:nth-child(even) {
+    justify-content: flex-end;
 }
 
 .task-field .option {

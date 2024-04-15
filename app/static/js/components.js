@@ -48,25 +48,30 @@ function taskFieldcomponent(taskField) {
         wrapper.innerHTML = `
             <img src="${taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/assets/notfound.webp"}"/>
         `;
-    } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes") {
+    } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes" || taskField.field_type === "connect") {
         taskIndex++
 
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
 
+        let counter = 0;
+
         shuffle(taskField.options).forEach(option => {
+            counter++
+
             wrapper.innerHTML += `
                 <div class="choice" onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}">
-                    <div class="indicator"></div>
+                    ${taskField.field_type === "connect"? counter % 2 === 0? '<div class="indicator"></div>' : '' : '<div class="indicator"></div>'}
                     <div class="content">${option.content? option.content : ''}</div>
+                    ${taskField.field_type === "connect" && counter % 2 !== 0? '<div class="indicator"></div>' : ''}
                 </div>
             `
         })
-    } else if (taskField.field_type === "connect" || taskField.field_type === "order") {
+    } else if (taskField.field_type === "order") {
+        taskIndex++
+
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
-
-        let optionCounter = 0;
 
         shuffle(taskField.options).forEach(option => {
             wrapper.innerHTML += `
@@ -98,15 +103,20 @@ function editableTaskFieldComponent(taskField) {
         wrapper.innerHTML = `
             <img src="${taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/assets/notfound.webp"}"/>
         `;
-    } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes") {
+    } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes" || taskField.field_type === "connect") {
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
 
+        let counter = 0;
+
         taskField.options.forEach(option => {
+            counter++
+
             wrapper.innerHTML += `
                 <div class="choice">
-                    <div class="indicator"></div>
+                    ${taskField.field_type === "connect"? counter % 2 === 0? '<div class="indicator"></div>' : '' : '<div class="indicator"></div>'}
                     <div class="content"><input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}"/></div>
+                    ${taskField.field_type === "connect" && counter % 2 !== 0? '<div class="indicator"></div>' : ''}
                 </div>
             `
         })
@@ -114,11 +124,9 @@ function editableTaskFieldComponent(taskField) {
         wrapper.innerHTML += `
             <button onclick="addOption(${taskField.id})">Add option</button>
         `
-    } else if (taskField.field_type === "connect" || taskField.field_type === "order") {
+    } else if (taskField.field_type === "order") {
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
-
-        let optionCounter = 1;
 
         taskField.options.forEach(option => {
             wrapper.innerHTML += `
