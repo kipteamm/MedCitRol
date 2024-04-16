@@ -185,23 +185,23 @@ def buy_item(market_type):
     
     character = g.character
     
-    item = MarketItem.query.get(json["item_id"])
+    market_item = MarketItem.query.get(json["item_id"])
 
-    if character.pennies < item.price:
+    if character.pennies < market_item.price:
         return make_response({"error" : "You don't have enough money."}, 400)
     
-    item.amount -= 1
-    character.pennies -= item.price
+    market_item.amount -= 1
+    character.pennies -= market_item.price
 
-    seller = Character.query.get(item.character_id)
-    seller.pennies += item.price
+    seller = Character.query.get(market_item.character_id)
+    seller.pennies += market_item.price
     
-    Inventory(character.settlement_id, None, character.id).add_item(item.item_type, 1)
+    Inventory(character.settlement_id, None, character.id).add_item(market_item.item_type, 1)
 
     db.session.commit()
 
-    if item.amount == 0:
-        db.session.delete(item)
+    if market_item.amount == 0:
+        db.session.delete(market_item)
         db.session.commit()
 
     socketio.emit("update_character", properties_serializer(seller), room=seller.settlement_id) # type: ignore
@@ -337,7 +337,7 @@ def merchant_buy_item():
 
     db.session.commit()
 
-    socketio.emit("update_character", properties_serializer(seller), room=seller.settlement_id) # type: ignore
+    socketio.emit("update_character", properties_serializer(character), room=character.settlement_id) # type: ignore
 
     return make_response({"success" : True}, 204)
 

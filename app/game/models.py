@@ -151,6 +151,7 @@ class InventoryItem(db.Model):
     __tablename__ = 'inventory_item'
 
     id = db.Column(db.Integer, primary_key=True)
+    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
     character_id = db.Column(db.Integer, db.ForeignKey('character.id'))
     warehouse_id = db.Column(db.Integer, db.ForeignKey('warehouse.id'))
 

@@ -194,9 +194,9 @@ def game(id):
 
     settlement, character = get_presence(world, current_user) # type: ignore
 
-    #settlement.taxes = 10000
+    settlement.taxes = 10000
 
-    #db.session.commit()
+    db.session.commit()
 
     tiles = [tile_serializer(tile) for tile in Tile.query.filter_by(settlement_id=settlement.id).all()]
 

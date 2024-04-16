@@ -1,6 +1,7 @@
 from app.utils.serializers import properties_serializer, tile_serializer
+from app.utils.inventory import Inventory
 from app.utils.functions import get_coordinates
-from app.game.models import Settlement, SettlementRuler, Character, Tile, Warehouse
+from app.game.models import Settlement, SettlementRuler, Character, Tile, Warehouse, InventoryItem, MarketItem
 from app.extensions import db, socketio
 
 from datetime import timedelta, datetime
@@ -14,7 +15,7 @@ import json
 import math
 
 
-# 13, 12, 4, 7, 12 -> MORE SOCIAL AND RELIGION
+# 13, 12, 5, 7, 13 -> MORE SOCIAL AND RELIGION
 
 CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social', 'military', 'carelessness']
 
@@ -40,8 +41,8 @@ class Action(Enum):
     UPGRADE_JAIL_3 = {"characteristics": ["tyranny", "military"], "price": 40, "previous" : "UPGRADE_JAIL_2", "repeatable" : False}
     UPGRADE_JAIL_4 = {"characteristics": ["tyranny", "military"], "price": 70, "previous" : "UPGRADE_JAIL_3", "repeatable" : False}
     UPGRADE_JAIL_5 = {"characteristics": ["tyranny", "military"], "price": 120, "previous" : "UPGRADE_JAIL_4", "repeatable" : False}
-    WAREHOUSE = {"characteristics": ["tyranny", "economy"], "price": 10, "previous" : None, "repeatable" : True}
-    #STOCK_ITEMS = {"characteristics": ["tyranny", "economy", "social"], "price" : 1, "previous" : "WAREHOUSE", "repeatable" : True}
+    WAREHOUSE = {"characteristics": ["tyranny", "economy"], "price": 5, "previous" : None, "repeatable" : True}
+    STOCK_ITEMS = {"characteristics": ["tyranny", "economy", "religion", "social", "military"], "price" : 1, "previous" : "WAREHOUSE", "repeatable" : True}
     #TRADEROUTE = {"characteristics": ["economy"], "price": 0, "previous" : None, "repeatable" : True}
     #HALLMARK = {"characteristics": ["tyranny", "economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
     #WAR = {"characteristics": ["tyranny", "military"], "price": 100, "previous" : None, "repeatable" : True}
@@ -123,9 +124,6 @@ class Ruler:
             if action.previous and not action.previous in self._actions:
                 continue
 
-            if action.name == "WAREHOUSE" and Tile.query.filter_by(settlement_id=self._settlement.id, tile_type="warehouse").count() >= 4:
-                continue
-
             eligible_actions.append(action)
 
         if not eligible_actions:
@@ -169,14 +167,22 @@ class Ruler:
     
     def _collect_taxes(self, current_time: datetime) -> bool:
         for character in Character.query.filter_by(settlement_id=self._settlement.id).all():
-            if character.taxes > 0:
+            awake = True
+
+            if character.end_sleep and character.end_sleep + timedelta(hours=1) < current_time:
+                awake = False
+
+            if character.taxes > 0 and not character.jailed and character.start_sleep == None and awake:
                 if "UPGRADE_JAIL_2" in self._actions:
                     character.jailed = True
                     character.jail_end = current_time + timedelta(hours=random.randint(12, 24) if self._characteristics['tyranny'] > self._characteristics['social'] else random.randint(1, 12))
                     character.taxes = 0
 
-            else:
-                character.taxes = random.randint(2, 3) if self._characteristics['tyranny'] > self._characteristics['social'] else 2
+                    db.session.commit()
+
+                    continue
+
+            character.taxes = random.randint(2, 3) if self._characteristics['tyranny'] > self._characteristics['social'] else 2
 
             db.session.commit()
 
@@ -218,36 +224,25 @@ class Ruler:
 
         return True
 
-    def _random_house_coordinates(self, tiles) -> tuple[int, int]:
+    def _random_coordinates(self, tiles) -> tuple[Optional[int], Optional[int]]:
         house_count = Tile.query.filter_by(settlement_id=self._settlement.id, tile_type="hut").count()
-
-        if house_count < 1:
-            print("no houses")
-
-            return 0, 0
 
         house = Tile.query.filter_by(settlement_id=self._settlement.id, tile_type="hut").offset(random.randint(0, house_count - 1)).first()
 
         if not house:
             print("no random house")
 
-            return 0, 0
+            return None, None
 
         while True:
             pos_x = random.randint(abs(37 - house.pos_x), 33)
             pos_y = random.randint(25, 40)
 
-            exists = False
-
             for tile in tiles:
-                if exists:
-                    continue
-
                 if Tile.query.filter_by(settlement_id=self._settlement.id, pos_x=pos_x + tile[0], pos_y=pos_y + tile[1]).first():
-                    exists = True
-
-            if not exists:
-                break
+                    return None, None
+                
+            break
 
         return pos_x, pos_y
 
@@ -255,7 +250,7 @@ class Ruler:
         tiles = []
 
         if level == "UPGRADE_CHURCH_1":
-            pos_x, pos_y = self._random_house_coordinates([[0, 0], [1, 0]])
+            pos_x, pos_y = self._random_coordinates([[0, 0], [1, 0]])
 
             if not pos_x or not pos_y:
                 return False
@@ -297,7 +292,7 @@ class Ruler:
         if level == "UPGRADE_BOURSE_1":
             coordinates = [[0, 0], [1, 0], [0, 1], [1, 1]]
 
-            pos_x, pos_y = self._random_house_coordinates(coordinates)
+            pos_x, pos_y = self._random_coordinates(coordinates)
 
             if not pos_x or not pos_y:
                 return False
@@ -340,7 +335,7 @@ class Ruler:
         if level == "UPGRADE_JAIL_1":
             coordinates = [[0, 0], [1, 0], [0, 1], [1, 1]]
 
-            pos_x, pos_y = self._random_house_coordinates(coordinates)
+            pos_x, pos_y = self._random_coordinates(coordinates)
 
             if not pos_x or not pos_y:
                 return False
@@ -378,7 +373,7 @@ class Ruler:
         return True
 
     def _warehouse(self) -> bool:
-        pos_x, pos_y = self._random_house_coordinates([0, 0])
+        pos_x, pos_y = self._random_coordinates([[0, 0]])
 
         if not pos_x or not pos_y:
             return False
@@ -388,7 +383,7 @@ class Ruler:
         db.session.add(tile)
         db.session.commit()
 
-        warehouse = Warehouse(settlement_id=self._settlement.id, tile=tile.id)
+        warehouse = Warehouse(settlement_id=self._settlement.id, tile_id=tile.id)
 
         db.session.add(warehouse)
         db.session.commit()
@@ -396,10 +391,53 @@ class Ruler:
         socketio.emit('update_tiles', [tile_serializer(tile)], room=self._settlement.id) # type: ignore
 
         return True
+    
+    def _stock_items(self) -> bool:
+        warehouse = Warehouse.query.filter_by(settlement_id=self._settlement.id).filter(Warehouse.capacity < 100).first()
+
+        if not warehouse:
+            print("no warehouse")
+
+            return False
+
+        available_items = MarketItem.query.filter_by(settlement_id=self._settlement.id).filter(MarketItem.price <= self._settlement.taxes).all()
+
+        if not available_items:
+            print("no available items")
+
+            return False
+
+        stored_items = {item.item_type: item.amount for item in InventoryItem.query.filter_by(settlement_id=self._settlement.id, character_id=None).all()}
+
+        sorted_items = sorted(available_items, key=lambda item: stored_items.get(item.item_type, 0))
+        random_item = sorted_items[0] if sorted_items else None
+
+        if not random_item:
+            print("no random item")
+
+            return False
+        
+        max_amount = min(random_item.amount, math.floor(self._settlement.taxes / random_item.price))
+        amount = max(1, random.randint(1, max_amount))
+
+        random_item.amount -= amount
+
+        if random_item.amount == 0:
+            db.session.delete(random_item)
+            db.session.commit()
+
+        Inventory(self._settlement.id, warehouse.id, None).add_item(random_item.item_type, amount)
+
+        character = Character.query.get(random_item.character_id)
+        character.pennies += amount * random_item.price
+        
+        db.session.commit()
+
+        socketio.emit("update_character", properties_serializer(character), room=self._settlement.id) # type: ignore
+
+        return True
 
     def work(self, current_time: datetime) -> None:
-        print(f"{self._ruler.name} {self._ruler.surname} started working")
-
         if self._ruler.last_action and (self._ruler.last_action + timedelta(days=1)) > current_time and False:
             print("waiting")
 
@@ -416,6 +454,8 @@ class Ruler:
             print("no action")
 
             return
+        
+        print(f"{self._ruler.name} {self._ruler.surname} started working on {action.name}")
         
         success = False
         
@@ -443,12 +483,15 @@ class Ruler:
         if action == Action.WAREHOUSE:
             success = self._warehouse()
 
+        if action == Action.STOCK_ITEMS:
+            success = self._stock_items()
+
         if not success:
             print(f"no success on {action.name}")
 
             return
 
-        if not action.repeatable:
+        if not action.repeatable or (action.name == "WAREHOUSE" and Tile.query.filter_by(settlement_id=self._settlement.id, tile_type="warehouse").count() >= 4):
             self._actions.append(action.name)
             self._ruler.actions = json.dumps(self._actions)
 

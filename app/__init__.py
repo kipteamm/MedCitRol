@@ -133,9 +133,9 @@ def create_app():
                         socketio.emit("close_eyes", {"id" : character.id}, room=character.settlement_id) # type: ignore
 
                     if character.jailed:
-                        if world.current_time >= character.end_jail:
+                        if world.current_time >= character.jail_end:
                             character.jailed = False
-                            character.end_jail = None
+                            character.jail_end = None
 
                     if not character.settlement_id in settlements:
                         settlement_ruler = SettlementRuler.query.filter_by(settlement_id=character.settlement_id).first()

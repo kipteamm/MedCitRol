@@ -59,6 +59,7 @@ def properties_serializer(character: Character) -> dict:
         'pennies' : character.pennies,
         'profession' : character.profession if character.profession else "Unemployed",
         'asleep' : character.start_sleep is not None,
+        'jailed' : character.jailed,
         'taxes' : character.taxes,
     }
 

@@ -37,7 +37,7 @@ class Inventory:
             inventory_item = InventoryItem.query.filter_by(warehouse_id=self._warehouse_id, item_type=item_type).first()
 
             if not inventory_item:
-                inventory_item = InventoryItem(warehouse_id=self._warehouse_id, item_type=item_type, buildable=self.is_buildable(item_type))
+                inventory_item = InventoryItem(settlement_id=self._room_id, warehouse_id=self._warehouse_id, item_type=item_type, buildable=self.is_buildable(item_type))
 
                 db.session.add(inventory_item)
                 db.session.commit()
@@ -46,7 +46,7 @@ class Inventory:
             inventory_item = InventoryItem.query.filter_by(character_id=self._character_id, item_type=item_type).first()
 
             if not inventory_item:
-                inventory_item = InventoryItem(character_id=self._character_id, item_type=item_type, buildable=self.is_buildable(item_type))
+                inventory_item = InventoryItem(settlement_id=self._room_id, character_id=self._character_id, item_type=item_type, buildable=self.is_buildable(item_type))
 
                 db.session.add(inventory_item)
                 db.session.commit()
@@ -72,7 +72,7 @@ class Inventory:
             inventory_item = InventoryItem.query.filter_by(character_id=self._character_id, item_type=item_type).first()
 
         if not inventory_item:
-            raise ValueError(f"No item {item_type} found in settlement inventory")
+            raise ValueError(f"No item {item_type} found in {'any warehouses' if self._warehouse_id else 'character'} inventory")
             
         if inventory_item.amount < amount:
             raise ValueError(f"Not enough {item_type} in inventory to remove {amount}")
