@@ -4,6 +4,8 @@ from app.utils.functions import get_coordinates
 from app.game.models import Settlement, SettlementRuler, Character, Tile, Warehouse, InventoryItem, MarketItem
 from app.extensions import db, socketio
 
+from sqlalchemy import func
+
 from datetime import timedelta, datetime
 
 from typing import Optional
@@ -15,7 +17,7 @@ import json
 import math
 
 
-# 13, 12, 5, 7, 13 -> MORE SOCIAL AND RELIGION
+# 14, 12, 5, 7, 13 -> MORE SOCIAL AND RELIGION
 
 CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social', 'military', 'carelessness']
 
@@ -44,9 +46,9 @@ class Action(Enum):
     WAREHOUSE = {"characteristics": ["tyranny", "economy"], "price": 5, "previous" : None, "repeatable" : True}
     STOCK_ITEMS = {"characteristics": ["tyranny", "economy", "religion", "social", "military"], "price" : 1, "previous" : "WAREHOUSE", "repeatable" : True}
     #TRADEROUTE = {"characteristics": ["economy"], "price": 0, "previous" : None, "repeatable" : True}
-    #HALLMARK = {"characteristics": ["tyranny", "economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
-    #WAR = {"characteristics": ["tyranny", "military"], "price": 100, "previous" : None, "repeatable" : True}
+    #HALLMARK = {"characteristics": ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
     #FAIR = {"characteristics": ["economy", "social"], "price": 25, "previous" : None, "repeatable" : True}
+    #WAR = {"characteristics": ["tyranny", "military"], "price": 100, "previous" : None, "repeatable" : True}
 
     @property
     def characteristics(self):
@@ -108,6 +110,36 @@ class Ruler:
         db.session.add(ruler)
         db.session.commit()
 
+    def evaluate_economy(self) -> int:
+        value = self._settlement.taxes
+        
+        health_sum = Character.query.filter(
+            Character.settlement_id == self._settlement.id,
+            Character.profession != None
+        ).with_entities(func.round(func.sum(100 - Character.health))).scalar() or 0
+        value += health_sum
+
+        stored_resources_sum = InventoryItem.query.with_entities(func.sum(InventoryItem.amount)).filter_by(
+            settlement_id=self._settlement.id,
+            character_id=None
+        ).scalar() or 0
+        value += stored_resources_sum
+
+        upgrade_fort_values = sum(2 ** i for i in range(4) if f"UPGRADE_FORT_{i + 1}" in self._actions)
+        upgrade_church_values = sum(2 ** i for i in range(3) if f"UPGRADE_CHURCH_{i + 2}" in self._actions)
+        upgrade_bourse_values = sum(2 ** i for i in range(4) if f"UPGRADE_BOURSE_{i + 2}" in self._actions)
+        upgrade_jail_values = sum(2 ** i for i in range(4) if f"UPGRADE_JAIL_{i + 2}" in self._actions)
+        value += upgrade_fort_values + upgrade_church_values + upgrade_bourse_values + upgrade_jail_values
+
+        warehouse_count = Tile.query.filter_by(settlement_id=self._settlement, tile_type="warehouse").count()
+        value += warehouse_count
+
+        self._settlement.value_economy = value
+
+        db.session.commit()
+
+        return value
+
     def _get_action(self) -> Optional[Action]:
         eligible_actions = []
 
@@ -122,6 +154,9 @@ class Ruler:
                 continue
 
             if action.previous and not action.previous in self._actions:
+                continue
+
+            if action.name == "TRADEROUTE" and Settlement.query.filter_by(world_id=self._settlement.world_id).count() == 1:
                 continue
 
             eligible_actions.append(action)
@@ -171,6 +206,8 @@ class Ruler:
 
             if character.end_sleep and character.end_sleep + timedelta(hours=1) < current_time:
                 awake = False
+
+            print(character.taxes > 0, not character.jailed, character.start_sleep == None, awake)
 
             if character.taxes > 0 and not character.jailed and character.start_sleep == None and awake:
                 if "UPGRADE_JAIL_2" in self._actions:

@@ -68,6 +68,7 @@ class Settlement(db.Model):
     colour = db.Column(db.String(120), nullable=False)
 
     taxes = db.Column(db.Integer, default=0)
+    value_economy = db.Column(db.Integer, default=0)
 
 
 class SettlementRuler(db.Model):
