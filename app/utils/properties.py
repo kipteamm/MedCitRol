@@ -104,4 +104,4 @@ class Properties:
         if current_hours >= 6 and current_hours < 20:
             hours = math.ceil(hours / 2)
 
-        return hours if hours > 0 else random.randint(2, 5)
+        return min(16, hours) if hours > 0 else random.randint(2, 5)

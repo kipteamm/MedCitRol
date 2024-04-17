@@ -13,6 +13,7 @@
     position: relative;
     padding: 25px;
     font-size: 16px;
+    text-align: center;
 }
 
 .task-field:first-child {
@@ -47,15 +48,13 @@
     border-radius: 12.5px;
 }
 
-.task-field.connect,
-.task-field.checkboxes,
-.task-field.multiplechoice {
+.task-field .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12.5px;
 }
 
-.task-field.connect {
+.task-field.connect .grid {
     column-gap: 75px;
 }
 
@@ -65,11 +64,16 @@
     display: flex;
     align-items: center;
     gap: 18.75px;
+    text-align: left;
 }
 
 .task-field .option:hover,
 .task-field .choice:hover {
     cursor: pointer;
+}
+
+.task-field .choice .content {
+    flex: 1;
 }
 
 .task-field .choice .indicator {
@@ -89,8 +93,8 @@
     background-color: var(--primary-clr);
 }
 
-.task-field.connect .choice:nth-child(even) {
-    justify-content: flex-end;
+.task-field.connect .choice.odd {
+    text-align: right;
 }
 
 .task-field .option {
@@ -106,4 +110,33 @@
 .task-field .arrow {
     text-align: center;
     font-weight: bold;
+}
+
+.task-field .add-option {
+    width: 100%;
+}
+
+.task-field .connect-answer {
+    margin: 12.5px 0px 0px 0px;
+    display: inline-flex;
+    border: 1px solid var(--secondary-bg);
+    border-radius: 12.5px;
+}
+
+.task-field .connect-answer .column {
+    padding: 12.5px;
+}
+
+.task-field .connect-answer .column:not(:last-child) {
+    border-right: 1px solid var(--secondary-bg);
+}
+
+.task-field .connect-answer .row {
+    text-align: center;
+}
+
+.task-field .connect-answer .row input {
+    margin-top: 12.5px;
+    width: 50px;
+    text-align: center;
 }

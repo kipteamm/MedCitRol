@@ -54,19 +54,29 @@ function taskFieldcomponent(taskField) {
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
 
+        wrapper.innerHTML += `<div class="grid"></div>`
+
+        const content = wrapper.querySelector(".grid")
+
         let counter = 0;
+        let connectCounter = 0;
+        let connectLetterCounter = 0;
 
         shuffle(taskField.options).forEach(option => {
             counter++
 
-            wrapper.innerHTML += `
-                <div class="choice" onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}">
-                    ${taskField.field_type === "connect"? counter % 2 === 0? '<div class="indicator"></div>' : '' : '<div class="indicator"></div>'}
+            content.innerHTML += `
+                <div class="choice ${counter % 2 === 0? "even": "odd"}" onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}">
+                    ${taskField.field_type === "connect"? counter % 2 === 0? ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][connectLetterCounter++] : '' : '<div class="indicator"></div>'}
                     <div class="content">${option.content? option.content : ''}</div>
-                    ${taskField.field_type === "connect" && counter % 2 !== 0? '<div class="indicator"></div>' : ''}
+                    ${taskField.field_type === "connect" && counter % 2 !== 0? ++connectCounter : ''}
                 </div>
             `
         })
+
+        if (taskField.field_type === "connect") {
+            wrapper.appendChild(connectAswerComponent(connectCounter))
+        }
     } else if (taskField.field_type === "order") {
         taskIndex++
 
@@ -93,11 +103,11 @@ function editableTaskFieldComponent(taskField) {
 
     if (taskField.field_type === "header") {
         wrapper.innerHTML = `
-            <h2><input onchange="editField(${taskField.id}, this.value)" value="${taskField.content? taskField.content : ""}"/></h2>
+            <h2><input onchange="editField(${taskField.id}, this.value)" value="${taskField.content? taskField.content : ""}" placeholder="Header"/></h2>
         `;
     } else if (taskField.field_type === "text") {
         wrapper.innerHTML = `
-            <textarea onchange="editField(${taskField.id}, this.value)">${taskField.content? taskField.content : ""}</textarea>
+            <textarea onchange="editField(${taskField.id}, this.value)" placeholder="Text">${taskField.content? taskField.content : ""}</textarea>
         `;
     } else if (taskField.field_type === "image") {
         wrapper.innerHTML = `
@@ -107,23 +117,33 @@ function editableTaskFieldComponent(taskField) {
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
 
+        wrapper.innerHTML += `<div class="grid"></div>`
+
+        const content = wrapper.querySelector(".grid")
+
         let counter = 0;
+        let connectCounter = 0;
+        let connectLetterCounter = 0;
 
         taskField.options.forEach(option => {
             counter++
 
-            wrapper.innerHTML += `
+            content.innerHTML += `
                 <div class="choice">
-                    ${taskField.field_type === "connect"? counter % 2 === 0? '<div class="indicator"></div>' : '' : '<div class="indicator"></div>'}
-                    <div class="content"><input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}"/></div>
-                    ${taskField.field_type === "connect" && counter % 2 !== 0? '<div class="indicator"></div>' : ''}
+                    ${taskField.field_type === "connect"? counter % 2 === 0? ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][connectLetterCounter++] : '' : '<div class="indicator"></div>'}
+                    <div class="content"><input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}" placeholder="Option"/></div>
+                    ${taskField.field_type === "connect" && counter % 2 !== 0? ++connectCounter : ''}
                 </div>
             `
         })
 
         wrapper.innerHTML += `
-            <button onclick="addOption(${taskField.id})">Add option</button>
+            <button class="add-option" onclick="addOption(${taskField.id})">Add option</button>
         `
+
+        if (taskField.field_type === "connect") {
+            wrapper.appendChild(connectAswerComponent(connectCounter))
+        }
     } else if (taskField.field_type === "order") {
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
@@ -131,13 +151,30 @@ function editableTaskFieldComponent(taskField) {
         taskField.options.forEach(option => {
             wrapper.innerHTML += `
                 <div class="option" id="task-option-${option.id}" draggable="true" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" task-id="${taskField.id}">
-                    <input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}"/>
+                    <input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}" placeholder="Option"/>
                 </div>
             `
         })
 
         wrapper.innerHTML += `
-            <button onclick="addOption(${taskField.id})">Add option</button>
+            <button class="add-option" onclick="addOption(${taskField.id})">Add option</button>
+        `
+    }
+
+    return wrapper;
+}
+
+function connectAswerComponent(connectCounter) {
+    const wrapper = document.createElement("div");
+
+    wrapper.classList.add("connect-answer");
+
+    for (let i = 0; i < connectCounter; i++) {
+        wrapper.innerHTML += `
+            <div class="column">
+                <div class="row">${i + 1}</div>
+                <div class="row"><input type="text" placeholder="${['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][i]}"/></div>
+            </div>
         `
     }
 
