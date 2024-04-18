@@ -62,6 +62,7 @@ li#taxes.active {
 }
 
 .work-panel button.close {
+    z-index: 1;
     position: absolute;
     top: 25px;
     left: 25px;

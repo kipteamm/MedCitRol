@@ -34,7 +34,6 @@ function taskFieldcomponent(taskField) {
 
     wrapper.id = `task-field-${taskField.id}`;
     wrapper.classList.add("task-field");
-    wrapper.innerHTML = `<span>(vraag ${taskIndex})</span>`
 
     if (taskField.field_type === "header") {
         wrapper.innerHTML = `
@@ -45,16 +44,14 @@ function taskFieldcomponent(taskField) {
             <p>${taskField.content? taskField.content.replace(/\n+/g, '</p><p>') : ""}</p>
         `;
     } else if (taskField.field_type === "image") {
-        wrapper.innerHTML = `
-            <img src="${taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/assets/notfound.webp"}"/>
-        `;
+        wrapper.appendChild(imageComponent(taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/assets/notfound.webp"))
     } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes" || taskField.field_type === "connect") {
         taskIndex++
 
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
 
-        wrapper.innerHTML += `<div class="grid"></div>`
+        wrapper.innerHTML += `<span>(vraag ${taskIndex})</span><div class="grid"></div>`
 
         const content = wrapper.querySelector(".grid")
 
@@ -79,6 +76,8 @@ function taskFieldcomponent(taskField) {
         }
     } else if (taskField.field_type === "order") {
         taskIndex++
+
+        wrapper.innerHTML = `<span>(vraag ${taskIndex})</span>`
 
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
@@ -110,9 +109,7 @@ function editableTaskFieldComponent(taskField) {
             <textarea onchange="editField(${taskField.id}, this.value)" placeholder="Text">${taskField.content? taskField.content : ""}</textarea>
         `;
     } else if (taskField.field_type === "image") {
-        wrapper.innerHTML = `
-            <img src="${taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/assets/notfound.webp"}"/>
-        `;
+        wrapper.appendChild(imageComponent(taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/assets/notfound.webp"))
     } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes" || taskField.field_type === "connect") {
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
@@ -162,6 +159,21 @@ function editableTaskFieldComponent(taskField) {
     }
 
     return wrapper;
+}
+
+function imageComponent(imageUrl) {
+    const wrapper = document.createElement('img');
+
+    wrapper.src = imageUrl;
+    //wrapper.style.display = 'none';
+
+    //wrapper.addEventListener('load', function() {
+    //    console.log(wrapper, "event fired");
+
+    //    wrapper.style.display = 'block';
+    //});
+   
+    return wrapper
 }
 
 function connectAswerComponent(connectCounter) {

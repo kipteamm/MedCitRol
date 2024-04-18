@@ -465,6 +465,9 @@ def add_option():
 
     if TaskOption.query.filter_by(task_field_id=json["field_id"], content=None).first():
         return make_response({"error" : "already have an empty option"}, 400)
+    
+    if TaskOption.query.filter_by(task_field_id=json["field_id"]).count() >= 26:
+        return make_response({"error" : "you maxed out the amoutn of options"}, 400)
 
     task_option = TaskOption(task_field_id=json["field_id"])
 
