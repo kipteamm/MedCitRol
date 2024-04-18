@@ -51,28 +51,35 @@
 
     <div class="ui alert" id="alert"></div>
 
-    <div class="ui information">
+    <div class="ui character">
+        <img src="/static/images/assets/{{ character.profession }}_avatar.png">
+
+        <div class="properties">
+            <div class="property"><div class="icon hunger"></div><b id="hunger">{{ character.hunger }}</b></div>
+            <div class="property"><div class="icon fatigue"></div><b id="fatigue">{{ character.fatigue }}</b></div>
+            <div class="property"><div class="icon health"></div><b id="health">{{ character.health }}</b></div>
+            <div class="property"><div class="icon happiness"></div><b id="happiness">{{ character.happiness }}</b></div>
+            <div class="property"><div class="icon pennies"></div><b id="pennies">{{ character.pennies }} penningen</b></div>
+        </div>
+    </div>
+
+    <div class="ui time">
         <b id="clock">00:00</b>
         <b id="date">00/00/00</b>
+    </div>
 
+    <div class="ui character-actions">
+        <button{% if character.taxes > 0 %} class="active"{% endif %} class="taxes" onclick="payTaxes()">Pay taxes (<b id="taxes">{{ character.taxes }} penningen</b>)</button>
+        <button onclick="eat()">Eat</button>
+        <button onclick="sleep()">Sleep</button>
+        <button onclick="work()">Work</button>
+    </div>
+
+    <div class="ui actions">
         <button onclick="openBuildMenu()">Build</button>
         <button onclick="openMarket()">Market</button>
         <button onclick="openMap()">Map</button>
         <button onclick="centerCamera()">Center</button>
-    </div>
-
-    <div class="ui character">
-        <li>Hunger <b id="hunger">{{ character.hunger }}</b></li>
-        <li>Fatigue <b id="fatigue">{{ character.fatigue }}</b></li>
-        <li>Health <b id="health">{{ character.health }}</b></li>
-        <li>Happiness <b id="happiness">{{ character.happiness }}</b></li>
-        <li>Wealth <b id="pennies">{{ character.pennies }} penningen</b></li>
-        <li>Profession <b id="profession">{% if character.profession %}{{ character.profession }}{% else %}Unemployed{% endif %}</b></li>
-        <li{% if character.taxes > 0 %} class="active"{% endif %} id="taxes">Taxes <b id="taxes">{{ character.taxes }} penningen</b> <button onclick="payTaxes()">Pay</button></li>
-
-        <button onclick="eat()">Eat</button>
-        <button onclick="sleep()">Sleep</button>
-        <button onclick="work()">Work</button>
     </div>
 
     <div class="map-container" id="map-container">
