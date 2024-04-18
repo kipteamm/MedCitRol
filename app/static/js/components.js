@@ -126,7 +126,7 @@ function editableTaskFieldComponent(taskField) {
             counter++
 
             content.innerHTML += `
-                <div class="choice">
+                <div class="choice" onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}">
                     ${taskField.field_type === "connect"? counter % 2 === 0? ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][connectLetterCounter++] : '' : '<div class="indicator"></div>'}
                     <div class="content"><input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}" placeholder="Option"/></div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? ++connectCounter : ''}

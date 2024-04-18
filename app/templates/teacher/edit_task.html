@@ -33,8 +33,9 @@
 
     <script>
         const task = document.getElementById("task");
+        let activeTaskJson = {{ task|tojson }};
 
-        {{ task.fields|tojson }}.forEach(field => {
+        activeTaskJson.fields.forEach(field => {
             const taskField = editableTaskFieldComponent(field);
             
             task.appendChild(taskField);    
