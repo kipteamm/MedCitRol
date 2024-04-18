@@ -63,7 +63,7 @@ function taskFieldcomponent(taskField) {
             counter++
 
             content.innerHTML += `
-                <div class="choice ${counter % 2 === 0? "even": "odd"}" onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}">
+                <div class="choice ${counter % 2 === 0? "even": "odd"}"${taskField.field_type !== "connect"? ' onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}"' : ''}>
                     ${taskField.field_type === "connect"? counter % 2 === 0? ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][connectLetterCounter++] : '' : '<div class="indicator"></div>'}
                     <div class="content">${option.content? option.content : ''}</div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? ++connectCounter : ''}
@@ -126,7 +126,7 @@ function editableTaskFieldComponent(taskField) {
             counter++
 
             content.innerHTML += `
-                <div class="choice" onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}">
+                <div class="choice"${taskField.field_type !== "connect"? ' onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}"' : ''}>
                     ${taskField.field_type === "connect"? counter % 2 === 0? ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][connectLetterCounter++] : '' : '<div class="indicator"></div>'}
                     <div class="content"><input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}" placeholder="Option"/></div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? ++connectCounter : ''}
@@ -185,7 +185,7 @@ function connectAswerComponent(connectCounter) {
         wrapper.innerHTML += `
             <div class="column">
                 <div class="row">${i + 1}</div>
-                <div class="row"><input type="text" placeholder="${['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][i]}"/></div>
+                <div class="row"><input type="text" oninput="connectAnswer(this)" placeholder="${['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][i]}"/></div>
             </div>
         `
     }

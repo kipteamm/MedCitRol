@@ -28,6 +28,22 @@ function handleDrop(event) {
             }
         }
     }
+
+    const task = draggedElement.parentElement;
+    let content = [];
+
+    task.querySelectorAll(".option").forEach(option => {
+        content.push(parseInt(option.id.split("-")[2]));
+    })
+
+    let answer = answers.find(field => field.field_id === task.id.split("-")[2]);
+
+    if (answer) {
+        answer.content = content;
+    } else {
+        answer = { field_id: parseInt(task.id.split("-")[2]), content: content };
+        answers.push(answer);
+    }
 }
 
 function selectOption(fieldId, optionId) {
@@ -54,4 +70,10 @@ function selectOption(fieldId, optionId) {
     }
 
     option.classList.toggle("active", !isSelected);
+}
+
+function connectAnswer(input) {
+    if (!/[^a-zA-Z]/.test(input.value)) return input.value = '';
+
+    
 }
