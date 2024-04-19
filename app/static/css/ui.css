@@ -83,22 +83,9 @@
     background-position: 0px -32px;
 }
 
-.character-actions {
-    top: 125px;
-    left: 12.5px;
-}
-
-.taxes {
-    display: none;
-}
-
-.taxes.active {
-    display: list-item;
-}
-
 .time {
     position: relative;
-    top: 72.5px;
+    top: 18.5px;
     left: 12.5px;
     pointer-events: none;
 }
@@ -123,6 +110,19 @@
     align-items: center;
     gap: 25px;
     border-radius: 0px 12.5px 12.5px;
+}
+
+.character-actions {
+    top: 188.5px;
+    left: 12.5px;
+}
+
+.taxes {
+    display: none;
+}
+
+.taxes.active {
+    display: list-item;
 }
 
 .actions {
