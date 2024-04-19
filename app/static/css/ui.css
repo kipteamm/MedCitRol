@@ -7,25 +7,6 @@
     user-select: none;
 }
 
-/* ALERTS */
-.alert {
-    top: 242.5px;
-    left: 25%;
-    opacity: 0;
-    transition: .3s;
-    z-index: 1000;
-    pointer-events: none;
-    background-color: var(--game-secondary-bg);
-    padding: 6.25px 12.5px;
-    display: flex;
-    align-items: center;
-}
-
-.alert.show {
-    opacity: 1;
-    left: 12.5px;
-}
-
 /* UI */
 .character {
     position: relative;

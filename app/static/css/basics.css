@@ -67,3 +67,27 @@ textarea:focus {
     padding: 0px 1px;
     width: 6px;
 }
+
+/* ALERTS */
+.alert {
+    position: fixed;
+    top: 242.5px;
+    left: 25%;
+    opacity: 0;
+    transition: .3s;
+    z-index: 1000;
+    pointer-events: none;
+    background-color: var(--game-secondary-bg);
+    padding: 6.25px 12.5px;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    border-radius: 6.25px;
+    font-size: 18px;
+    color: #f6f9fb;
+}
+
+.alert.show {
+    opacity: 1;
+    left: 12.5px;
+}

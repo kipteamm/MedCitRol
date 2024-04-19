@@ -27,38 +27,5 @@ function updateDate(timestamp) {
     dateElement.innerHTML = dateString;
 }
 
-const alertElement = document.getElementById('alert')
-
-let alertActive = false;
-
-function sendAlert(type, text) {
-    const wordsPerMinute = text.split(/\s+/).length;
-    const delay = Math.max((wordsPerMinute / 125) * 60 * 1000, 1500);
-    
-    if (alertActive) {
-        setTimeout(() => {
-            sendAlert(type, text);
-        }, delay + 500);
-
-        return
-    }
-
-    alertElement.innerHTML = `
-        <div class="icon alert-icon"></div>
-        <div class="alert-${type}">
-            ${text}
-        </div>
-    `;
-
-    alertElement.classList.add('show');
-
-    alertActive = true;
-
-    setTimeout(() => {
-        alertElement.classList.remove('show');
-        alertActive = false;
-    }, delay);
-}
-
 updateClock(world.current_time)
 updateDate(world.current_time)

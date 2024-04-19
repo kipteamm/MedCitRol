@@ -53,9 +53,9 @@ def submit_task():
     if not task:
         return make_response({"error": "No task found"}, 404)
     
-    Profession(character).work()
+    json = request.json
 
-    return make_response(task_serializer(task), 200)
+    return make_response({"success" : True}, 204)
 
 
 @api_blueprint.route("/profession/set", methods=["PUT"])

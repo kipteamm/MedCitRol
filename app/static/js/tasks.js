@@ -72,8 +72,44 @@ function selectOption(fieldId, optionId) {
     option.classList.toggle("active", !isSelected);
 }
 
-function connectAnswer(input) {
-    if (!/[^a-zA-Z]/.test(input.value)) return input.value = '';
+function connectAnswer(fieldId, _input) {
+    if (/[^a-zA-Z]/.test(_input.value)) return _input.value = '';
+    if (_input.value.length > 1) return _input.value = _input.value[0];
 
-    
+    let answer = answers.find(field => field.field_id === fieldId);
+
+    if (!answer) {
+        answer = { field_id: fieldId, content: [] };
+        answers.push(answer);
+    }
+
+    answer.content = []
+
+    document.getElementById(`task-field-${fieldId}`).querySelectorAll("input.connect-answer").forEach(input => {
+        if (input.value) {
+            const letter = input.value.toUpperCase()
+            const indexOption = document.getElementById(`${fieldId}-${input.getAttribute("index")}`);
+            const letterOption = document.getElementById(`${fieldId}-${letter}`)
+
+            if (indexOption === null || letterOption === null) {
+                input.value = "";
+
+                sendAlert("error", "invalid option"); 
+
+                return 
+            } 
+
+            if (answer.content.length > 0) {
+                answer.content.forEach(_answer => {
+                    if (_answer.split("-").includes(indexOption.getAttribute("option-id")) || _answer.split("-").includes(letterOption.getAttribute("option-id"))) {
+                        input.value = "";
+                    } else {
+                        answer.content.push(`${indexOption.getAttribute("option-id")}-${letterOption.getAttribute("option-id")}`);
+                    }
+                });
+            } else {
+                answer.content.push(`${indexOption.getAttribute("option-id")}-${letterOption.getAttribute("option-id")}`);
+            }
+        }
+    });
 }
