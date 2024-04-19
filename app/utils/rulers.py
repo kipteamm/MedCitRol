@@ -273,7 +273,7 @@ class Ruler:
 
         while True:
             pos_x = random.randint(abs(37 - house.pos_x), 33)
-            pos_y = random.randint(25, 40)
+            pos_y = random.randint(27, 47)
 
             for tile in tiles:
                 if Tile.query.filter_by(settlement_id=self._settlement.id, pos_x=pos_x + tile[0], pos_y=pos_y + tile[1]).first():

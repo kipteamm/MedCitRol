@@ -99,7 +99,7 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
         pos_x, pos_y = None, None
 
         while pos_x is None or pos_y is None:
-            pos_x, pos_y = generateRandomCoordinates(25, 35, 5, True, settlement.id)
+            pos_x, pos_y = generateRandomCoordinates(30, 35, 5, True, settlement.id)
 
         house = Tile(character_id=character.id, settlement_id=settlement.id, pos_x=pos_x, pos_y=pos_y, tile_type="hut")
 
