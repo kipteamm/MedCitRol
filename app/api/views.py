@@ -55,6 +55,9 @@ def submit_task():
     
     json = request.json
 
+    if not json:
+        return make_response({"error" : "Invalid answers."}, 400)
+
     return make_response({"success" : True}, 204)
 
 
@@ -498,3 +501,26 @@ def edit_option():
     db.session.commit()
 
     return make_response(task_field_serializer(TaskField.query.get(task_option.task_field_id)), 200)
+
+
+@api_blueprint.route('/task/answers', methods=["PATCH"])
+@authorized
+def update_answers():
+    json = request.json
+
+    if not json or not "field_type" in json or not "task_id" in json:
+        return make_response({"error" : "invalid json"}, 400)
+    
+    task = Task.query.get(json["task_id"])
+
+    field_type = json["field_type"]
+
+    if not field_type in ["header", "text", "image", "multiplechoice", "checkboxes", "connect", "order"]:
+        return make_response({"error" : "invalid field type"}, 400)
+
+    task_field = TaskField(task_id=json["task_id"], field_type=field_type)
+
+    db.session.add(task_field)
+    db.session.commit()
+
+    return make_response(task_field_serializer(task_field), 200)

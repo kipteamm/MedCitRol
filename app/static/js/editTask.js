@@ -110,3 +110,20 @@ async function editOption(optionId, value) {
 
     return task.replaceChild(editableTaskFieldComponent(json), document.getElementById(`task-field-${json.id}`));
 }
+
+async function updateAnswers(taskId) {
+    const response = await fetch("/api/task/answers", {
+        method: "PATCH",
+        body: JSON.stringify({task_id: taskId, answers: answers}),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${getCookie('psk')}`,
+        },
+    })
+
+    if (!response.ok) {
+        return console.log(response, await response.json());
+    }
+
+    return window.location.reload()
+}
