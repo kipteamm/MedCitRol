@@ -51,6 +51,15 @@
 
     <div class="ui alert" id="alert"></div>
 
+    <div class="ui time">
+        <img src="/static/images/assets/time.png"/>
+        
+        <div>
+            <b id="clock">00:00</b>
+            <b id="date">00/00/00</b>
+        </div>
+    </div>
+
     <div class="ui character">
         <img src="/static/images/assets/{{ character.profession }}_avatar.png"/>
 
@@ -60,15 +69,6 @@
             <div class="property"><div class="icon health"></div><b id="health">{{ character.health }}</b></div>
             <div class="property"><div class="icon happiness"></div><b id="happiness">{{ character.happiness }}</b></div>
             <div class="property"><div class="icon pennies"></div><b id="pennies">{{ character.pennies }} penningen</b></div>
-        </div>
-    </div>
-
-    <div class="ui time">
-        <img src="/static/images/assets/time.png"/>
-        
-        <div>
-            <b id="clock">00:00</b>
-            <b id="date">00/00/00</b>
         </div>
     </div>
 
