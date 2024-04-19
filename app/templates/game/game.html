@@ -52,7 +52,7 @@
     <div class="ui alert" id="alert"></div>
 
     <div class="ui character">
-        <img src="/static/images/assets/{{ character.profession }}_avatar.png">
+        <img src="/static/images/assets/{{ character.profession }}_avatar.png"/>
 
         <div class="properties">
             <div class="property"><div class="icon hunger"></div><b id="hunger">{{ character.hunger }}</b></div>
@@ -64,8 +64,12 @@
     </div>
 
     <div class="ui time">
-        <b id="clock">00:00</b>
-        <b id="date">00/00/00</b>
+        <img src="/static/images/assets/time.png"/>
+        
+        <div>
+            <b id="clock">00:00</b>
+            <b id="date">00/00/00</b>
+        </div>
     </div>
 
     <div class="ui character-actions">

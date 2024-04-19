@@ -89,13 +89,13 @@ function taxes(value) {
     if (value > 0) {
         sendAlert("error", `Your ruler requested ${value} pennies in taxes.`);
 
-        taxesElement.classList.add("active")
+        taxesElement.parentNode.classList.add("active")
         taxesElement.innerHTML = `Taxes <b>${value} penningen</b> <button onclick="payTaxes()">Pay</button>`
 
         return
     }
     
-    taxesElement.classList.remove("active")
+    taxesElement.parentNode.classList.remove("active")
 }
 
 const tiredOverlay = document.getElementById("tired-overlay");

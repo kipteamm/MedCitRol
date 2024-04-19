@@ -33,8 +33,8 @@ let alertActive = false;
 
 function sendAlert(type, text) {
     const wordsPerMinute = text.split(/\s+/).length;
-    const delay = (wordsPerMinute / 125) * 60 * 1000;
-
+    const delay = Math.max((wordsPerMinute / 125) * 60 * 1000, 1500);
+    
     if (alertActive) {
         setTimeout(() => {
             sendAlert(type, text);
@@ -44,6 +44,7 @@ function sendAlert(type, text) {
     }
 
     alertElement.innerHTML = `
+        <div class="icon alert-icon"></div>
         <div class="alert-${type}">
             ${text}
         </div>

@@ -252,11 +252,13 @@ def sleep():
 
         character.start_sleep = None
 
-    elif not character.end_sleep or (character.end_sleep + timedelta(hours=4) < world.current_time):
+    elif not character.end_sleep or (character.end_sleep + timedelta(hours=2) < world.current_time):
         character.start_sleep = world.current_time
         character.end_sleep = world.current_time + timedelta(hours=properties.get_hours_of_sleep(world.current_time.hour))
 
     else:
+        print(character.end_sleep + timedelta(hours=2), world.current_time)
+
         return make_response({"error" : "You just got up, you are not feeling sleepy."}, 400)
     
     db.session.commit()

@@ -65,6 +65,7 @@ socket.on('update_character', function(data) {
 
     for (const [key, value] of Object.entries(data)) {
         if (key === "id") continue;
+        if (key === "profession") continue;
 
         if (key === "asleep") {
             sleeping(value);

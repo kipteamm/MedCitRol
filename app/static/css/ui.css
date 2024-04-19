@@ -9,18 +9,21 @@
 
 /* ALERTS */
 .alert {
-    top: 12.5px;
+    top: 242.5px;
     left: 25%;
-    transform: translateX(-50%);
     opacity: 0;
     transition: .3s;
     z-index: 1000;
     pointer-events: none;
+    background-color: var(--game-secondary-bg);
+    padding: 6.25px 12.5px;
+    display: flex;
+    align-items: center;
 }
 
 .alert.show {
-    left: 50%;
     opacity: 1;
+    left: 12.5px;
 }
 
 /* UI */
@@ -42,10 +45,10 @@
     position: absolute;
     z-index: -1;
     top: 0;
-    left: 50px;
+    left: 48px;
     height: 100px;
     background-color: var(--game-secondary-bg);
-    padding: 0px 25px 0px 62.5px;
+    padding: 0px 25px 0px 64.5px;
     display: grid;
     grid-template-columns: repeat(3, auto);
     column-gap: 25px;
@@ -71,10 +74,13 @@
     background-position: -64px 0px;
 }
 .icon.happiness {
-    background-position: -0px -32px;
+    background-position: -96px 0px;
 }
 .icon.pennies {
-    background-position: -32px -32px;
+    background-position: -128px 0px;
+}
+.icon.alert-icon {
+    background-position: 0px -32px;
 }
 
 .character-actions {
@@ -91,11 +97,32 @@
 }
 
 .time {
-    top: 178px;
+    position: relative;
+    top: 72.5px;
     left: 12.5px;
-    background-color: var(--game-secondary-bg);
-    padding: 12.5px 25px;
     pointer-events: none;
+}
+
+.time img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 100%;
+    border: 4px solid var(--game-primary-bg);
+}
+
+.time div {
+    position: absolute;
+    z-index: -1;
+    top: 0px;
+    left: 23px;
+    background-color: var(--game-secondary-bg);
+    padding: 0px 25px 0px 39.5px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    border-radius: 0px 12.5px 12.5px;
 }
 
 .actions {

@@ -120,10 +120,18 @@ def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
         if character.last_update:
             hours_passed = round((world.current_time - character.last_update).total_seconds() / 3600)
 
-            character.hunger -= min(hours_passed, 16)
-            character.health -= min(hours_passed * 0.25, 16)
-            character.fatigue -= min(hours_passed, 16)
+            if character.hunger > 0:
+                character.hunger -= min(hours_passed, 16)
+                character.hunger = max(character.hunger, 0) 
+            
+            if character.health > 0:
+                character.health -= min(hours_passed * 0.25, 16)
+                character.health = max(character.health, 0) 
 
+            if character.fatigue > 0:
+                character.fatigue -= min(hours_passed, 16)
+                character.fatigue = max(character.fatigue, 0) 
+                
             character.last_update = world.current_time
 
         db.session.commit()
