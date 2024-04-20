@@ -21,6 +21,19 @@ const shuffle = (array) => {
     return array; 
 }; 
 
+function orderedShuffle(array) {
+    const oddIndexes = shuffle(array.filter((_, index) => index % 2 !== 0));
+    const evenIndexes = shuffle(array.filter((_, index) => index % 2 === 0));
+
+    const shuffledArray = [];
+
+    for (let i = 0; i < array.length; i++) {
+        shuffledArray[i] = i % 2 !== 0 ? oddIndexes.shift() : evenIndexes.shift();
+    }
+
+    return shuffledArray;
+}
+
 let alertActive = false;
 
 function sendAlert(type, text) {

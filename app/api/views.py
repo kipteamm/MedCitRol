@@ -2,6 +2,7 @@ from flask import Blueprint, request, make_response, g
 
 from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, task_field_serializer
 from app.utils.decorators import character_auhtorized, authorized
+from app.utils.professions import Profession
 from app.utils.properties import Properties
 from app.utils.inventory import Inventory
 from app.utils.functions import get_merchandise
@@ -56,8 +57,65 @@ def submit_task():
 
     if not json:
         return make_response({"error" : "Invalid answers."}, 400)
+    
+    correct, wrong = 0, 0
+    
+    for answer in json:
+        task_field = TaskField.query.get(answer['field_id'])
 
-    return make_response({"success" : True}, 204)
+        if not task_field:
+            return make_response({"error" : f"no field with id {answer['field_id']} found"}, 400)
+        
+        if task_field.field_type == "multiplechoice" or task_field.field_type == "checkboxes":
+            for _answer in answer['content']:
+                if TaskOption.query.filter_by(id=_answer, answer=True).first():
+                    correct += 1
+
+                else:
+                    wrong += 1
+
+        if task_field.field_type == "connect":
+            for connection in answer['content']:
+                connection = connection.split("-")
+
+                if TaskOption.query.filter_by(id=connection[0], connected=connection[1]).first():
+                    correct += 1
+
+                else:
+                    wrong += 1
+
+        if task_field.field_type == "order":
+            for i in range(len(answer['content'])):
+                if i == 0 and TaskOption.query.filter_by(id=answer['content'][i], connected=None).first():
+                    correct += 1
+
+                elif TaskOption.query.filter_by(id=answer['content'][i], connected=last_id).first():
+                    correct += 1
+                
+                else:
+                    wrong += 1
+
+                last_id = answer['content'][i]
+
+    percentage = round(correct / (correct + wrong) * 100) 
+
+    if percentage < 80:
+        return make_response({"status" : f"You had a bad day at work. You only scored {percentage}% on your task."}, 200)
+
+    elif percentage < 90:
+        character.pennies += 2 if character.profession in ['farmer', 'miller', 'baker'] else 4
+
+    else:
+        character.pennies += 3 if character.profession in ['farmer', 'miller', 'baker'] else 6  
+
+    character.task_index += 1
+
+    db.session.commit()
+
+    Profession(character).work()
+
+    return make_response({"status" : f"You scored {percentage}%. Great job!"}, 200)
+    
 
 
 @api_blueprint.route("/profession/set", methods=["PUT"])

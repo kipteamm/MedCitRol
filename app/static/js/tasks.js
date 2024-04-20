@@ -1,8 +1,6 @@
 let answers = [];
 
 function handleDragStart(event) {
-    console.log("HEE")
-
     event.dataTransfer.setData("text/plain", event.target.id);
 }
 

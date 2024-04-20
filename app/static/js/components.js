@@ -59,7 +59,13 @@ function taskFieldcomponent(taskField) {
         let connectCounter = 0;
         let connectLetterCounter = 0;
 
-        shuffle(taskField.options).forEach(option => {
+        if (taskField.field_type === "connect") {
+            options = orderedShuffle(taskField.options);
+        } else {
+            options = shuffle(taskField.options);
+        }
+
+        options.forEach(option => {
             counter++
 
             if (counter % 2 === 0) {

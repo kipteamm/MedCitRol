@@ -98,13 +98,15 @@ async function submitTask() {
         }
     });
 
-    if (!response.ok) {
-        const json = await response.json();
+    const json = await response.json();
 
+    if (!response.ok) {
         sendAlert("error", json.error);
 
         return;
     }
+
+    sendAlert("error", json.status)
 
     workContent.innerHTML = '';
 
