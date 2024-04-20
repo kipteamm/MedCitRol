@@ -121,7 +121,7 @@ async function buyItem(id) {
     if (marketItem.amount === 0) {
         document.getElementById(`market-item-${id}`).style.display = "none";
     } else {
-        document.getElementById(`amount-${id}`).innerText = `${marketItem.amount}x`;
+        document.getElementById(`amount-${id}`).innerText = amountComponent(marketItem.amount);
     }
 
     const response = await fetch(market === "merchant"? "/api/merchant/buy" : `/api/market/${market}/buy`, {
@@ -144,7 +144,7 @@ async function buyItem(id) {
 
         marketItem.amount += 1;
 
-        document.getElementById(`amount-${id}`).innerText = `${marketItem.amount}x`;
+        document.getElementById(`amount-${id}`).innerText = amountComponent(marketItem.amount);
 
         updatePennies("pennies", marketItem.price, false);
     

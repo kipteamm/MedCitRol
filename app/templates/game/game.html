@@ -73,17 +73,17 @@
     </div>
 
     <div class="ui character-actions">
-        <button{% if character.taxes > 0 %} class="active"{% endif %} class="taxes" onclick="payTaxes()">Pay taxes (<b id="taxes">{{ character.taxes }} penningen</b>)</button>
-        <button onclick="eat()">Eat</button>
-        <button onclick="sleep()">Sleep</button>
-        <button onclick="work()">Work</button>
+        <button class="primary-btn taxes{% if character.taxes > 0 %} active{% endif %}" onclick="payTaxes()">Pay taxes (<b id="taxes">{{ character.taxes }} penningen</b>)</button>
+        <button class="primary-btn" onclick="eat()">Eat</button>
+        <button class="primary-btn" onclick="sleep()">Sleep</button>
+        <button class="primary-btn" onclick="work()">Work</button>
     </div>
 
     <div class="ui actions">
-        <button onclick="openBuildMenu()">Build</button>
-        <button onclick="openMarket()">Market</button>
-        <button onclick="openMap()">Map</button>
-        <button onclick="centerCamera()">Center</button>
+        <button class="primary-btn" onclick="openBuildMenu()">Build</button>
+        <button class="primary-btn" onclick="openMarket()">Market</button>
+        <button class="primary-btn" onclick="openMap()">Map</button>
+        <button class="primary-btn" onclick="centerCamera()">Center</button>
     </div>
 
     <div class="map-container" id="map-container">
@@ -91,41 +91,45 @@
     </div>
 
     <div class="work-panel" id="work-panel">
-        <button class="close" onclick="stopWorking()">Close</button>
+        <button class="primary-btn" class="close" onclick="stopWorking()">Close</button>
         
         <div class="work-content" id="work-content"></div>
     </div>
 
     <div class="build-panel" id="build-panel">
-        <button onclick="cancelBuild()">Cancel</button>
+        <button class="primary-btn" onclick="cancelBuild()">Cancel</button>
         <h2>Your buildables</h2>
         <div class="content"></div>
 
-        <button onclick="confirmBuild()">Confirm build</button>
+        <button class="primary-btn" onclick="confirmBuild()">Confirm build</button>
 
         <h2>Purchase</h2>
         <div>
-            Market stall <b>20 penningen</b> <button onclick="buyBuildable('market_stall', 20)">Buy</button>
+            Market stall <b>20 penningen</b> <button class="primary-btn" onclick="buyBuildable('market_stall', 20)">Buy</button>
         </div>
     </div>
 
     <div class="market-panel" id="market-panel">
-        <button class="market-btn" onclick="switchMarket('settlement')" id="settlement-market-btn" disabled>Local market</button>
-        <button class="market-btn" onclick="switchMarket('merchant')" id="merchant-market-btn" style="display: none;">Merchant</button>
-        <button class="market-btn" onclick="switchMarket('world')" id="world-market-btn">Global market</button>
+        <div class="market-selectors">
+            <button class="primary-btn market-btn" onclick="switchMarket('settlement')" id="settlement-market-btn" disabled>Local market</button>
+            <button class="primary-btn market-btn" onclick="switchMarket('merchant')" id="merchant-market-btn" style="display: none;">Merchant</button>
+            <button class="primary-btn market-btn" onclick="switchMarket('world')" id="world-market-btn">Global market</button>
+            <button class="primary-btn market-btn" onclick="closeMarket()">Close</button>
+        </div>
 
-        <button class="close" onclick="closeMarket()">Close</button>
-        
-        <div class="content"></div>
+        <h2>Market</h2>
 
-        <div class="sell" id="market-sell">
-            <h2>Sell</h2>
-            
-            <input type="text" placeholder="item" id="item">
-            <input type="number" placeholder="amount" id="amount">
-            <input type="number" placeholder="price per item" id="price">
+        <div class="market-container">
+            <div class="sell" id="market-sell">
+                <h3>Sell</h3>
+                <input type="text" placeholder="Item name" id="item">
+                <input type="number" placeholder="Amount" id="amount">
+                <input type="number" placeholder="Price per item" id="price">
 
-            <button onclick="sellItem()">Sell something</button>
+                <button class="primary-btn" onclick="sellItem()">Sell something</button>
+            </div>
+
+            <div class="content"></div>
         </div>
     </div>
 </body>

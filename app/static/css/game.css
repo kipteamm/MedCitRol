@@ -2,6 +2,12 @@ body {
     overflow: hidden;
 }
 
+.primary-btn {
+    background-color: var(--game-primary-bg);
+    color: var(--secondary-font-clr);
+    border-color: var(--game-primary-bg);
+}
+
 .night {
     z-index: 10000;
     position: absolute;

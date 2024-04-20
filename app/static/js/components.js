@@ -301,11 +301,21 @@ function marketItemComponent(item) {
     wrapper.id = `market-item-${item.id}`;
     wrapper.classList.add("market-item");
     wrapper.innerHTML = `
-        ${item.item_type}
-        <b id="amount-${item.id}">${item.amount}x</b>
-        <b>${item.price}pennies</b>
-        ${item.character_id !== character.id? `<button onclick="buyItem('${item.id}')">Buy</button>` : ""}
+        <h3>${item.item_type} (<span id="amount-${item.id}">${amountComponent()}</span>)</h3>
+        ${item.character_id !== character.id? `<button class="primary-btn" onclick="buyItem('${item.id}')">Buy <b>(${item.price} penningen/item)</b></button>` : ""}
     `;
 
     return wrapper;
+}
+
+function amountComponent(amount) {
+    if (amount < 5) return "Very limited supply"
+    if (amount < 10) return "Limited supply"
+    if (amount < 15) return "Almost out of stock"
+    if (amount < 20) return "Low on stock"
+    if (amount < 25) return "Quite Stocked"
+    if (amount < 30) return "Well stocked"
+    if (amount < 35) return "Very stocked"
+    
+    return "Huge supply"
 }
