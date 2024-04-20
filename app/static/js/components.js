@@ -170,12 +170,16 @@ function editableTaskFieldComponent(taskField) {
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
 
+        console.log(taskField.options)
+
         taskField.options.forEach(option => {
-            wrapper.innerHTML += `
-                <div class="option" id="task-option-${option.id}" draggable="true" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" task-id="${taskField.id}">
-                    <input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}" placeholder="Option"/>
-                </div>
-            `
+            const previous = wrapper.querySelector(`#task-option-${option.connected}`);
+
+            if (previous) {
+                previous.insertAdjacentElement("afterend", orderOption(option, taskField.id));
+            } else {
+                wrapper.prepend(orderOption(option, taskField.id));
+            }
         })
 
         wrapper.innerHTML += `
@@ -183,6 +187,22 @@ function editableTaskFieldComponent(taskField) {
             <button class="add-option" onclick="deleteField(${taskField.id})">Delete field</button>
         `
     }
+
+    return wrapper;
+}
+
+function orderOption(option, taskFieldId) {
+    const wrapper = document.createElement("div");
+
+    wrapper.classList.add("option");
+    wrapper.id = `task-option-${option.id}`;
+    wrapper.draggable = true;
+    wrapper.setAttribute("ondragstart", "handleDragStart(event)");
+    wrapper.setAttribute("ondragover", "handleDragOver(event)");
+    wrapper.setAttribute("ondrop", "handleDrop(event)");
+    wrapper.setAttribute("task-id", taskFieldId);
+
+    wrapper.innerHTML += `<input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}" placeholder="Option"/>`;
 
     return wrapper;
 }
