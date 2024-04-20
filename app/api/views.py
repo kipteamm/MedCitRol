@@ -507,8 +507,6 @@ def edit_option():
 def update_answers():
     json = request.json
 
-    print(json)
-
     if not json or not "answers" in json or not "task_id" in json:
         return make_response({"error" : "invalid json"}, 400)
 
@@ -517,21 +515,20 @@ def update_answers():
     if not task:
         return make_response({"error" : "no task found"}, 400)
     
-    for answer in json.answers:
-        task_field = TaskField.query.get(['field_id'])
+    for answer in json['answers']:
+        task_field = TaskField.query.get(answer['field_id'])
 
         if not task_field:
-            return make_response({"error", f"no field with id {answer['field_id']} found"})
+            return make_response({"error" : f"no field with id {answer['field_id']} found"}, 400)
         
         if task_field.field_type == "multiplechoice" or task_field.field_type == "checkboxes":
-            update_query = (
-                TaskOption.__table__
-                .update()
-                .where(TaskOption.id.in_(answer['content']))
-                .values(answer=True)
-            )
+            for option in TaskOption.query.filter_by(task_field_id=task_field.id).all():
+                if option.id in answer['content']:
+                    option.answer = True
 
-            db.session.execute(update_query)
+                else:
+                    option.answer = False
+
             db.session.commit()
 
     return make_response({"success" : True}, 204)

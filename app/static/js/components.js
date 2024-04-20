@@ -138,12 +138,16 @@ function editableTaskFieldComponent(taskField) {
             }
 
             content.innerHTML += `
-                <div class="choice"${taskField.field_type !== "connect"? ` onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
+                <div class="choice${option.answer? " active" : ""}"${taskField.field_type !== "connect"? ` onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
                     ${taskField.field_type === "connect"? counter % 2 === 0? indicator : '' : '<div class="indicator"></div>'}
                     <div class="content"><input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}" placeholder="Option"/></div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? indicator : ''}
                 </div>
             `
+
+            if (option.answer) {
+                selectOption(taskField.id, option.id)
+            }
         })
 
         wrapper.innerHTML += `

@@ -61,13 +61,15 @@ function selectOption(fieldId, optionId) {
 
     if (isMultipleChoice && answer.content.length > 0) {
         const previousOptionId = answer.content[0];
-        document.getElementById(`task-option-${previousOptionId}`).classList.remove("active");
+        document.getElementById(`task-option-${previousOptionId}`).classList.remove("active"); 
         answer.content = [optionId];
     } else if (isSelected) {
         answer.content.splice(answer.content.indexOf(optionId), 1);
     } else {
         answer.content.push(optionId);
     }
+
+    if (!option) return;
 
     option.classList.toggle("active", !isSelected);
 }
