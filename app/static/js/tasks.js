@@ -36,7 +36,7 @@ function handleDrop(event) {
         content.push(parseInt(option.id.split("-")[2]));
     })
 
-    let answer = answers.find(field => field.field_id === task.id.split("-")[2]);
+    let answer = answers.find(field => field.field_id === parseInt(task.id.split("-")[2]));
 
     if (answer) {
         answer.content = content;

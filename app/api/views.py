@@ -562,4 +562,26 @@ def update_answers():
 
             db.session.commit()
 
+        elif task_field.field_type == "order":
+            last_id = None
+            
+            for i in range(len(answer['content'])):
+                option = TaskOption.query.get(answer['content'][i])
+                
+                if i == 0:
+                    option.connected = None
+
+                else:
+                    option.connected = last_id
+
+                if i < len(answer['content']) - 1:
+                    option.answer = True
+                
+                else:
+                    option.answer = False
+
+                last_id = option.id
+
+            db.session.commit()
+
     return make_response({"success" : True}, 204)
