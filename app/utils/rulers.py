@@ -480,7 +480,9 @@ class Ruler:
 
             return None
         
-        if self._ruler.last_actions + timedelta(days=1) < current_time:
+        if self._ruler.last_action + timedelta(days=1) < current_time:
+            print("inactivity taxes save")
+
             self._save_taxes()
 
         action = self._get_action()

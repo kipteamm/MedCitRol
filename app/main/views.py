@@ -16,6 +16,11 @@ def index():
     return render_template('main/index.html')
 
 
+@main_blueprint.route('/help')
+def help():
+    return render_template('main/help.html')
+
+
 @main_blueprint.route('/reset')
 def reset():
     for task in Task.query.all():
