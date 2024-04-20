@@ -67,7 +67,7 @@ def edit_task(world_id, task_id):
     
     task = Task.query.get(task_id)
 
-    response = make_response(render_template('teacher/edit_task.html', world=world, task=task_serializer(task)))
+    response = make_response(render_template('teacher/edit_task.html', world=world, task=task_serializer(task, True)))
 
     response.set_cookie('psk', get_key(current_user.id, world.id))
     response.set_cookie('task', str(task.id))

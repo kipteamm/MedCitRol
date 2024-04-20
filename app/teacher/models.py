@@ -19,8 +19,11 @@ class TaskField(db.Model):
 
 
 class TaskOption(db.Model):
-    __tablename__ = 'option'
+    __tablename__ = 'task_option'
 
     id = db.Column(db.Integer, primary_key=True)
     task_field_id = db.Column(db.Integer, db.ForeignKey('task_field.id'), nullable=False)
     content = db.Column(db.Text)
+
+    answer = db.Column(db.Boolean, default=False)
+    connected = db.Column(db.Integer, db.ForeignKey('task_option.id'))

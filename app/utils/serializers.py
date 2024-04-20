@@ -121,21 +121,21 @@ def merchant_serializer(merchant: Merchant) -> dict:
     return data
 
 
-def task_serializer(task: Task) -> dict:
+def task_serializer(task: Task, include_answers: bool=False) -> dict:
     return {
         'id' : task.id,
         'world_id' : task.world_id,
         'index' : task.index,
-        'fields' : [task_field_serializer(task_field) for task_field in TaskField.query.filter_by(task_id=task.id)]
+        'fields' : [task_field_serializer(task_field, include_answers) for task_field in TaskField.query.filter_by(task_id=task.id)]
     }
 
 
-def task_field_serializer(task_field: TaskField) -> dict:
+def task_field_serializer(task_field: TaskField, include_answers: bool=False) -> dict:
     options = []
     content = task_field.content
 
     if task_field.field_type == "multiplechoice" or task_field.field_type == "checkboxes" or task_field.field_type == "connect" or task_field.field_type == "order":
-        options = [task_option_serializer(task_option) for task_option in TaskOption.query.filter_by(task_field_id=task_field.id)]
+        options = [task_option_serializer(task_option, include_answers) for task_option in TaskOption.query.filter_by(task_field_id=task_field.id)]
 
     elif task_field.field_type == "image":
         content = f'/media/tasks/{content}'
@@ -149,9 +149,15 @@ def task_field_serializer(task_field: TaskField) -> dict:
     }
 
 
-def task_option_serializer(task_option: TaskOption) -> dict:
-    return {
+def task_option_serializer(task_option: TaskOption, include_answer: bool=False) -> dict:
+    data = {
         'id' : task_option.id,
         'task_field_id' : task_option.task_field_id,
         'content' : task_option.content
     }
+
+    if include_answer:
+        data['answer'] = task_option.answer
+        data['connected'] = task_option.connected
+
+    return data

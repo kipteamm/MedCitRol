@@ -33,7 +33,7 @@
     display: grid;
     grid-template-columns: repeat(3, auto);
     column-gap: 25px;
-    border-radius: 0px 12.5px 12.5px;
+    border-radius: 0px 12.5px 12.5px 0px;
 }
 
 .character .properties .property {
@@ -90,7 +90,7 @@
     display: flex;
     align-items: center;
     gap: 25px;
-    border-radius: 0px 12.5px 12.5px;
+    border-radius: 0px 12.5px 12.5px 0px;
 }
 
 .character-actions {

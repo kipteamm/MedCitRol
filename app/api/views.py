@@ -508,19 +508,31 @@ def edit_option():
 def update_answers():
     json = request.json
 
-    if not json or not "field_type" in json or not "task_id" in json:
+    print(json)
+
+    if not json or not "answers" in json or not "task_id" in json:
         return make_response({"error" : "invalid json"}, 400)
+
+    task = Task.query.filter_by(id=json["task_id"]).first()
+
+    if not task:
+        return make_response({"error" : "no task found"}, 400)
     
-    task = Task.query.get(json["task_id"])
+    for answer in json.answers:
+        task_field = TaskField.query.filter_by(id=answer['field_id']).first()
 
-    field_type = json["field_type"]
+        if not task_field:
+            return make_response({"error", f"no field with id {answer['field_id']} found"})
+        
+        if task_field.field_type == "multiplechoice" or task_field.field_type == "checkboxes":
+            update_query = (
+                TaskOption.__table__
+                .update()
+                .where(TaskOption.id.in_(answer['content']))
+                .values(answer=True)
+            )
 
-    if not field_type in ["header", "text", "image", "multiplechoice", "checkboxes", "connect", "order"]:
-        return make_response({"error" : "invalid field type"}, 400)
+            db.session.execute(update_query)
+            db.session.commit()
 
-    task_field = TaskField(task_id=json["task_id"], field_type=field_type)
-
-    db.session.add(task_field)
-    db.session.commit()
-
-    return make_response(task_field_serializer(task_field), 200)
+    return make_response({"success" : True}, 204)
