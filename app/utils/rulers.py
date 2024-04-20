@@ -475,15 +475,13 @@ class Ruler:
         return True
 
     def work(self, current_time: datetime) -> None:
-        if self._ruler.last_action and (self._ruler.last_action + timedelta(days=1)) > current_time and False:
-            print("waiting")
-
-            return None
-        
-        if random.randint(1, 2) == 1:
+        if random.randint(1, 6) != 6:
             print("not doing anything")
 
             return None
+        
+        if self._ruler.last_actions + timedelta(days=1) < current_time:
+            self._save_taxes()
 
         action = self._get_action()
 

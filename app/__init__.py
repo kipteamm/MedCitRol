@@ -140,8 +140,7 @@ def create_app():
                     if not character.settlement_id in settlements:
                         settlement_ruler = SettlementRuler.query.filter_by(settlement_id=character.settlement_id).first()
 
-                        if not settlement_ruler.last_action or settlement_ruler.last_action + timedelta(days=1) < world.current_time:
-                            Ruler(settlement_ruler).work(world.current_time)
+                        Ruler(settlement_ruler).work(world.current_time)
 
                         settlements.append(character.settlement_id)
 
