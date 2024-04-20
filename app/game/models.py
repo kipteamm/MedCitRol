@@ -102,6 +102,9 @@ class Character(db.Model):
     settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
     last_update = db.Column(DateTime(timezone=True), default=None)
 
+    name = db.Column(db.String(120))
+    surname = db.Column(db.String(120))
+
     # properties
     hunger = db.Column(db.Integer, default=24)
     fatigue = db.Column(db.Integer, default=24)

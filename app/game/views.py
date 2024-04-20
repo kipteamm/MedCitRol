@@ -3,140 +3,16 @@ from flask_login import current_user, login_required
 from flask import Blueprint, render_template, redirect, url_for, make_response
  
 from app.utils.serializers import world_serializer, settlement_serializer, character_serializer, tile_serializer, settlement_ruler_serializer
-from app.utils.functions import get_key, generateRandomCoordinates
+from app.utils.functions import get_key
+from app.utils.presence import get_presence
 from app.utils.rulers import Ruler
-from app.auth.models import User, UserWorlds
-from app.extensions import db, socketio
+from app.auth.models import UserWorlds
+from app.extensions import db
 
-from .models import World, Settlement, Character, Tile, SettlementRuler, Merchant
-
-from datetime import timedelta
-
-import json
+from .models import World, Tile, SettlementRuler
 
 
 game_blueprint = Blueprint('game', __name__)
-
-
-settlement_colours = ['cyan', 'lime', 'purple', 'red', 'brown']
-
-
-def get_presence(world: World, user: User) -> tuple[Settlement, Character]:
-    user.active_world = world.id
-
-    db.session.commit()
-
-    character = Character.query.filter_by(world_id=world.id, user_id=user.id).first()
-
-    if not character:
-        settlements = Settlement.query.filter_by(world_id=world.id).all()
-
-        if not settlements:
-            settlement = Settlement(world_id=world.id, name="Unnamed", colour=settlement_colours[0])
-
-            db.session.add(settlement)
-            db.session.commit()
-
-            Ruler().create(settlement.id)
-
-            tile = Tile(settlement_id=settlement.id, pos_x=37, pos_y=37, tile_type="well")
-            
-            db.session.add(tile)
-            db.session.commit()
-
-            merchant = Merchant(settlement_id=settlement.id, merchant_type="grain", end_date=(world.current_time + timedelta(weeks=8)))
-
-            db.session.add(merchant)
-            db.session.commit()
-
-        elif len(settlements) < len(settlement_colours):
-            i = len(settlements)
-
-            for _settlement in settlements:
-                if Character.query.filter_by(world_id=world.id, settlement_id=_settlement.id).count() >= 8:
-                    settlement = Settlement(world_id=world.id, name="Unnamed", colour=settlement_colours[i])
-
-                    db.session.add(settlement)
-                    db.session.commit()
-
-                    Ruler().create(settlement.id)
-
-                    tile = Tile(settlement_id=settlement.id, pos_x=37, pos_y=37, tile_type="well")
-                    
-                    db.session.add(tile)
-                    db.session.commit()
-
-                    merchant = Merchant(settlement_id=settlement.id, merchant_type="grain", end_date=(world.current_time + timedelta(weeks=8)))
-
-                    db.session.add(merchant)
-                    db.session.commit()
-
-                    break
-
-                settlement = _settlement
-
-                i += 1
-
-                break
-        else:
-            character_counts = []
-
-            for i in range(settlements):
-                character_counts[i] = {
-                    'characters' : Character.query.filter_by(world_id=world.id, settlement_id=settlements[i].id),
-                    'id' : settlements[i].id
-                }
-
-            sorted_data = sorted(character_counts, key=lambda x: x['characters'])
-
-            settlement = settlements.query.filter_by(id=sorted_data[i].id)
-
-        character = Character(world_id=world.id, user_id=user.id, settlement_id=settlement.id)
-
-        db.session.add(character)
-        db.session.commit()
-
-        pos_x, pos_y = None, None
-
-        while pos_x is None or pos_y is None:
-            pos_x, pos_y = generateRandomCoordinates(30, 35, 5, True, settlement.id)
-
-        house = Tile(character_id=character.id, settlement_id=settlement.id, pos_x=pos_x, pos_y=pos_y, tile_type="hut")
-
-        db.session.add(house)
-        db.session.commit()
-
-        character.house_id = house.id
-
-        socketio.emit("new_tiles", [tile_serializer(house)], room=settlement.id) # type: ignore
-
-    else:
-        settlement = Settlement.query.filter_by(world_id=world.id, id=character.settlement_id).first()
-
-        if character.jailed and world.current_time >= character.jail_end:
-                character.jailed = False
-                character.jail_end = None
-
-        if character.last_update:
-            hours_passed = round((world.current_time - character.last_update).total_seconds() / 3600)
-
-            if character.hunger > 0:
-                character.hunger -= min(hours_passed, 16)
-                character.hunger = max(character.hunger, 0) 
-            
-            if character.health > 0:
-                character.health -= min(hours_passed * 0.25, 16)
-                character.health = max(character.health, 0) 
-
-            if character.fatigue > 0:
-                character.fatigue -= min(hours_passed, 16)
-                character.fatigue = max(character.fatigue, 0) 
-                
-            character.last_update = world.current_time
-
-        db.session.commit()
-
-    return settlement, character
 
 
 @game_blueprint.route('/home')
