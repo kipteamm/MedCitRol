@@ -64,7 +64,7 @@ def _get_settlement(world: World) -> Settlement:
         return _create_settlement(world, settlement_colours[len(settlements)])
     
     smallest_settlement = min(settlements, key=lambda s: Character.query.filter_by(world_id=world.id, settlement_id=s.id).count())
-    
+
     return smallest_settlement
 
 
@@ -77,7 +77,7 @@ def _create_character(world: World, user: User, settlement: Settlement) -> Chara
     pos_x, pos_y = None, None
 
     while pos_x is None or pos_y is None:
-        pos_x, pos_y = generateRandomCoordinates(30, 35, 5, True, settlement.id)
+        pos_x, pos_y = generateRandomCoordinates(29, 35, 5, True, settlement.id)
 
     house = Tile(character_id=character.id, settlement_id=settlement.id, pos_x=pos_x, pos_y=pos_y, tile_type="hut")
 

@@ -19,7 +19,7 @@ import math
 
 # 14, 12, 5, 7, 13 -> MORE SOCIAL AND RELIGION
 
-CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social', 'military', 'carelessness']
+CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social', 'military']
 
 
 class Action(Enum):
@@ -85,7 +85,7 @@ class Ruler:
 
     def create(self, settlement_id: int) -> None:
         random.shuffle(CHARACTERISTICS)
-        points_left = 300
+        points_left = 250
 
         for i in range(len(CHARACTERISTICS) - 1):
             random_value = random.randint(5, min(points_left, 100))
@@ -480,7 +480,7 @@ class Ruler:
 
             return None
         
-        if random.randint(self._characteristics['carelessness'], 100) < 50:
+        if random.randint(1, 2) == 1:
             print("not doing anything")
 
             return None

@@ -103,7 +103,7 @@
 }
 
 .taxes.active {
-    display: list-item;
+    display: inline-block;
 }
 
 .actions {

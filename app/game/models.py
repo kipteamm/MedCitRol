@@ -86,7 +86,6 @@ class SettlementRuler(db.Model):
     religion = db.Column(db.Integer, default=0)
     social = db.Column(db.Integer, default=0)
     military = db.Column(db.Integer, default=0)
-    carelessness = db.Column(db.Integer, default=0)
 
     actions = db.Column(db.Text, default="[]")
     last_action = db.Column(db.DateTime, default=None)
