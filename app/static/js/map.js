@@ -125,6 +125,9 @@ function render() {
     }
 }
 
+const informationPanel = document.getElementById("information-panel");
+
+let activeTile = null;
 let isDragging = false;
 let building = null;
 let startX, startY;
@@ -170,7 +173,13 @@ function handleClick(event, rightClick=false) {
 
     tile = tiles.find(tile => tile.pos_x === tileX && tile.pos_y === tileY)
 
-    console.log(tile)
+    informationPanel.classList.add("active")
+
+    if (tile.id !== activeTile) {
+        activeTile = tile.id;
+
+        informationPanel.appendChild(informationComponent(tile));
+    }
 }
 
 // Start dragging
@@ -185,6 +194,13 @@ function startDragging(e) {
     startX = e.clientX || e.touches[0].clientX;
     startY = e.clientY || e.touches[0].clientY;
 
+    if (informationPanel.classList.contains("active")) {
+        informationPanel.classList.remove("active");
+
+        activeTile = null;
+
+        informationPanel.innerHTML = '';
+    }
 }
 
 // Stop dragging

@@ -319,3 +319,18 @@ function amountComponent(amount) {
     
     return "Huge supply"
 }
+
+function informationComponent(tile) {
+    const wrapper = document.createElement("div");
+
+    console.log(tile)
+
+    wrapper.innerHTML = `
+        <h2>${tile.tile_type}</h2>
+        <p>
+            ${tile.character_id? tile.character_id === character.id? `This is your ${tile.tile_type}` : "This is owned by a fellow citizen." : "This is owned by your ruler."}
+        </p>
+    `
+
+    return wrapper;
+}

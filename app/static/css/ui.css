@@ -245,15 +245,17 @@
 
 .build-panel {
     position: fixed;
-    right: -100%;
+    top: 0;
+    right: -450px;
     width: 400px;
     height: 100vh;
-    background-color: var(--primary-bg);
-    transition: .3s;
+    background-color: var(--game-tertiary-bg);
+    transition: right 0.3s ease;
     color: var(--primary-font-clr);
+    padding: 12.5px;
 }
 .build-panel.active {
-    right: 0px;
+    right: 0;
 }
 
 .inventory-item {
@@ -262,4 +264,25 @@
 
 .inventory-item.active {
     background-color: var(--secondary-bg);
+}
+
+/* inforamtion panel */
+.information {
+    position: fixed;
+    top: 0;
+    right: -450px;
+    width: 400px;
+    height: 100vh;
+    transition: right 0.3s ease;
+    background-color: var(--game-tertiary-bg);
+    color: var(--primary-font-clr);
+    padding: 12.5px;
+}
+
+.information.active {
+    right: 0;
+}
+
+.information h2 {
+    margin: 0px;
 }
