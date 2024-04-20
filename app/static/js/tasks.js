@@ -75,7 +75,7 @@ function selectOption(fieldId, optionId) {
 }
 
 function connectAnswer(fieldId, _input=null) {
-    if (input) {
+    if (_input) {
         if (/[^a-zA-Z]/.test(_input.value)) return _input.value = '';
         if (_input.value.length > 1) return _input.value = _input.value[0];
     }

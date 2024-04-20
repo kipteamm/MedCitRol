@@ -78,7 +78,7 @@ function taskFieldcomponent(taskField) {
         })
 
         if (taskField.field_type === "connect") {
-            wrapper.appendChild(connectAswerComponent(connectCounter, taskField.id))
+            wrapper.appendChild(connectAswerComponent(taskField.options, taskField.id))
         }
     } else if (taskField.field_type === "order") {
         taskIndex++
@@ -99,6 +99,8 @@ function taskFieldcomponent(taskField) {
 
     return wrapper;
 }
+
+let correctConnectAnswers = {};
 
 function editableTaskFieldComponent(taskField) {
     const wrapper = document.createElement("div");
@@ -133,8 +135,14 @@ function editableTaskFieldComponent(taskField) {
 
             if (counter % 2 === 0) {
                 indicator =  ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][connectLetterCounter++]
+            
+                if (option.connected) {
+                    correctConnectAnswers[option.connected] = indicator
+                }
             } else {
                 indicator = ++connectCounter
+
+                correctConnectAnswers[`c-${indicator}`] = option.connected
             }
 
             content.innerHTML += `
@@ -155,7 +163,7 @@ function editableTaskFieldComponent(taskField) {
         `
 
         if (taskField.field_type === "connect") {
-            wrapper.appendChild(connectAswerComponent(connectCounter, taskField.id))
+            wrapper.appendChild(connectAswerComponent(taskField.options, taskField.id))
         }
     } else if (taskField.field_type === "order") {
         wrapper.classList.add(taskField.field_type)
@@ -192,20 +200,52 @@ function imageComponent(imageUrl) {
     return wrapper
 }
 
-function connectAswerComponent(connectCounter, fieldId) {
+function connectAswerComponent(options, fieldId) {
     const wrapper = document.createElement("div");
 
     wrapper.classList.add("connect-answer");
 
-    for (let i = 0; i < connectCounter; i++) {
-        const letter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][i];
+    let columnIndex = 0;
+    let content = [];
+    let index = 0;
 
-        wrapper.innerHTML += `
-            <div class="column">
-                <div class="row">${i + 1}</div>
-                <div class="row"><input type="text" class="connect-answer" oninput="connectAnswer(${fieldId}, this)" placeholder="${letter}" index="${i + 1}"/></div>
-            </div>
-        `
+    options.forEach(option => {
+        let column = wrapper.querySelector(`#column-${columnIndex}`);
+
+        if (!column) {
+            column = document.createElement("div");
+
+            column.id = `column-${columnIndex}`
+            column.classList.add("column");
+
+            wrapper.appendChild(column);
+        }
+
+        const row = document.createElement("div");
+
+        row.classList.add("row");
+
+        if (index % 2 === 0) {
+            row.innerHTML = columnIndex + 1
+        } else {
+            const letter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][columnIndex];
+
+            row.innerHTML = `<input type="text" class="connect-answer" oninput="connectAnswer(${fieldId}, this)" placeholder="${letter}" index="${columnIndex + 1}" ${option.connected? `value="${correctConnectAnswers[options.find(_option => _option.id === correctConnectAnswers[`c-${columnIndex + 1}`]).connected]}` : ''}"/>`;
+
+            columnIndex++;
+
+            if (option.connected) {
+                content.push(`${option.connected}-${options.find(_option => _option.id === option.connected).connected}`)
+            }
+        }
+
+        column.appendChild(row);
+
+        index++;
+    })
+
+    if (content.length > 0) {
+        answers.push({field_id : fieldId, content : content});
     }
 
     return wrapper;
