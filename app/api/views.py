@@ -34,7 +34,7 @@ def task():
     task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
     
     if not task:
-        return make_response({"error": "No task found"}, 404)
+        return make_response({"error": "No task found."}, 404)
 
     return make_response(task_serializer(task), 200)
 
@@ -51,7 +51,7 @@ def submit_task():
     task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
     
     if not task:
-        return make_response({"error": "No task found"}, 404)
+        return make_response({"error": "No task found."}, 404)
     
     json = request.json
 
@@ -593,7 +593,7 @@ def update_answers():
     task = Task.query.get(json["task_id"])
 
     if not task:
-        return make_response({"error" : "no task found"}, 400)
+        return make_response({"error" : "No task found."}, 400)
     
     for answer in json['answers']:
         task_field = TaskField.query.get(answer['field_id'])

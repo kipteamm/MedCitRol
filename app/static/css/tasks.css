@@ -90,7 +90,15 @@
 
 .task-field.checkboxes .choice.active .indicator,
 .task-field.multiplechoice .choice.active .indicator {
+    border-color: var(--primary-clr);
+}
+
+.task-field.checkboxes .choice.active .indicator {
     background-color: var(--primary-clr);
+}
+
+.task-field.multiplechoice .choice.active .indicator {
+    border-width: 8px;
 }
 
 .task-field.connect .choice.odd {

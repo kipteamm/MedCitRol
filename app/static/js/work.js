@@ -26,6 +26,10 @@ async function work() {
             return chooseProfession(2);
         }
 
+        if (json.error === "No task found.") {
+            workContent.innerHTML = '<h2>There is nothing for you to do right now..</h2>'
+        }
+
         activeTask = null;
 
         sendAlert("error", json.error);
