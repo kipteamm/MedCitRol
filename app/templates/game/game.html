@@ -61,7 +61,7 @@
     </div>
 
     <div class="ui character">
-        <img src="/static/images/assets/{{ character.profession }}_avatar.png"/>
+        <img src="/static/images/assets/{% if character.profession != "Unemployed" %}{{ character.profession }}{% else %}farmer{% endif %}_avatar.png"/>
 
         <div class="properties">
             <div class="property"><div class="icon hunger"></div><b id="hunger">{{ character.hunger }}</b></div>
