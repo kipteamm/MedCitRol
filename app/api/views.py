@@ -1,7 +1,6 @@
 from flask import Blueprint, request, make_response, g
 
 from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, task_field_serializer
-from app.utils.professions import Profession
 from app.utils.decorators import character_auhtorized, authorized
 from app.utils.properties import Properties
 from app.utils.inventory import Inventory
@@ -513,13 +512,13 @@ def update_answers():
     if not json or not "answers" in json or not "task_id" in json:
         return make_response({"error" : "invalid json"}, 400)
 
-    task = Task.query.filter_by(id=json["task_id"]).first()
+    task = Task.query.get(json["task_id"])
 
     if not task:
         return make_response({"error" : "no task found"}, 400)
     
     for answer in json.answers:
-        task_field = TaskField.query.filter_by(id=answer['field_id']).first()
+        task_field = TaskField.query.get(['field_id'])
 
         if not task_field:
             return make_response({"error", f"no field with id {answer['field_id']} found"})
