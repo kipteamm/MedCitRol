@@ -74,9 +74,11 @@ function selectOption(fieldId, optionId) {
     option.classList.toggle("active", !isSelected);
 }
 
-function connectAnswer(fieldId, _input) {
-    if (/[^a-zA-Z]/.test(_input.value)) return _input.value = '';
-    if (_input.value.length > 1) return _input.value = _input.value[0];
+function connectAnswer(fieldId, _input=null) {
+    if (input) {
+        if (/[^a-zA-Z]/.test(_input.value)) return _input.value = '';
+        if (_input.value.length > 1) return _input.value = _input.value[0];
+    }
 
     let answer = answers.find(field => field.field_id === fieldId);
 
@@ -106,7 +108,11 @@ function connectAnswer(fieldId, _input) {
                     if (_answer.split("-").includes(indexOption.getAttribute("option-id")) || _answer.split("-").includes(letterOption.getAttribute("option-id"))) {
                         input.value = "";
                     } else {
-                        answer.content.push(`${indexOption.getAttribute("option-id")}-${letterOption.getAttribute("option-id")}`);
+                        const answerValue = `${indexOption.getAttribute("option-id")}-${letterOption.getAttribute("option-id")}`;
+
+                        if (!answer.content.includes(answerValue)) {
+                            answer.content.push(answerValue);
+                        }
                     }
                 });
             } else {

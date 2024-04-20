@@ -531,4 +531,13 @@ def update_answers():
 
             db.session.commit()
 
+        elif task_field.field_type == "connect":
+            for connection in answer['content']:
+                connection = connection.split("-")
+
+                TaskOption.query.get(int(connection[0])).connected = int(connection[1])
+                TaskOption.query.get(int(connection[1])).connected = int(connection[0])
+
+            db.session.commit()
+
     return make_response({"success" : True}, 204)
