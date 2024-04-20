@@ -125,5 +125,23 @@ async function updateAnswers(taskId) {
         return console.log(response, await response.json());
     }
 
-    return window.location.reload()
+    return window.location.reload();
+}
+
+async function deleteField(fieldId) {
+    const response = await fetch(`/api/task/field/${fieldId}/delete`, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${getCookie('psk')}`,
+        },
+    })
+
+    if (!response.ok) {
+        return console.log(response, await response.json());
+    }
+
+    document.getElementById(`task-field-${fieldId}`).remove();
+
+    return;
 }

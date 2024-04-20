@@ -420,6 +420,22 @@ def edit_field():
     return make_response(task_field_serializer(task_field), 200)
 
 
+@api_blueprint.route('/task/field/<field_id>/delete', methods=["DELETE"])
+@authorized
+def delete_field(field_id):
+    task_field = TaskField.query.get(field_id)
+
+    if not Task.query.filter_by(id=task_field.task_id, world_id=g.access_key.world_id):
+        return make_response({"error" : "field not found"}, 400)
+    
+    TaskOption.query.filter_by(task_field_id=field_id).delete()
+
+    db.session.delete(task_field)
+    db.session.commit()
+
+    return make_response(task_field_serializer(task_field), 200)
+
+
 @api_blueprint.route('/task/image/add', methods=["POST"])
 @authorized
 def upload_file():
@@ -474,6 +490,12 @@ def add_option():
         return make_response({"error" : "you maxed out the amoutn of options"}, 400)
 
     task_option = TaskOption(task_field_id=json["field_id"])
+
+    if task_field.field_type == "order" and TaskOption.query.filter_by(task_field_id=task_field.id).count() > 0:
+        connected_option = TaskOption.query.filter_by(task_field_id=task_field.id, answer=False).first()
+        connected_option.answer = True
+
+        task_option.connected = connected_option.id
 
     db.session.add(task_option)
     db.session.commit()

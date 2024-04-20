@@ -160,6 +160,7 @@ function editableTaskFieldComponent(taskField) {
 
         wrapper.innerHTML += `
             <button class="add-option" onclick="addOption(${taskField.id})">Add option</button>
+            <button class="add-option" onclick="deleteField(${taskField.id})">Delete field</button>
         `
 
         if (taskField.field_type === "connect") {
@@ -179,6 +180,7 @@ function editableTaskFieldComponent(taskField) {
 
         wrapper.innerHTML += `
             <button class="add-option" onclick="addOption(${taskField.id})">Add option</button>
+            <button class="add-option" onclick="deleteField(${taskField.id})">Delete field</button>
         `
     }
 

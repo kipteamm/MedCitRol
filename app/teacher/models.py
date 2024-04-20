@@ -1,5 +1,7 @@
 from app.extensions import db
 
+from datetime import datetime, timezone
+
 
 class Task(db.Model):
     __tablename__ = 'task'
