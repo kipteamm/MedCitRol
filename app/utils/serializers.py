@@ -2,7 +2,7 @@ from app.utils.properties import Properties
 from app.teacher.models import Task, TaskField, TaskOption
 from app.utils.functions import get_merchandise
 from app.utils.tiles import get_tile_index
-from app.game.models import World, Settlement, Character, Tile, InventoryItem, MarketItem, Merchant
+from app.game.models import World, Settlement, SettlementRuler, Character, Tile, InventoryItem, MarketItem, Merchant
 
 
 def world_serializer(world: World) -> dict:
@@ -21,6 +21,16 @@ def settlement_serializer(settlement: Settlement) -> dict:
         'name' : settlement.name,
         'colour' : settlement.colour,
         'merchant' : Merchant.query.filter_by(settlement_id=settlement.id).first() is not None,
+    }
+
+
+
+def settlement_ruler_serializer(settlement_ruler: SettlementRuler) -> dict:
+    return {
+        'id' : settlement_ruler.id,
+        'settlement_id' : settlement_ruler.settlement_id,
+        'name' : settlement_ruler.name,
+        'surname' : settlement_ruler.surname,
     }
 
 

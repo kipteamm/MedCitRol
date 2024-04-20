@@ -325,11 +325,15 @@ function informationComponent(tile) {
 
     console.log(tile)
 
+    if (tile.character_id) {
+        owner = tile.character_id === character.id? `This is your ${tile.tile_type}` : "This is owned by a fellow citizen."
+    } else {
+        owner = `This is owned by your ruler (${settlementRuler.name} ${settlementRuler.surname}).`
+    }
+
     wrapper.innerHTML = `
         <h2>${tile.tile_type}</h2>
-        <p>
-            ${tile.character_id? tile.character_id === character.id? `This is your ${tile.tile_type}` : "This is owned by a fellow citizen." : "This is owned by your ruler."}
-        </p>
+        ${owner}
     `
 
     return wrapper;

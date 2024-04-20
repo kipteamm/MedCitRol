@@ -2,7 +2,7 @@ from flask_login import current_user, login_required
 
 from flask import Blueprint, render_template, redirect, url_for, make_response
  
-from app.utils.serializers import world_serializer, settlement_serializer, character_serializer, tile_serializer
+from app.utils.serializers import world_serializer, settlement_serializer, character_serializer, tile_serializer, settlement_ruler_serializer
 from app.utils.functions import get_key, generateRandomCoordinates
 from app.utils.rulers import Ruler
 from app.auth.models import User, UserWorlds
@@ -202,13 +202,11 @@ def game(id):
 
     settlement, character = get_presence(world, current_user) # type: ignore
 
-    settlement.taxes = 10000
-
     db.session.commit()
 
     tiles = [tile_serializer(tile) for tile in Tile.query.filter_by(settlement_id=settlement.id).all()]
 
-    response = make_response(render_template('game/game.html', tiles=tiles, world=world_serializer(world), settlement=settlement_serializer(settlement), character=character_serializer(character)))
+    response = make_response(render_template('game/game.html', tiles=tiles, world=world_serializer(world), settlement=settlement_serializer(settlement), settlement_ruler=settlement_ruler_serializer(SettlementRuler.query.filter_by(settlement_id=settlement.id).first()), character=character_serializer(character)))
 
     response.set_cookie('psk', get_key(current_user.id, world.id, settlement.id, character.id))
 

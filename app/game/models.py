@@ -106,7 +106,7 @@ class Character(db.Model):
     hunger = db.Column(db.Integer, default=24)
     fatigue = db.Column(db.Integer, default=24)
     health = db.Column(db.Float, default=100)
-    happiness = db.Column(db.Integer, default=20)
+    happiness = db.Column(db.Integer, default=15)
     pennies = db.Column(db.Integer, default=12)
     taxes = db.Column(db.Integer, default=0)
     house_id = db.Column(db.Integer)
