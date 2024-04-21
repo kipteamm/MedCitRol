@@ -500,7 +500,7 @@ def move_field():
         other_field = TaskField.query.filter_by(task_id=task_field.task_id, field_index=task_field.field_index - 1).first()
     
     if json["direction"] == "down":
-        if task_field.field_index == Task.query.get(task_field.task_id).question_index - 1:
+        if task_field.field_index == Task.query.get(task_field.task_id).field_index - 1:
             return make_response({"error" : "cannot be moved down"}, 400)
         
         other_field = TaskField.query.filter_by(task_id=task_field.task_id, field_index=task_field.field_index + 1).first()
