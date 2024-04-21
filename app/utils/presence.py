@@ -98,6 +98,9 @@ def _update_character(character: Character, world: World):
     if character.last_update:
         hours_passed = round((world.current_time - character.last_update).total_seconds() / 3600)
 
+    else:
+        return
+
     if character.hunger > 0:
         character.hunger -= min(hours_passed, 16)
         character.hunger = max(character.hunger, 0) 

@@ -58,6 +58,8 @@ socket.on('update_inventory', function(data) {
     } else {
         inventory.splice(inventory.indexOf(inventoryItem), 1)
     }
+
+    updateSellables = true;
 });
 
 socket.on('update_character', function(data) {

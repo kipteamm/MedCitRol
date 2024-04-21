@@ -2,6 +2,7 @@ const marketPanel = document.getElementById("market-panel");
 const marketContent = marketPanel.querySelector('.content');
 const marketSell = document.getElementById("market-sell");
 
+let updateSellables = true;
 let marketItems = [];
 let market = "settlement";
 
@@ -26,9 +27,15 @@ async function openMarket() {
     if (market === "settlement" || (market === "world" && tiles.some(tile => tile.tile_type === "market_stall" && tile.character_id === character.id))) {
         marketSell.style.display = "block";
 
-        character.inventory.filter(item => !item.buildable).forEach(item => {
-            marketSell.querySelector("#sellables").appendChild(supplyComponent(item))
-        })
+        if (updateSellables) {
+            marketSell.querySelector("#sellables").innerHTML = "";
+
+            character.inventory.filter(item => !item.buildable).forEach(item => {
+                marketSell.querySelector("#sellables").appendChild(supplyComponent(item))
+            })
+
+            updateSellables = false;
+        }
     } else {
         marketSell.style.display = "none";
     }
