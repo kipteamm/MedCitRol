@@ -1,7 +1,5 @@
 from app.extensions import db
 
-from datetime import datetime, timezone
-
 
 class Task(db.Model):
     __tablename__ = 'task'
@@ -9,6 +7,7 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     world_id = db.Column(db.Integer, db.ForeignKey('world.id'), nullable=False)
     index = db.Column(db.Integer, nullable=False)
+    question_index = db.Column(db.Integer, default=0)
 
 
 class TaskField(db.Model):
@@ -16,6 +15,7 @@ class TaskField(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
+    question_index = db.Column(db.Integer, nullable=False)
     field_type = db.Column(db.String(50), nullable=False)
     content = db.Column(db.Text)
 
@@ -25,6 +25,7 @@ class TaskOption(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     task_field_id = db.Column(db.Integer, db.ForeignKey('task_field.id'), nullable=False)
+    field_type = db.Column(db.String(50), default="text")
     content = db.Column(db.Text)
 
     answer = db.Column(db.Boolean, default=False)
