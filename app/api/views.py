@@ -31,6 +31,9 @@ def task():
     if not character.profession:
         return make_response({"error" : "You have no profession."}, 400)
     
+    if character.hunger < 1 and random.randint(1, 2) == 1:
+        return make_response({"error": "Your too hungry to work."}, 400)
+    
     task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
     
     if not task:
@@ -140,6 +143,8 @@ def set_profession():
 
     if profession == 'baker':
         Inventory(character.settlement_id, None, character.id).add_item('bakery', 1)
+
+    socketio.emit("alert", {"id" : character.id, "type" : "success", "message" : "Check your build menu!"}, room=character.settlement_id) # type: ignore
 
     db.session.commit()
 

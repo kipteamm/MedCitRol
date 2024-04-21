@@ -336,15 +336,22 @@ function informationComponent(tile) {
 
     console.log(tile)
 
+    let future = '';
+
     if (tile.character_id) {
-        owner = tile.character_id === character.id? `This is your ${tile.tile_type}` : "This is owned by a fellow citizen."
+        owner = tile.character_id === character.id? `<p>This is your ${tile.tile_type}</p>` : "<p>This is owned by a fellow citizen.</p>";
     } else {
-        owner = `This is owned by your ruler (${settlementRuler.name} ${settlementRuler.surname}).`
+        owner = `<p>This is owned by your ruler (${settlementRuler.name} ${settlementRuler.surname}).</p>`;
+
+        if (tile.tile_type === "claimed") {
+            future = `<p>This will become a ${tile.future}</p>`;
+        }
     }
 
     wrapper.innerHTML = `
         <h2>${tile.tile_type}</h2>
         ${owner}
+        ${future}
     `
 
     return wrapper;

@@ -109,5 +109,5 @@ function closeEyes() {
         setTimeout(() => {
             sendAlert("success", "<i>yaaaaawn</i>, you feel tired.")
         }, 500);
-    }, 1500);
+    }, 2000);
 }

@@ -40,7 +40,7 @@ class Profession:
         tiles = Tile.query.filter_by(settlement_id=self._character.settlement_id, character_id=self._character.id, tile_type=farmer.stage).all()
 
         if not tiles:
-            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to place your farmland first (see build menu)."})
+            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to place your farmland first (see build menu)."}, room=self._character.settlement_id) # type: ignore
 
             return
 
@@ -61,7 +61,7 @@ class Profession:
 
             Inventory(self._character.settlement_id, None, self._character.id).add_item("rye", len(tiles) * random.randint(15, 20))
 
-            socketio.emit("alert", {"id" : self._character.id, "type" : "success", "message" : "You had a successfull harvest."})
+            socketio.emit("alert", {"id" : self._character.id, "type" : "success", "message" : "You had a successfull harvest."}, room=self._character.settlement_id) # type: ignore
 
             return
 
@@ -96,7 +96,7 @@ class Profession:
         tile = Tile.query.filter_by(settlement_id=self._character.settlement_id, character_id=self._character.id, tile_type="windmill").first()
 
         if not tile:
-            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to build your mind first (see build menu)."})
+            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to build your mind first (see build menu)."}, room=self._character.settlement_id) # type: ignore
 
             return
         
@@ -116,7 +116,7 @@ class Profession:
         tile = Tile.query.filter_by(settlement_id=self._character.settlement_id, character_id=self._character.id, tile_type="bakery").first()
 
         if not tile:
-            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to build your bakery first (see build menu)."})
+            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to build your bakery first (see build menu)."}, room=self._character.settlement_id) # type: ignore
 
             return
         

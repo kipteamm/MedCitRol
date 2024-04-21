@@ -21,6 +21,8 @@ import math
 
 CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social', 'military']
 
+# REWRITE FORT
+
 
 class Action(Enum):
     CLAIM_LAND = {"characteristics": ["tyranny", "military"], "price": 0, "previous" : None, "repeatable" : False}
@@ -271,7 +273,7 @@ class Ruler:
             return None, None
 
         while True:
-            pos_x = random.randint(abs(37 - house.pos_x), 33)
+            pos_x = random.randint(abs(house.pos_x - 10), 33)
             pos_y = random.randint(27, 47)
 
             for tile in tiles:
