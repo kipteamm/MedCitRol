@@ -124,6 +124,8 @@ async function buyItem(id) {
         document.getElementById(`amount-${id}`).innerText = amountComponent(marketItem.amount);
     }
 
+    sendAlert("success", "Your purchase was successful.")
+
     const response = await fetch(market === "merchant"? "/api/merchant/buy" : `/api/market/${market}/buy`, {
         method: "POST",
         body: JSON.stringify({item_id: marketItem.id}),
