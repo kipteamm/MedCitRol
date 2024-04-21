@@ -476,8 +476,10 @@ class Ruler:
         return True
 
     def work(self, current_time: datetime) -> None:
-        if random.randint(1, 4) != 2:
-            print("not doing anything")
+        random_int = random.randint(1, 4)
+
+        if random_int != 2:
+            print(f"not doing anything {random_int}")
 
             return None
         
