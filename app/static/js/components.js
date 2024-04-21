@@ -113,6 +113,7 @@ function editableTaskFieldComponent(taskField) {
 
     wrapper.id = `task-field-${taskField.id}`;
     wrapper.classList.add("task-field");
+    wrapper.setAttribute("onmouseover", "showActions(this)")
 
     if (taskField.field_type === "header") {
         wrapper.innerHTML = `
@@ -166,7 +167,6 @@ function editableTaskFieldComponent(taskField) {
 
         wrapper.innerHTML += `
             <button class="add-option" onclick="addOption(${taskField.id})">Add option</button>
-            <button class="add-option" onclick="deleteField(${taskField.id})">Delete field</button>
         `
 
         if (taskField.field_type === "connect") {
@@ -190,7 +190,6 @@ function editableTaskFieldComponent(taskField) {
 
         wrapper.innerHTML += `
             <button class="add-option" onclick="addOption(${taskField.id})">Add option</button>
-            <button class="add-option" onclick="deleteField(${taskField.id})">Delete field</button>
         `
     }
 

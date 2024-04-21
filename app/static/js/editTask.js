@@ -128,7 +128,37 @@ async function updateAnswers(taskId) {
     return window.location.reload();
 }
 
-async function deleteField(fieldId) {
+let activeActions = null;
+let activePositon = null
+
+function showActions(field) {
+    if (field.id === activeActions) return;
+
+    const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
+
+    activePositon = field.getBoundingClientRect().top + document.documentElement.scrollTop;
+
+    document.getElementById("actions").style.top = `${currentScrollPosition > activePositon? currentScrollPosition : activePositon}px`;
+
+    activeActions = field.id;
+}
+
+window.onscroll = function() {
+    const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
+
+    if (currentScrollPosition >= activePositon) {
+        const actions = document.getElementById("actions")
+        
+        actions.classList.add("scroll");
+        actions.style.top = `${activePositon}px`;
+    } else {
+        document.getElementById("actions").classList.remove("scroll");
+    }
+}
+
+async function deleteField() {
+    const fieldId = parseInt(activeActions.split("-")[2]);
+
     const response = await fetch(`/api/task/field/${fieldId}/delete`, {
         method: "DELETE",
         headers: {

@@ -1,0 +1,12 @@
+.actions {
+    z-index: 1;
+    position: absolute;
+    right: calc((100vw - 1200px) / 2 - 100px);
+    display: flex;
+    flex-direction: column;
+}
+
+.actions.scroll {
+    position: fixed;
+    top: 0 !important;
+}

@@ -4,16 +4,16 @@
     user-select: none;
 }
 
-.task.edit {
-    width: 1200px;
-    margin: 0px auto;
-}
-
 .task-field {
     position: relative;
     padding: 25px;
     font-size: 16px;
     text-align: center;
+}
+
+.edit .task-field > * {
+    width: 1200px;
+    margin: 0px auto;
 }
 
 .task-field:first-child {
@@ -120,7 +120,7 @@
     font-weight: bold;
 }
 
-.task-field .add-option {
+.task:not(.edit) .task-field .add-option {
     width: 100%;
 }
 

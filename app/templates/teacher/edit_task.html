@@ -2,37 +2,41 @@
 
 {% block content %}
     <script src="{{ url_for('static', filename='js/tasks.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/editTask.js') }}"></script>
     <script src="{{ url_for('static', filename='js/components.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/editTask.js') }}" defer></script>
-
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tasks.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css') }}">
 
     <div>
         <a href="/teacher/{{ world.id }}/tasks">Tasks</a>
     </div>
 
-    <div class="task edit">
-        <div class="task" id="task"></div>
+    <div class="actions" id="actions">
+        <button onclick="duplicateField()">DU</button>
+        <button onclick="deleteField()">DE</button>
+    </div>
 
-        <div>
-            <h2>Add</h2>
+    <div class="task edit" id="task"></div>
+
+    <div>
+        <h2>Add</h2>
     
-            <div>
-                <button onclick="addField('header')">Header</button>
-                <button onclick="addField('text')">Text</button>
-                <input type="file" accept="image/*" name="images" id="images" onchange="handleImage(event)">
-            </div>
-            <div>
-                <button onclick="addField('multiplechoice')">multiplechoice</button>
-                <button onclick="addField('checkboxes')">checkboxes</button>
-                <button onclick="addField('connect')">connect</button>
-                <button onclick="addField('order')">order</button>
-            </div>
-
-            <h2>Answers</h2>
-            
-            <button onclick="updateAnswers({{ task.id }})">Update answers</button>
+        <div>
+            <button onclick="addField('header')">Header</button>
+            <button onclick="addField('text')">Text</button>
+            <input type="file" accept="image/*" name="images" id="images" onchange="handleImage(event)">
         </div>
+        <div>
+            <button onclick="addField('multiplechoice')">multiplechoice</button>
+            <button onclick="addField('checkboxes')">checkboxes</button>
+            <button onclick="addField('connect')">connect</button>
+            <button onclick="addField('order')">order</button>
+        </div>
+
+        <h2>Answers</h2>
+            
+        <button onclick="updateAnswers({{ task.id }})">Update answers</button>
     </div>
 
     <script>
