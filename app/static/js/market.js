@@ -166,3 +166,33 @@ async function buyItem(id) {
 
     return;
 }
+
+async function loadWarehouse(warehouseId) {
+    const response = await fetch(`/api/warehouse/${warehouseId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json",
+            "Authorization" : getCookie("psk")
+        }
+    })
+
+    const json = await response.json();
+
+    if (!response.ok) {
+        sendAlert("error", json.error);
+
+        return;
+    }
+
+    const content = informationPanel.querySelector("#warehouse-items")
+
+    if (json.length === 0) {
+        content.innerHTML = 'Warehouse is empty.'
+
+        return;
+    }
+
+    json.forEach(item => {
+        content.appendChild(supplyComponent(item))
+    })
+}

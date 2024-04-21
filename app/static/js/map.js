@@ -170,10 +170,9 @@ function handleClick(event, rightClick=false) {
     }
 
     if (rightClick) return;
+    if (building !== null) return;
 
     tile = tiles.find(tile => tile.pos_x === tileX && tile.pos_y === tileY)
-
-    console.log(tile)
 
     informationPanel.classList.add("active")
 

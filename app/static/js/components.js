@@ -334,8 +334,6 @@ function amountComponent(amount) {
 function informationComponent(tile) {
     const wrapper = document.createElement("div");
 
-    console.log(tile)
-
     let future = '';
 
     if (tile.character_id) {
@@ -348,10 +346,15 @@ function informationComponent(tile) {
         }
     }
 
+    if (tile.tile_type === "warehouse") {
+        loadWarehouse(tile.id);
+    }
+
     wrapper.innerHTML = `
         <h2>${tile.tile_type}</h2>
         ${owner}
         ${future}
+        <div id="warehouse-items"></div>
     `
 
     return wrapper;

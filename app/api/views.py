@@ -1,13 +1,13 @@
 from flask import Blueprint, request, make_response, g
 
-from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, task_field_serializer
+from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, task_field_serializer, inventory_item_serializer
 from app.utils.decorators import character_auhtorized, authorized
 from app.utils.professions import Profession
 from app.utils.properties import Properties
 from app.utils.inventory import Inventory
 from app.utils.functions import get_merchandise
 from app.teacher.models import Task, TaskField, TaskOption
-from app.game.models import Settlement, Character, MarketItem, World, Merchant, Tile
+from app.game.models import Settlement, Character, MarketItem, World, Merchant, Tile, InventoryItem
 
 from app.extensions import db, socketio
 
@@ -31,7 +31,7 @@ def task():
     if not character.profession:
         return make_response({"error" : "You have no profession."}, 400)
     
-    if character.hunger < 1 and random.randint(1, 2) == 1:
+    if character.hunger < 1 and random.randint(1, 4) < 4:
         return make_response({"error": "Your too hungry to work."}, 400)
     
     task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
@@ -733,3 +733,21 @@ def update_answers():
             db.session.commit()
 
     return make_response({"success" : True}, 204)
+
+
+@api_blueprint.route("/warehouse/<warehouse_id>", methods=["GET"])
+@character_auhtorized
+def get_warehouse(warehouse_id): 
+    access_key = g.access_key
+
+    warehouse = Tile.query.filter_by(id=warehouse_id, settlement_id=access_key.settlement_id).first()
+
+    if not warehouse:
+        return make_response({"error" : "No warehouse found."}, 400)
+
+    items = []
+
+    for item in InventoryItem.query.filter_by(warehouse_id=warehouse_id).all():
+        items.append(inventory_item_serializer(item))
+
+    return make_response(items, 200)

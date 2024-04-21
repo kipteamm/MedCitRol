@@ -25,9 +25,10 @@ CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social', 'military']
 
 
 class Action(Enum):
-    CLAIM_LAND = {"characteristics": ["tyranny", "military"], "price": 0, "previous" : None, "repeatable" : False}
     SAVE_TAXES = {"characteristics": ["social", "economy"], "price": 0, "previous" : None, "repeatable" : True}
     COLLECT_TAXES = {"characteristics": ["tyranny", "military", "religion", "economy"], "price": 0, "previous" : None, "repeatable" : True}
+    EVALUATE_ECONOMY = {"characteristics": ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
+    CLAIM_LAND = {"characteristics": ["tyranny", "military"], "price": 0, "previous" : None, "repeatable" : False}
     UPGRADE_FORT_1 = {"characteristics": ["tyranny", "military"], "price": 5, "previous" : "CLAIM_LAND", "repeatable" : False}
     UPGRADE_FORT_2 = {"characteristics": ["tyranny", "military"], "price": 15, "previous" : "UPGRADE_FORT_1", "repeatable" : False}
     UPGRADE_FORT_3 = {"characteristics": ["tyranny", "military"], "price": 40, "previous" : "UPGRADE_FORT_2", "repeatable" : False}
@@ -174,16 +175,24 @@ class Ruler:
         return chosen_action
     
     def _claim_land(self) -> bool:
-        coordinates = get_coordinates(37, 37, 1)
-        coordinates.extend(get_coordinates(37, 37, 2))
+        coordinates = [
+            [0, 0], [1, 0], [2, 0], [3, 0], 
+            [0, 1], [1, 1], [2, 1], [3, 1],
+            [0, 2], [1, 2], [2, 2], [3, 2],
+            [0, 3], [1, 3], [2, 3], [3, 3]
+        ]
 
+        pos_x, pos_y = self._random_coordinates(coordinates)
+
+        if not pos_x or not pos_y:
+            return False
+        
         tiles = []
+            
+        for i in range(len(coordinates)):
+            coordinate = coordinates[i]
 
-        for coordinate in coordinates:
-            if Tile.query.filter_by(settlement_id=self._settlement.id, pos_x=coordinate[0], pos_y=coordinate[1]).first():
-                continue
-
-            tile = Tile(pos_x=coordinate[0], pos_y=coordinate[1], settlement_id=self._settlement.id, tile_type="claimed", future="fort")
+            tile = Tile(settlement_id=self._settlement.id, pos_x=pos_x + coordinate[0], pos_y=pos_y + coordinate[1], tile_type="claimed", future=f"bourse_{i}")
 
             db.session.add(tile)
             db.session.commit()
@@ -215,6 +224,7 @@ class Ruler:
                     character.jailed = True
                     character.jail_end = current_time + timedelta(hours=random.randint(12, 24) if self._characteristics['tyranny'] > self._characteristics['social'] else random.randint(1, 12))
                     character.taxes = 0
+                    character.happiness -= max(character.happines, character.happines - 6)
 
                     db.session.commit()
 
@@ -262,7 +272,7 @@ class Ruler:
 
         return True
 
-    def _random_coordinates(self, tiles) -> tuple[Optional[int], Optional[int]]:
+    def _random_coordinates(self, tiles: list, well: bool=False) -> tuple[Optional[int], Optional[int]]:
         house_count = Tile.query.filter_by(settlement_id=self._settlement.id, tile_type="hut").count()
 
         house = Tile.query.filter_by(settlement_id=self._settlement.id, tile_type="hut").offset(random.randint(0, house_count - 1)).first()
@@ -273,12 +283,15 @@ class Ruler:
             return None, None
 
         while True:
-            pos_x = random.randint(abs(house.pos_x - 10), 33)
+            pos_x = random.randint(abs(house.pos_x - 10), 47)
             pos_y = random.randint(27, 47)
 
             for tile in tiles:
-                if Tile.query.filter_by(settlement_id=self._settlement.id, pos_x=pos_x + tile[0], pos_y=pos_y + tile[1]).first():
-                    return None, None
+                _tile = Tile.query.filter_by(settlement_id=self._settlement.id, pos_x=pos_x + tile[0], pos_y=pos_y + tile[1]).first()
+
+                if _tile:
+                    if not well or (well and _tile.tile_type != "well"):
+                        return None, None
                 
             break
 
@@ -501,14 +514,17 @@ class Ruler:
         
         success = False
         
-        if action == Action.CLAIM_LAND:
-            success = self._claim_land()
-        
         if action == Action.SAVE_TAXES:
             success = self._save_taxes()
         
         if action == Action.COLLECT_TAXES:
             success = self._collect_taxes(current_time)
+
+        if action == Action.EVALUATE_ECONOMY:
+            success = True
+
+        if action == Action.CLAIM_LAND:
+            success = self._claim_land()
         
         if "UPGRADE_FORT_" in action.name:
             success = self._upgrade_fort(action.name)
