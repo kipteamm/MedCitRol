@@ -60,6 +60,10 @@ textarea:focus {
     border: 1px solid var(--primary-clr);
 }
 
+textarea {
+    height: 75px;
+}
+
 ::-webkit-scrollbar {
     width: 8px;
 }

@@ -136,7 +136,8 @@ def task_serializer(task: Task, include_answers: bool=False) -> dict:
         'id' : task.id,
         'world_id' : task.world_id,
         'index' : task.index,
-        'fields' : [task_field_serializer(task_field, include_answers) for task_field in TaskField.query.filter_by(task_id=task.id)]
+        'field_index' : task.field_index,
+        'fields' : [task_field_serializer(task_field, include_answers) for task_field in TaskField.query.filter_by(task_id=task.id).order_by(TaskField.field_index)]
     }
 
 
@@ -153,6 +154,7 @@ def task_field_serializer(task_field: TaskField, include_answers: bool=False) ->
     return { 
         'id' : task_field.id,
         'task_id' : task_field.task_id,
+        'field_index' : task_field.field_index,
         'field_type' : task_field.field_type,
         'content' : content,
         'options' : options

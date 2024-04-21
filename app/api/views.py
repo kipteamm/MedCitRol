@@ -450,9 +450,9 @@ def add_field():
     if not field_type in ["header", "text", "image", "multiplechoice", "checkboxes", "connect", "order"]:
         return make_response({"error" : "invalid field type"}, 400)
 
-    task_field = TaskField(task_id=json["task_id"], question_index=task.question_index, field_type=field_type)
+    task_field = TaskField(task_id=json["task_id"], field_index=task.field_index, field_type=field_type)
 
-    task.question_index += 1
+    task.field_index += 1
 
     db.session.add(task_field)
     db.session.commit()
@@ -480,17 +480,39 @@ def edit_field():
     return make_response(task_field_serializer(task_field), 200)
 
 
-@api_blueprint.route('/task/field/<field_id>/delete', methods=["DELETE"])
+@api_blueprint.route('/task/field/move', methods=["PATCH"])
 @authorized
-def delete_field(field_id):
-    task_field = TaskField.query.get(field_id)
+def move_field():
+    json = request.json
 
-    if not Task.query.filter_by(id=task_field.task_id, world_id=g.access_key.world_id):
-        return make_response({"error" : "field not found"}, 400)
+    if not json or not "field_id" in json:
+        return make_response({"error" : "invalid json"}, 400)
     
-    TaskOption.query.filter_by(task_field_id=field_id).delete()
+    if not json["direction"] in ["up", "down"]:
+        return make_response({"error", "invalid direction"}, 400)
+    
+    task_field = TaskField.query.get(json["field_id"])
 
-    db.session.delete(task_field)
+    if json["direction"] == "up":
+        if task_field.field_index == 0:
+            return make_response({"error", "cannot be moved up"}, 400)
+        
+        other_field = TaskField.query.filter_by(task_id=task_field.task_id, field_index=task_field.field_index - 1).first()
+    
+    if json["direction"] == "down":
+        if task_field.field_index == Task.query.get(task_field.task_id).question_index - 1:
+            return make_response({"error", "cannot be moved down"}, 400)
+        
+        other_field = TaskField.query.filter_by(task_id=task_field.task_id, field_index=task_field.field_index + 1).first()
+
+    if not other_field:
+        return make_response({"error", f"cannot be moved {json['direction']}"}, 400)
+
+    old_index, new_index = task_field.field_index, other_field.field_index
+
+    task_field.field_index = new_index
+    other_field.field_index = old_index
+
     db.session.commit()
 
     return make_response(task_field_serializer(task_field), 200)
@@ -506,9 +528,9 @@ def duplicate_field(field_id):
     if not task:
         return make_response({"error" : "field not found"}, 400)
     
-    task_field = TaskField(task_id=original_task_field.task_id, question_index=task.question_index, field_type=original_task_field.field_type, content=original_task_field.content)
+    task_field = TaskField(task_id=original_task_field.task_id, field_index=task.field_index, field_type=original_task_field.field_type, content=original_task_field.content)
 
-    task.question_index += 1
+    task.field_index += 1
 
     db.session.add(task_field)
     db.session.commit()
@@ -521,6 +543,22 @@ def duplicate_field(field_id):
 
         db.session.add(option)
     
+    db.session.commit()
+
+    return make_response(task_field_serializer(task_field), 200)
+
+
+@api_blueprint.route('/task/field/<field_id>/delete', methods=["DELETE"])
+@authorized
+def delete_field(field_id):
+    task_field = TaskField.query.get(field_id)
+
+    if not Task.query.filter_by(id=task_field.task_id, world_id=g.access_key.world_id):
+        return make_response({"error" : "field not found"}, 400)
+    
+    TaskOption.query.filter_by(task_field_id=field_id).delete()
+
+    db.session.delete(task_field)
     db.session.commit()
 
     return make_response(task_field_serializer(task_field), 200)
@@ -545,9 +583,9 @@ def upload_file():
         if not TaskField.query.filter_by(field_type="image", content=name).first():
             break
 
-    task_field = TaskField(task_id=task.id, question_index=task.question_index, field_type="image", content=name)
+    task_field = TaskField(task_id=task.id, field_index=task.field_index, field_type="image", content=name)
 
-    task.question_index += 1
+    task.field_index += 1
 
     db.session.add(task_field)
     db.session.commit()

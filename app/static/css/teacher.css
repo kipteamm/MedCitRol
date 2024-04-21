@@ -10,3 +10,7 @@
     position: fixed;
     top: 0 !important;
 }
+
+.task-field textarea:focus {
+    height: 150px;
+}

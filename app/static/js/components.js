@@ -114,6 +114,7 @@ function editableTaskFieldComponent(taskField) {
     wrapper.id = `task-field-${taskField.id}`;
     wrapper.classList.add("task-field");
     wrapper.setAttribute("onmouseover", "showActions(this)")
+    wrapper.setAttribute("field-index", taskField.field_index)
 
     if (taskField.field_type === "header") {
         wrapper.innerHTML = `

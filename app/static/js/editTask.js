@@ -156,11 +156,17 @@ window.onscroll = function() {
     }
 }
 
-async function deleteField() {
+async function moveField(direction) {
+    const field = document.getElementById(activeActions);
+
+    if (direction === "up" && field.getAttribute("field-index") === "0") return;
+    if (direction === "down" && field.getAttribute("field-index") === (task.field_index - 1).toString()) return;
+
     const fieldId = parseInt(activeActions.split("-")[2]);
 
-    const response = await fetch(`/api/task/field/${fieldId}/delete`, {
-        method: "DELETE",
+    const response = await fetch(`/api/task/field/move`, {
+        method: "PATCH",
+        body: JSON.stringify({field_id: fieldId, direction: direction}),
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `${getCookie('psk')}`,
@@ -171,7 +177,16 @@ async function deleteField() {
         return console.log(response, await response.json());
     }
 
-    document.getElementById(`task-field-${fieldId}`).remove();
+    
+    let otherElement;
+
+    if (direction === "up") {
+        otherElement = field.previousElementSibling;
+    } else {
+        otherElement = field.nextElementSibling;
+    }
+
+    task.insertBefore(field, otherElement);
 
     return;
 }
@@ -192,4 +207,24 @@ async function duplicateField() {
     }
 
     return task.appendChild(editableTaskFieldComponent(await response.json()));
+}
+
+async function deleteField() {
+    const fieldId = parseInt(activeActions.split("-")[2]);
+
+    const response = await fetch(`/api/task/field/${fieldId}/delete`, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${getCookie('psk')}`,
+        },
+    })
+
+    if (!response.ok) {
+        return console.log(response, await response.json());
+    }
+
+    document.getElementById(`task-field-${fieldId}`).remove();
+
+    return;
 }
