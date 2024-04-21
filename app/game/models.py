@@ -105,8 +105,8 @@ class Character(db.Model):
     surname = db.Column(db.String(120))
 
     # properties
-    hunger = db.Column(db.Integer, default=24)
-    fatigue = db.Column(db.Integer, default=24)
+    hunger = db.Column(db.Integer, default=30)
+    fatigue = db.Column(db.Integer, default=20)
     health = db.Column(db.Float, default=100)
     happiness = db.Column(db.Integer, default=15)
     pennies = db.Column(db.Integer, default=12)

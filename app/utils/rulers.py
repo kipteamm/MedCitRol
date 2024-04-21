@@ -184,10 +184,9 @@ class Ruler:
             tile = Tile(pos_x=coordinate[0], pos_y=coordinate[1], settlement_id=self._settlement.id, tile_type="claimed", future="fort")
 
             db.session.add(tile)
+            db.session.commit()
 
             tiles.append(tile_serializer(tile))
-
-        db.session.commit()
 
         socketio.emit('update_tiles', tiles, room=self._settlement.id) # type: ignore
 
@@ -299,6 +298,8 @@ class Ruler:
             tile_2 = Tile(settlement_id=self._settlement.id, pos_x=pos_x + 1, pos_y=pos_y, tile_type="claimed", future="church_tower")
 
             db.session.add(tile_2)
+
+            db.session.commit()
 
             tiles.append(tile_serializer(tile_1))
             tiles.append(tile_serializer(tile_2))
