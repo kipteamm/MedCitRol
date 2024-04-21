@@ -175,3 +175,21 @@ async function deleteField() {
 
     return;
 }
+
+async function duplicateField() {
+    const fieldId = parseInt(activeActions.split("-")[2]);
+
+    const response = await fetch(`/api/task/field/${fieldId}/duplicate`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${getCookie('psk')}`,
+        },
+    })
+
+    if (!response.ok) {
+        return console.log(response, await response.json());
+    }
+
+    return task.appendChild(editableTaskFieldComponent(await response.json()));
+}

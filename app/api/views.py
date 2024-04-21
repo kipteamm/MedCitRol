@@ -494,6 +494,32 @@ def delete_field(field_id):
     return make_response(task_field_serializer(task_field), 200)
 
 
+@api_blueprint.route('/task/field/<field_id>/duplicate', methods=["POST"])
+@authorized
+def duplicate_field(field_id):
+    original_task_field = TaskField.query.get(field_id)
+
+    if not Task.query.filter_by(id=original_task_field.task_id, world_id=g.access_key.world_id):
+        return make_response({"error" : "field not found"}, 400)
+    
+    task_field = TaskField(task_id=original_task_field.task_id, field_type=original_task_field.field_type, content=original_task_field.content)
+
+    db.session.add(task_field)
+    db.session.commit()
+
+    if task_field.field_type in ["header", "text", "image"]:
+        return make_response(task_field_serializer(task_field), 200)
+    
+    for original_option in TaskOption.query.filter_by(task_field_id=original_task_field.id).all():
+        option = TaskOption(task_field_id=task_field.id, content=original_option.content)
+
+        db.session.add(option)
+    
+    db.session.commit()
+
+    return make_response(task_field_serializer(task_field), 200)
+
+
 @api_blueprint.route('/task/image/add', methods=["POST"])
 @authorized
 def upload_file():
