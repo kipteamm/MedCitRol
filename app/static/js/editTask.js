@@ -159,8 +159,8 @@ window.onscroll = function() {
 async function moveField(direction) {
     const field = document.getElementById(activeActions);
 
-    if (direction === "up" && field.getAttribute("field-index") === "0") return;
-    if (direction === "down" && field.getAttribute("field-index") === (task.field_index - 1).toString()) return;
+    if (direction === "up" && field.getAttribute("field-index") === "0") return console.log("1");
+    if (direction === "down" && field.getAttribute("field-index") === (task.field_index - 1).toString()) return console.log("2");
 
     const fieldId = parseInt(activeActions.split("-")[2]);
 
@@ -182,11 +182,21 @@ async function moveField(direction) {
 
     if (direction === "up") {
         otherElement = field.previousElementSibling;
+
+        task.insertBefore(field, otherElement);
     } else {
         otherElement = field.nextElementSibling;
+
+        otherElement.insertAdjacentElement("afterend", field);
     }
 
-    task.insertBefore(field, otherElement);
+    old_index = field.getAttribute("field-index");
+    new_index = otherElement.getAttribute("field-index");
+
+    field.setAttribute("field-index", new_index);
+    otherElement.setAttribute("field-index", old_index);
+
+    showActions(otherElement);
 
     return;
 }
@@ -224,7 +234,17 @@ async function deleteField() {
         return console.log(response, await response.json());
     }
 
-    document.getElementById(`task-field-${fieldId}`).remove();
+    const field = document.getElementById(`task-field-${fieldId}`);
+    const nextSibling = field.nextElementSibling;
+    const previousSibling = field.previousElementSibling
+    
+    field.remove();
+
+    if (nextSibling) {
+        showActions(nextSibling);
+    } else {
+        showActions(previousSibling);
+    }
 
     return;
 }

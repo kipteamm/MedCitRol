@@ -553,8 +553,23 @@ def duplicate_field(field_id):
 def delete_field(field_id):
     task_field = TaskField.query.get(field_id)
 
-    if not Task.query.filter_by(id=task_field.task_id, world_id=g.access_key.world_id):
+    if not task_field:
         return make_response({"error" : "field not found"}, 400)
+
+    task = Task.query.filter_by(id=task_field.task_id, world_id=g.access_key.world_id).first()
+
+    if not task:
+        return make_response({"error" : "task not found"}, 400)
+    
+    for i in range(task.field_index):
+        if i <= task_field.field_index:
+            continue
+
+        TaskField.query.filter_by(task_id=task_field.task_id, field_index=i).first().field_index -= 1
+
+        db.session.commit()
+
+    task.field_index -= 1
     
     TaskOption.query.filter_by(task_field_id=field_id).delete()
 
