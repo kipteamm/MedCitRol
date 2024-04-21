@@ -247,6 +247,9 @@ def buy_item(market_type):
     
     market_item = MarketItem.query.get(json["item_id"])
 
+    if not market_item:
+        return make_response({"error" : "Item not found."}, 400)
+
     if character.pennies < market_item.price:
         return make_response({"error" : "You don't have enough money."}, 400)
     

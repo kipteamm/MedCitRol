@@ -476,12 +476,12 @@ class Ruler:
         return True
 
     def work(self, current_time: datetime) -> None:
-        if random.randint(1, 6) != 6:
+        if random.randint(1, 4) != 2:
             print("not doing anything")
 
             return None
         
-        if self._ruler.last_action + timedelta(days=1) < current_time:
+        if self._ruler.last_action and self._ruler.last_action + timedelta(days=1) < current_time:
             print("inactivity taxes save")
 
             self._save_taxes()
