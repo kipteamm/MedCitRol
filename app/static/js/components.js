@@ -308,6 +308,16 @@ function marketItemComponent(item) {
     return wrapper;
 }
 
+function supplyComponent(item) {
+    const wrapper = document.createElement("div");
+
+    wrapper.innerHTML = `
+        ${item.item_type} <b>${item.amount}x</b>
+    `
+
+    return wrapper;
+}
+
 function amountComponent(amount) {
     if (amount < 5) return "Very limited supply";
     if (amount < 10) return "Limited supply";
@@ -319,6 +329,7 @@ function amountComponent(amount) {
     
     return "Huge supply"
 }
+
 
 function informationComponent(tile) {
     const wrapper = document.createElement("div");

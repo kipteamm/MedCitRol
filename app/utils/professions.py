@@ -65,7 +65,7 @@ class Profession:
 
             return
 
-        farmer.date -= timedelta(days=14)
+        farmer.date -= timedelta(days=21)
 
         db.session.commit()
 

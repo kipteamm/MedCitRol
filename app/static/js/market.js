@@ -25,6 +25,10 @@ async function openMarket() {
 
     if (market === "settlement" || (market === "world" && tiles.some(tile => tile.tile_type === "market_stall" && tile.character_id === character.id))) {
         marketSell.style.display = "block";
+
+        character.inventory.filter(item => !item.buildable).forEach(item => {
+            marketSell.querySelector("#sellables").appendChild(supplyComponent(item))
+        })
     } else {
         marketSell.style.display = "none";
     }
