@@ -495,18 +495,18 @@ def move_field():
 
     if json["direction"] == "up":
         if task_field.field_index == 0:
-            return make_response({"error", "cannot be moved up"}, 400)
+            return make_response({"error" : "cannot be moved up"}, 400)
         
         other_field = TaskField.query.filter_by(task_id=task_field.task_id, field_index=task_field.field_index - 1).first()
     
     if json["direction"] == "down":
         if task_field.field_index == Task.query.get(task_field.task_id).question_index - 1:
-            return make_response({"error", "cannot be moved down"}, 400)
+            return make_response({"error" : "cannot be moved down"}, 400)
         
         other_field = TaskField.query.filter_by(task_id=task_field.task_id, field_index=task_field.field_index + 1).first()
 
     if not other_field:
-        return make_response({"error", f"cannot be moved {json['direction']}"}, 400)
+        return make_response({"error" : f"cannot be moved {json['direction']}"}, 400)
 
     old_index, new_index = task_field.field_index, other_field.field_index
 
