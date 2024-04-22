@@ -208,6 +208,8 @@ class Ruler:
         return True
     
     def _collect_taxes(self, current_time: datetime) -> bool:
+        taxes = random.randint(2, 3) if self._characteristics['tyranny'] > self._characteristics['social'] else 2
+
         for character in Character.query.filter_by(settlement_id=self._settlement.id).all():
             awake = True
 
@@ -227,11 +229,13 @@ class Ruler:
 
                     continue
 
-            character.taxes = random.randint(2, 3) if self._characteristics['tyranny'] > self._characteristics['social'] else 2
+            character.taxes = taxes 
 
             db.session.commit()
 
             socketio.emit('update_character', properties_serializer(character), room=self._settlement.id) # type: ignore
+
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler requested {taxes} penningen in taxes."})
 
         return True
     

@@ -87,8 +87,6 @@ const taxesElement = document.getElementById("taxes");
 
 function taxes(value) {
     if (value > 0) {
-        sendAlert("error", `Your ruler requested ${value} pennies in taxes.`);
-
         taxesElement.parentNode.classList.add("active")
         taxesElement.innerHTML = `${value} penningen`
 
@@ -110,4 +108,26 @@ function closeEyes() {
             sendAlert("success", "<i>yaaaaawn</i>, you feel tired.")
         }, 500);
     }, 2000);
+}
+
+async function requestFreedom() {
+    const response = await fetch('/api/character/freedom/request', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${getCookie('psk')}`,
+        },
+    });
+
+    if (!response.ok) {
+        const json = await response.json();
+
+        sendAlert("error", json.error);
+
+        return;
+    }
+
+    sendAlert("success", "Freedom granted.")
+
+    return;
 }

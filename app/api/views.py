@@ -355,6 +355,24 @@ def pay_taxes():
     return make_response({"success" : True}, 204)
 
 
+@api_blueprint.route("/character/freedom/request", methods=["POST"])
+@character_auhtorized
+def request_freedom():
+    character = g.character
+
+    if random.randint(1, 4) != 4:
+        return make_response({"error" : "Your ruler spits you in the face."})
+    
+    character.jailed = False
+    character.jail_end = None
+
+    db.session.commit()
+
+    socketio.emit("update_character", properties_serializer(character), room=character.settlement_id) # type: ignore
+
+    return make_response({"success" : True}, 204)
+
+
 @api_blueprint.route("/merchant", methods=["GET"])
 @character_auhtorized
 def get_merchant_market():
