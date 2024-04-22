@@ -45,7 +45,7 @@ def _create_settlement(world: World, colour: str) -> Settlement:
     db.session.add(tile)
     db.session.commit()
 
-    merchant = Merchant(settlement_id=settlement.id, merchant_type="grain", end_date=(world.current_time + timedelta(weeks=8)))
+    merchant = Merchant(settlement_id=settlement.id, name=_get_random_name(), surname=_get_random_surname(), merchant_type="grain", end_date=(world.current_time + timedelta(weeks=8)))
 
     db.session.add(merchant)
     db.session.commit()

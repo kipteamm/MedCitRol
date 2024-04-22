@@ -204,6 +204,8 @@ class Merchant(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+    name = db.Column(db.String(120), default="Zita")
+    surname = db.Column(db.String(120), default="Wainwright")
 
     merchant_type = db.Column(db.String(120), nullable=False)
 

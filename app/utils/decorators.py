@@ -22,7 +22,7 @@ def character_auhtorized(f):
             if character.start_sleep:
                 return make_response({"error" : "You are sleeping."}, 400)
             
-            if character.jailed and request.path != "/api/character/eat":
+            if character.jailed and request.path != "/api/character/freedom/request":
                 return make_response({"error" : "You are in jail."}, 400)
         
         g.character = character

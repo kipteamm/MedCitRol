@@ -361,7 +361,7 @@ def request_freedom():
     character = g.character
 
     if random.randint(1, 4) != 4:
-        return make_response({"error" : "Your ruler spits you in the face."})
+        return make_response({"error" : "Your ruler spits you in the face."}, 400)
     
     character.jailed = False
     character.jail_end = None
@@ -764,8 +764,6 @@ def get_warehouse(warehouse_id):
         return make_response({"error" : "No warehouse found."}, 400)
 
     items = []
-
-    print(warehouse.id)
 
     for item in InventoryItem.query.filter_by(warehouse_id=warehouse.id).all():
         items.append(inventory_item_serializer(item))

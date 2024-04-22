@@ -77,10 +77,14 @@ def properties_serializer(character: Character) -> dict:
 
 
 def tile_serializer(tile: Tile) -> dict:
+    character = Character.query.get(tile.character_id)
+
     return {
         'id' : tile.id,
         'character_id' : tile.character_id,
         'settlement_id' : tile.settlement_id,
+        'name' : character.name if character else None,
+        'surname' : character.surname if character else None,
         'pos_x' : tile.pos_x,
         'pos_y' : tile.pos_y,
         'tile_type' : tile.tile_type,
@@ -102,11 +106,14 @@ def inventory_item_serializer(inventory_item: InventoryItem) -> dict:
 
 
 def market_item_serializer(market_item: MarketItem) -> dict:
+    character = Character.query.get(market_item.character_id)
+
     return {
         'id' : market_item.id,
         'character_id' : market_item.character_id,
         'world_id' : market_item.world_id,
         'settlement_id' : market_item.settlement_id,
+        'seller' : f'{character.name} {character.surname}',
         'item_type' : market_item.item_type,
         'amount' : market_item.amount,
         'price' : market_item.price,

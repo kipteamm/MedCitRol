@@ -302,6 +302,7 @@ function marketItemComponent(item) {
     wrapper.classList.add("market-item");
     wrapper.innerHTML = `
         <h3>${item.item_type} (<span id="amount-${item.id}">${amountComponent(item.amount)}</span>)</h3>
+        <p>${item.seller}${item.character_id === character.id? " (you)" : ""}</p>
         ${item.character_id !== character.id? `<button class="primary-btn" onclick="buyItem('${item.id}')">Buy <b>(${item.price} penningen/item)</b></button>` : `<b>${item.price} penningen/item</b>`}
     `;
 
@@ -337,7 +338,7 @@ function informationComponent(tile) {
     let future = '';
 
     if (tile.character_id) {
-        owner = tile.character_id === character.id? `<p>This is your ${tile.tile_type}</p>` : "<p>This is owned by a fellow citizen.</p>";
+        owner = tile.character_id === character.id? `<p>This is your ${tile.tile_type}</p>` : `<p>This is owned by ${tile.name} ${tile.surname}.</p>`;
     } else {
         owner = `<p>This is owned by your ruler (${settlementRuler.name} ${settlementRuler.surname}).</p>`;
 

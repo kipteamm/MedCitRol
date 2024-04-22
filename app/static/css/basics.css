@@ -80,7 +80,7 @@ textarea {
     left: 25%;
     opacity: 0;
     transition: .3s;
-    z-index: 1000;
+    z-index: 1000000;
     pointer-events: none;
     background-color: var(--game-secondary-bg);
     padding: 6.25px 12.5px;

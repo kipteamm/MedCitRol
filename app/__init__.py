@@ -114,10 +114,10 @@ def create_app():
 
                     character.last_update = world.current_time
 
-                    if character.hunger > 0:
+                    if character.hunger > 0 and not character.jailed:
                         character.hunger -= 1
 
-                    if character.health > 0:
+                    if character.health > 0 and not character.jailed:
                         character.health -= 0.25
 
                     if character.start_sleep:
@@ -126,7 +126,7 @@ def create_app():
 
                             character.start_sleep = None
 
-                    elif character.fatigue > 0:
+                    elif character.fatigue > 0 and not character.jailed:
                         character.fatigue -= 1
 
                     if character.fatigue < 7 and random.randint(1, 4) == 2 and not character.start_sleep:
