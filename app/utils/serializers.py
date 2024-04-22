@@ -20,6 +20,8 @@ def settlement_serializer(settlement: Settlement) -> dict:
         'world_id' : settlement.world_id,
         'name' : settlement.name,
         'colour' : settlement.colour,
+        'traderoutes' : settlement.traderoutes.split(","),
+        'hallmark' : settlement.hallmark,
         'merchant' : Merchant.query.filter_by(settlement_id=settlement.id).first() is not None,
     }
 

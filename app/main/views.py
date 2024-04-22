@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, send_from_directory, req
 
 from app.utils.functions import get_access_key
 from app.teacher.models import Task, TaskField, TaskOption
-from app.game.models import World, Settlement, SettlementRuler, Character, AccessKey, Tile, InventoryItem, Farmer, MarketItem, Merchant
+from app.game.models import World, Settlement, SettlementRuler, Character, AccessKey, Tile, InventoryItem, Farmer, MarketItem, Merchant, Warehouse
 from app.auth.models import UserWorlds
 from app.extensions import db
 
@@ -38,6 +38,7 @@ def reset():
     MarketItem.query.delete()
     Merchant.query.delete()
     UserWorlds.query.delete()
+    Warehouse.query.delete()
 
     db.session.commit()
 

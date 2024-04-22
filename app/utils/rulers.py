@@ -1,14 +1,14 @@
 from app.utils.serializers import properties_serializer, tile_serializer
 from app.utils.inventory import Inventory
 from app.utils.functions import get_coordinates
-from app.game.models import Settlement, SettlementRuler, Character, Tile, Warehouse, InventoryItem, MarketItem
+from app.game.models import Settlement, SettlementRuler, TraderouteRequest, Character, Tile, Warehouse, InventoryItem, MarketItem
 from app.extensions import db, socketio
 
 from sqlalchemy import func
 
 from datetime import timedelta, datetime
 
-from typing import Optional
+from typing import Optional, List
 
 from enum import Enum
 
@@ -17,12 +17,9 @@ import json
 import math
 
 
-# 14, 12, 5, 7, 13 -> MORE SOCIAL AND RELIGION
+# 15, 13, 6, 8, 14 -> MORE SOCIAL AND RELIGION
 
 CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social', 'military']
-
-# REWRITE FORT
-
 
 class Action(Enum):
     SAVE_TAXES = {"characteristics": ["social", "economy"], "price": 0, "previous" : None, "repeatable" : True}
@@ -48,8 +45,8 @@ class Action(Enum):
     UPGRADE_JAIL_5 = {"characteristics": ["tyranny", "military"], "price": 120, "previous" : "UPGRADE_JAIL_4", "repeatable" : False}
     WAREHOUSE = {"characteristics": ["tyranny", "economy"], "price": 5, "previous" : None, "repeatable" : True}
     STOCK_ITEMS = {"characteristics": ["tyranny", "economy", "religion", "social", "military"], "price" : 1, "previous" : "WAREHOUSE", "repeatable" : True}
-    #TRADEROUTE = {"characteristics": ["economy"], "price": 0, "previous" : None, "repeatable" : True}
-    #HALLMARK = {"characteristics": ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
+    TRADEROUTE = {"characteristics": ["economy"], "price": 0, "previous" : None, "repeatable" : True}
+    HALLMARK = {"characteristics": ["tyranny", "military", "religion", "economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
     #FAIR = {"characteristics": ["economy", "social"], "price": 25, "previous" : None, "repeatable" : True}
     #WAR = {"characteristics": ["tyranny", "military"], "price": 100, "previous" : None, "repeatable" : True}
 
@@ -134,7 +131,7 @@ class Ruler:
         upgrade_jail_values = sum(2 ** i for i in range(4) if f"UPGRADE_JAIL_{i + 2}" in self._actions)
         value += upgrade_fort_values + upgrade_church_values + upgrade_bourse_values + upgrade_jail_values
 
-        warehouse_count = Tile.query.filter_by(settlement_id=self._settlement, tile_type="warehouse").count()
+        warehouse_count = Tile.query.filter_by(settlement_id=self._settlement.id, tile_type="warehouse").count()
         value += warehouse_count
 
         self._settlement.value_economy = value
@@ -150,16 +147,13 @@ class Ruler:
             if action.name in self._actions:
                 continue
 
-            if action == Action.SAVE_TAXES and random.randint(0, 1) == 0:
+            if action.name == self._ruler.last_action:
                 continue
 
             if action.price > self._settlement.taxes:
                 continue
 
             if action.previous and not action.previous in self._actions:
-                continue
-
-            if action.name == "TRADEROUTE" and Settlement.query.filter_by(world_id=self._settlement.world_id).count() == 1:
                 continue
 
             eligible_actions.append(action)
@@ -192,7 +186,9 @@ class Ruler:
         for i in range(len(coordinates)):
             coordinate = coordinates[i]
 
-            tile = Tile(settlement_id=self._settlement.id, pos_x=pos_x + coordinate[0], pos_y=pos_y + coordinate[1], tile_type="claimed", future=f"bourse_{i}")
+            future = "fort" if coordinate != [0, 0] else "fort-0"
+
+            tile = Tile(settlement_id=self._settlement.id, pos_x=pos_x + coordinate[0], pos_y=pos_y + coordinate[1], tile_type="claimed", future=future)
 
             db.session.add(tile)
             db.session.commit()
@@ -200,6 +196,7 @@ class Ruler:
             tiles.append(tile_serializer(tile))
 
         socketio.emit('update_tiles', tiles, room=self._settlement.id) # type: ignore
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler started building a fort."})
 
         return True
     
@@ -224,7 +221,7 @@ class Ruler:
                     character.jailed = True
                     character.jail_end = current_time + timedelta(hours=random.randint(12, 24) if self._characteristics['tyranny'] > self._characteristics['social'] else random.randint(1, 12))
                     character.taxes = 0
-                    character.happiness -= max(character.happines, character.happines - 6)
+                    character.happiness -= max(character.happiness, character.happiness - 6)
 
                     db.session.commit()
 
@@ -242,33 +239,37 @@ class Ruler:
         random_value = random.randint(0, 1)
 
         tile_changes = {
-            "UPGRADE_FORT_1": [(37, 37, "small_fort")],
-            "UPGRADE_FORT_2": [(37, 37, f"fort_top_left_{random_value}"), (38, 37, f"fort_top_right_{random_value}"), (37, 36, f"fort_bottom_left_{random_value}"), (38, 36, f"fort_bottom_right_{random_value}")],
-            "UPGRADE_FORT_3": [(36, 38, f"tower_right_{random_value}"), (39, 38, f"tower_left_{random_value}"), (36, 35, f"tower_right_{random_value}"), (39, 35, f"tower_left_{random_value}")],
-            "UPGRADE_FORT_4": [(36, 37, "wall_vertical"), (36, 36, "wall_vertical"), (37, 38, "wall_horizontal"), (38, 38, "wall_horizontal"), (39, 37, "wall_vertical"), (39, 36, "wall_vertical"), (37, 35, "wall_horizontal"), (38, 35, "wall_horizontal")]
+            "UPGRADE_FORT_1": [(1, 1, "small_fort")],
+            "UPGRADE_FORT_2": [(1, 2, f"fort_top_left_{random_value}"), (2, 2, f"fort_top_right_{random_value}"), (3, 1, f"fort_bottom_left_{random_value}"), (2, 1, f"fort_bottom_right_{random_value}")],
+            "UPGRADE_FORT_3": [(0, 0, f"tower_right_{random_value}"), (3, 0, f"tower_left_{random_value}"), (0, 3, f"tower_right_{random_value}"), (3, 3, f"tower_left_{random_value}")],
+            "UPGRADE_FORT_4": [(0, 1, "wall_vertical"), (0, 2, "wall_vertical"), (1, 0, "wall_horizontal"), (2, 0, "wall_horizontal"), (3, 1, "wall_vertical"), (3, 2, "wall_vertical"), (1, 3, "wall_horizontal"), (2, 3, "wall_horizontal")]
         }
         
         changes = tile_changes.get(level)
 
         tiles = []
 
-        if changes:
-            for pos_x, pos_y, tile_type in changes:
-                tile = Tile.query.filter_by(settlement_id=self._settlement.id, pos_x=pos_x, pos_y=pos_y).first()
-                
-                tile.tile_type = tile_type
+        if not changes:
+            return False
+        
+        corner = Tile.query.filter_by(settlement_id=self._settlement.id, future="fort-0").first()
 
-                tiles.append(tile_serializer(tile))
+        if not corner:
+            return False
 
-        if level == "UPGRADE_FORT_4":
-            for tile in Tile.query.filter_by(settlement_id=self._settlement.id, tile_type="claimed", future="fort").all():
-                tiles.append({"tile_index" : random.randint(3, 5), "pos_x" : tile.pos_x, "pos_y" : tile.pos_y})
+        pos_x, pos_y = corner.pos_x, corner.pos_y
+        
+        for x, y, tile_type in changes:
+            tile = Tile.query.filter_by(settlement_id=self._settlement.id, pos_x=pos_x + x, pos_y=pos_y + y).first()
                 
-                db.session.delete(tile)
+            tile.tile_type = tile_type
+
+            tiles.append(tile_serializer(tile))
 
         db.session.commit()
 
         socketio.emit('update_tiles', tiles, room=self._settlement.id) # type: ignore
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler upgraded his fort."})
 
         return True
 
@@ -319,6 +320,8 @@ class Ruler:
             tiles.append(tile_serializer(tile_1))
             tiles.append(tile_serializer(tile_2))
 
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler started building a church."})
+
         if level == "UPGRADE_CHURCH_2":
             tile = Tile.query.filter_by(settlement_id=self._settlement.id, future="church_chapel").first()
             
@@ -326,12 +329,16 @@ class Ruler:
 
             tiles.append(tile_serializer(tile))
 
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler continued constructing the church."})
+
         if level == "UPGRADE_CHURCH_3":
             tile = Tile.query.filter_by(settlement_id=self._settlement.id, future="church_tower").first()
             
             tile.tile_type = "church_tower"
 
             tiles.append(tile_serializer(tile))
+
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler finished constructing the church."})
 
         db.session.commit()
         
@@ -360,6 +367,8 @@ class Ruler:
 
                 tiles.append(tile_serializer(tile))
 
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler started building a bourse."})
+
         else:
             tile_type_mapping = {
                 "UPGRADE_BOURSE_2": "bourse_0",
@@ -375,6 +384,8 @@ class Ruler:
             tile.tile_type = tile_type
 
             tiles.append(tile_serializer(tile))
+
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler continued constructing the bourse."})
 
         db.session.commit()
 
@@ -403,6 +414,8 @@ class Ruler:
 
                 tiles.append(tile_serializer(tile))
 
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler started building a jail."})
+
         else:
             tile_type_mapping = {
                 "UPGRADE_JAIL_2": "jail_0",
@@ -418,6 +431,8 @@ class Ruler:
             tile.tile_type = tile_type
 
             tiles.append(tile_serializer(tile))
+
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler continued constructing the jail."})
 
         db.session.commit()
 
@@ -442,6 +457,8 @@ class Ruler:
         db.session.commit()
 
         socketio.emit('update_tiles', [tile_serializer(tile)], room=self._settlement.id) # type: ignore
+
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler built a warehouse."})
 
         return True
     
@@ -487,18 +504,107 @@ class Ruler:
         db.session.commit()
 
         socketio.emit("update_character", properties_serializer(character), room=self._settlement.id) # type: ignore
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler stored items in a warehouse."})
+
+        return True
+    
+    def _manage_traderoute_requests(self, traderoute_requests: List[TraderouteRequest]) -> bool:
+        social = (self._characteristics['social'] + self._characteristics['religion'] + self._characteristics['military']) / 3
+
+        traderoute = None
+
+        if self._characteristics['tyranny'] > social or self._characteristics['economy'] > social:
+            traderoute = traderoute_requests.order_by(TraderouteRequest.taxes.desc()).first() # type: ignore
+
+        else:
+            traderoute = traderoute_requests.order_by("?").first() # type: ignore
+
+        if not traderoute:
+            return False
+        
+        Settlement.query.get(traderoute.settlement).traderoutes += f",{traderoute.traderoute}"
+        Settlement.query.get(traderoute.traderoute).traderoutes += f",{self._settlement.id}"
+
+        db.session.delete(traderoute)
+        db.session.commit()
+
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler accepted a traderoute request."})
+
+        return True
+    
+    def _traderoute(self) -> bool:
+        traderoute_requests = TraderouteRequest.query.filter_by(traderoute_id=self._settlement.id).all()
+
+        if traderoute_requests:
+            return self._manage_traderoute_requests(traderoute_requests)
+
+        traderoute_settlement_ids = self._settlement.traderoutes.split(",")
+
+        new_traderoutes = Settlement.query.filter(
+            Settlement.id!= self._settlement.id,
+            Settlement.id not in traderoute_settlement_ids
+        ).all()
+
+        if not new_traderoutes:
+            new_traderoutes = [traderoute for traderoute in ["Antwerp", "Brugge", "Gent"] if traderoute not in traderoute_settlement_ids]
+
+            if not new_traderoutes:
+                return False
+            
+            self._settlement.traderoutes += f'{"" if len(traderoute_settlement_ids) == 0 else ","}{random.choice(new_traderoutes)}'
+
+            db.session.commit()
+
+            return True
+        
+        closest_traderoute = min(new_traderoutes, key=lambda t: abs(t.taxes - self._settlement.taxes))
+
+        if not closest_traderoute:
+            return False
+
+        traderoute_request = TraderouteRequest(settlement_id=self._settlement.id, traderoute_id=closest_traderoute.id)
+
+        db.session.add(traderoute_request)
+
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler requested a traderoute with another settlement."})
+
+        return True
+    
+    def _hallmark(self) -> bool:
+        if self._settlement.value_economy < 100:
+            return False
+        
+        not_military = (self._characteristics['tyranny'] + self._characteristics['economy'] + self._characteristics['social'] + self._characteristics['religion']) / 4
+
+        if self._characteristics['military'] > not_military:
+            self._settlement.hallmark = True
+            self._actions.append("HALLMARK")
+            self._ruler.actions = json.dumps(self._actions)
+
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your city is now approved by your king."})
+
+            return True
+        
+        if random.randint(1, 4) < 4:
+            return False
+        
+        self._settlement.hallmark = True
+        self._actions.append("HALLMARK")
+        self._ruler.actions = json.dumps(self._actions)
+
+        db.session.commit()
+
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your city is now approved by your king."})
 
         return True
 
     def work(self, current_time: datetime) -> None:
-        random_int = random.randint(1, 4)
-
-        if random_int != 2:
-            print(f"not doing anything {random_int}")
+        if random.randint(1, 4) != 2:
+            print(f"not doing anything")
 
             return None
         
-        if self._ruler.last_action and self._ruler.last_action + timedelta(days=1) < current_time:
+        if self._ruler.last_action_date and self._ruler.last_action_date + timedelta(days=1) < current_time:
             print("inactivity taxes save")
 
             self._save_taxes()
@@ -521,6 +627,8 @@ class Ruler:
             success = self._collect_taxes(current_time)
 
         if action == Action.EVALUATE_ECONOMY:
+            self.evaluate_economy()
+
             success = True
 
         if action == Action.CLAIM_LAND:
@@ -544,6 +652,12 @@ class Ruler:
         if action == Action.STOCK_ITEMS:
             success = self._stock_items()
 
+        if action == Action.TRADEROUTE:
+            success = self._traderoute()
+
+        if action == Action.HALLMARK:
+            success = self._hallmark()
+
         if not success:
             print(f"no success on {action.name}")
 
@@ -557,9 +671,10 @@ class Ruler:
 
         self._settlement.taxes -= action.price
 
-        print(self._ruler.last_action, current_time)
+        print(self._ruler.last_action_date, current_time)
 
-        self._ruler.last_action = current_time
+        self._ruler.last_action_date = current_time
+        self._ruler.last_action = action.name
 
         db.session.commit()
 

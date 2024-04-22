@@ -7,7 +7,7 @@ from app.utils.properties import Properties
 from app.utils.inventory import Inventory
 from app.utils.functions import get_merchandise
 from app.teacher.models import Task, TaskField, TaskOption
-from app.game.models import Settlement, Character, MarketItem, World, Merchant, Tile, InventoryItem
+from app.game.models import Settlement, Character, MarketItem, World, Merchant, Tile, InventoryItem, Warehouse
 
 from app.extensions import db, socketio
 
@@ -740,14 +740,16 @@ def update_answers():
 def get_warehouse(warehouse_id): 
     access_key = g.access_key
 
-    warehouse = Tile.query.filter_by(id=warehouse_id, settlement_id=access_key.settlement_id).first()
+    warehouse = Warehouse.query.filter_by(settlement_id=access_key.settlement_id, tile_id=warehouse_id).first()
 
     if not warehouse:
         return make_response({"error" : "No warehouse found."}, 400)
 
     items = []
 
-    for item in InventoryItem.query.filter_by(warehouse_id=warehouse_id).all():
+    print(warehouse.id)
+
+    for item in InventoryItem.query.filter_by(warehouse_id=warehouse.id).all():
         items.append(inventory_item_serializer(item))
 
     return make_response(items, 200)

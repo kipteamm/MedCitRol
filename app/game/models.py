@@ -66,9 +66,12 @@ class Settlement(db.Model):
 
     name = db.Column(db.String(120), nullable=False)
     colour = db.Column(db.String(120), nullable=False)
+    hallmark = db.Column(db.Boolean, default=False)
 
     taxes = db.Column(db.Integer, default=0)
     value_economy = db.Column(db.Integer, default=0)
+
+    traderoutes = db.Column(db.Text, default="")
 
 
 class SettlementRuler(db.Model):
@@ -88,7 +91,17 @@ class SettlementRuler(db.Model):
     military = db.Column(db.Integer, default=0)
 
     actions = db.Column(db.Text, default="[]")
-    last_action = db.Column(db.DateTime, default=None)
+    last_action = db.Column(db.Text, default="")
+    last_action_date = db.Column(db.DateTime, default=None)
+
+
+class TraderouteRequest(db.Model):
+    __tablename__ = 'traderoute_request'
+
+    id = db.Column(db.Integer, primary_key=True)
+    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+    traderoute_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+    traderoute_taxes = db.Column(db.Integer, default=0)
 
 
 class Character(db.Model):

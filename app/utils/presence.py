@@ -17,6 +17,9 @@ with open('app/static/data/names.json') as names_file:
 with open('app/static/data/surnames.json') as surnames_file:
     SURNAMES_DATA = json.load(surnames_file)
 
+with open('app/static/data/city_names.json') as city_names_file:
+    CITY_NAMES_DATA = json.load(city_names_file)
+
 # Function to get a random name
 def _get_random_name():
     return random.choice(NAMES_DATA)
@@ -25,9 +28,12 @@ def _get_random_name():
 def _get_random_surname():
     return random.choice(SURNAMES_DATA)
 
+def _get_random_city_name():
+    return random.choice(CITY_NAMES_DATA)
+
 
 def _create_settlement(world: World, colour: str) -> Settlement:
-    settlement = Settlement(world_id=world.id, name="Unnamed", colour=colour)
+    settlement = Settlement(world_id=world.id, name=_get_random_city_name(), colour=colour)
 
     db.session.add(settlement)
     db.session.commit()
