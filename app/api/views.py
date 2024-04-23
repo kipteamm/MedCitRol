@@ -292,7 +292,7 @@ def eat():
     character.hunger += 6
 
     if character.hunger <= 24:
-        character.health += 1
+        character.health += 7
 
     elif character.hunger > 28:
         character.health -= 1
@@ -319,6 +319,8 @@ def sleep():
             character.fatigue += math.floor((world.current_time - character.start_sleep).total_seconds() / 3600) - 1
 
         character.start_sleep = None
+
+        character.health += 6
 
     else:
         character.start_sleep = world.current_time
