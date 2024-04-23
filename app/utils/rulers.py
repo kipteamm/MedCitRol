@@ -1,6 +1,5 @@
 from app.utils.serializers import properties_serializer, tile_serializer
 from app.utils.inventory import Inventory
-from app.utils.functions import get_coordinates
 from app.game.models import Settlement, SettlementRuler, TraderouteRequest, Character, Tile, Warehouse, InventoryItem, MarketItem
 from app.extensions import db, socketio
 
@@ -117,21 +116,33 @@ class Ruler:
             Character.settlement_id == self._settlement.id,
             Character.profession != None
         ).with_entities(func.round(func.sum(100 - Character.health))).scalar() or 0
+
+        print(health_sum)
+
         value += health_sum
 
         stored_resources_sum = InventoryItem.query.with_entities(func.sum(InventoryItem.amount)).filter_by(
             settlement_id=self._settlement.id,
             character_id=None
         ).scalar() or 0
+
+        print(stored_resources_sum)
+        
         value += stored_resources_sum
 
         upgrade_fort_values = sum(2 ** i for i in range(4) if f"UPGRADE_FORT_{i + 1}" in self._actions)
         upgrade_church_values = sum(2 ** i for i in range(3) if f"UPGRADE_CHURCH_{i + 2}" in self._actions)
         upgrade_bourse_values = sum(2 ** i for i in range(4) if f"UPGRADE_BOURSE_{i + 2}" in self._actions)
         upgrade_jail_values = sum(2 ** i for i in range(4) if f"UPGRADE_JAIL_{i + 2}" in self._actions)
+
+        print(upgrade_fort_values + upgrade_church_values + upgrade_bourse_values + upgrade_jail_values)
+
         value += upgrade_fort_values + upgrade_church_values + upgrade_bourse_values + upgrade_jail_values
 
         warehouse_count = Tile.query.filter_by(settlement_id=self._settlement.id, tile_type="warehouse").count()
+
+        print(warehouse_count)
+
         value += warehouse_count
 
         self._settlement.value_economy = value
@@ -312,17 +323,12 @@ class Ruler:
                 return False
 
             tile_1 = Tile(settlement_id=self._settlement.id, pos_x=pos_x, pos_y=pos_y, tile_type="claimed", future="church_chapel")
-
-            db.session.add(tile_1)
-
             tile_2 = Tile(settlement_id=self._settlement.id, pos_x=pos_x + 1, pos_y=pos_y, tile_type="claimed", future="church_tower")
 
-            db.session.add(tile_2)
-
+            db.session.add_all([tile_1, tile_2])
             db.session.commit()
 
-            tiles.append(tile_serializer(tile_1))
-            tiles.append(tile_serializer(tile_2))
+            tiles.extend([tile_serializer(tile_1), tile_serializer(tile_2)])
 
             socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler started building a church."})
 
@@ -451,17 +457,12 @@ class Ruler:
             return False
         
         tile = Tile(settlement_id=self._settlement.id, pos_x=pos_x, pos_y=pos_y, tile_type="warehouse")
-
-        db.session.add(tile)
-        db.session.commit()
-
         warehouse = Warehouse(settlement_id=self._settlement.id, tile_id=tile.id)
 
-        db.session.add(warehouse)
+        db.session.add_all([warehouse, tile])
         db.session.commit()
 
         socketio.emit('update_tiles', [tile_serializer(tile)], room=self._settlement.id) # type: ignore
-
         socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler built a warehouse."})
 
         return True

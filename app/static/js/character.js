@@ -131,3 +131,9 @@ async function requestFreedom() {
 
     return;
 }
+
+const revolutionPanel = document.getElementById("revolution-panel");
+
+function toggleRevolution() {
+    revolutionPanel.classList.toggle("active");
+}

@@ -86,17 +86,6 @@ def generateRandomCoordinates(center_x: int, center_y: int, deviation: int, empt
     return pos_x, pos_y
 
 
-def get_coordinates(x: int, y: int, radius: int) -> list[tuple[int, int]]:
-    tiles = []
-
-    for i in range(-radius, radius + 1):
-        for j in range(-radius, radius + 1):
-            if abs(i) == radius or abs(j) == radius:
-                tiles.append((x + i, y + j))
-
-    return tiles
-
-
 def get_merchandise(merchant_type: str) -> dict[str, int]:
     if merchant_type == "grain":
         return {"rye" : 2, "rye_flour" : 3, "bread" : 5} 

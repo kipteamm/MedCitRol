@@ -78,6 +78,9 @@
         <button class="primary-btn" onclick="eat()">Eat</button>
         <button class="primary-btn" onclick="sleep()">Sleep</button>
         <button class="primary-btn" onclick="work()">Work</button>
+        {% if character.happiness == "unhappy" or character.happiness == "depressed" %}
+            <button class="primary-btn" onclick="toggleRevolution()">Revolution</button>
+        {% endif%}
     </div>
 
     <div class="ui actions">
@@ -138,5 +141,20 @@
     </div>
 
     <div class="ui information" id="information-panel"></div>
+
+    <div class="ui revolution" id="revolution-panel">
+        <button class="primary-btn" onclick="toggleRevolution()">Close</button>
+
+        <h2>Revolutions</h2>
+        
+        <p>
+            If you feel unhappy about the way things are going in your settlement right now you can start a revolution! Gather your fellow citizens who feel the same and together you might be able to overthrow the current government. But be warned, revolutions often turn violent. Are you sure you want to risk it?
+        </p>
+        <p>
+            A revolution will automatically start a day after half or more citizens joined the cause.
+        </p>
+
+        <button class="primary-btn" onclick="revolution()">Join revolution</button>
+    </div>
 </body>
 </html>
