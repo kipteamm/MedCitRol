@@ -221,7 +221,7 @@ class Ruler:
             if character.taxes > 0 and not character.jailed and character.start_sleep == None and awake:
                 if "UPGRADE_JAIL_2" in self._actions:
                     character.jailed = True
-                    character.jail_end = current_time + timedelta(hours=random.randint(12, 24) if self._characteristics['tyranny'] > self._characteristics['social'] else random.randint(1, 12))
+                    character.jail_end = current_time + timedelta(hours=random.randint(12, 24) if self._characteristics['tyranny'] > self._characteristics['social'] else random.randint(6, 12))
                     character.taxes = 0
                     character.happiness -= max(0, character.happiness - 6)
 
