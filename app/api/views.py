@@ -360,6 +360,18 @@ def pay_taxes():
 def request_freedom():
     character = g.character
 
+    if not character.jailed:
+        return make_response({"error" : "You are not in jail."}, 400)
+
+    current_time = World.query.get(g.access_key.world_id).current_time
+
+    if character.freedom_request + timedelta(hours=2) > current_time:
+        return make_response({"error", "Your ruler starts laughing at you."}, 400)
+    
+    character.freedom_request = current_time
+
+    db.session.commit()
+
     if random.randint(1, 4) != 4:
         return make_response({"error" : "Your ruler spits you in the face."}, 400)
     

@@ -134,6 +134,7 @@ class Character(db.Model):
 
     jailed = db.Column(db.Boolean, default=False)
     jail_end = db.Column(DateTime(timezone=True), default=None)
+    freedom_request = db.Column(DateTime(timezone=True), default=None)
 
 
 class AccessKey(db.Model):
