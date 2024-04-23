@@ -223,7 +223,7 @@ class Ruler:
                     character.jailed = True
                     character.jail_end = current_time + timedelta(hours=random.randint(12, 24) if self._characteristics['tyranny'] > self._characteristics['social'] else random.randint(1, 12))
                     character.taxes = 0
-                    character.happiness -= max(character.happiness, character.happiness - 6)
+                    character.happiness -= max(0, character.happiness - 6)
 
                     db.session.commit()
 

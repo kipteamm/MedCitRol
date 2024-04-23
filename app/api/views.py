@@ -367,8 +367,8 @@ def request_freedom():
 
     current_time = World.query.get(g.access_key.world_id).current_time
 
-    if character.freedom_request + timedelta(hours=2) > current_time:
-        return make_response({"error", "Your ruler starts laughing at you."}, 400)
+    if character.freedom_request and character.freedom_request + timedelta(hours=2) > current_time:
+        return make_response({"error" : "Your ruler starts laughing at you."}, 400)
     
     character.freedom_request = current_time
 
