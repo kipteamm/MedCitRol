@@ -1,6 +1,6 @@
 from flask import Blueprint, request, make_response, g
 
-from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, task_field_serializer, inventory_item_serializer
+from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, task_field_serializer, inventory_item_serializer, settlement_serializer
 from app.utils.decorators import character_auhtorized, authorized
 from app.utils.professions import Profession
 from app.utils.properties import Properties
@@ -329,6 +329,28 @@ def sleep():
     db.session.commit()
 
     socketio.emit("update_character", properties_serializer(character), room=character.settlement_id) # type: ignore
+
+    return make_response({"success" : True}, 204)
+
+
+@api_blueprint.route("/character/revolution", methods=["POST"])
+@character_auhtorized
+def revolution():
+    character = g.character
+    
+    character.revolutionary = not character.revolutionary
+
+    db.session.commit()
+
+    settlement = Settlement.query.get(character.settlement_id)
+
+    settlement.revolution = Character.query.filter_by(settlement_id=character.settlement_id, revolutionary=True).count() > round(Character.query.filter_by(settlement_id=character.settlement_id).count() / 2)
+    settlement.start_revolution = World.query.get(settlement.world_id).current_time
+    
+    db.session.commit()
+
+    socketio.emit("update_character", properties_serializer(character), room=character.settlement_id) # type: ignore
+    socketio.emit("update_character", settlement_serializer(settlement), room=character.settlement_id) # type: ignore
 
     return make_response({"success" : True}, 204)
 

@@ -73,6 +73,9 @@ class Settlement(db.Model):
 
     traderoutes = db.Column(db.Text, default="")
 
+    revolution = db.Column(db.Boolean, default=False)
+    start_revolution = db.Column(DateTime(timezone=True), default=None)
+
 
 class SettlementRuler(db.Model):
     __tablename__ = 'settlement_ruler'
@@ -135,6 +138,7 @@ class Character(db.Model):
     jailed = db.Column(db.Boolean, default=False)
     jail_end = db.Column(DateTime(timezone=True), default=None)
     freedom_request = db.Column(DateTime(timezone=True), default=None)
+    revolutionary = db.Column(db.Boolean, default=False)
 
 
 class AccessKey(db.Model):

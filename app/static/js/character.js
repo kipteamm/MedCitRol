@@ -1,7 +1,11 @@
 function updateProperty(property, value, reset=false) {
     character[property] = reset? value : character[property] + value;
 
-    document.getElementById(property).innerText = `${character[property]}${property === "pennies"? " penningen" : ""}`;
+    const indicator = document.getElementById(property);
+
+    if (!indicator) return;
+
+    indicator.innerText = `${character[property]}${property === "pennies"? " penningen" : ""}`;
 }
 
 async function eat() {
@@ -136,4 +140,28 @@ const revolutionPanel = document.getElementById("revolution-panel");
 
 function toggleRevolution() {
     revolutionPanel.classList.toggle("active");
+}
+
+async function revolution(button) {
+    const response = await fetch('/api/character/revolution', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${getCookie('psk')}`,
+        },
+    });
+
+    if (!response.ok) {
+        const json = await response.json();
+
+        sendAlert("error", json.error);
+
+        return;
+    }
+
+    sendAlert("success", `You ${character.revolutionary? "left" : "joined"} the revolution.`);
+
+    button.innerText = character.revolutionary? "Join revolution" : "Leave revolution";
+
+    return;
 }

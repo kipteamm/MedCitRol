@@ -91,6 +91,14 @@ socket.on('update_character', function(data) {
     }
 });
 
+socket.on('update_settlement', function(data) {
+    if (settlement.id !== data.id) return;
+
+    for (const [key, value] of Object.entries(data)) {
+        settlement[key] = value;
+    }
+})
+
 socket.on('merchant_leave', function() {
     document.getElementById("merchant-market-btn").style.display = "none";
 })

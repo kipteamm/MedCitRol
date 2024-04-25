@@ -22,6 +22,8 @@ def settlement_serializer(settlement: Settlement) -> dict:
         'colour' : settlement.colour,
         'traderoutes' : settlement.traderoutes.split(","),
         'hallmark' : settlement.hallmark,
+        'citizens' : Character.query.filter_by(settlement_id=settlement.id).count(),
+        'revolutionaries' : Character.query.filter_by(settlement_id=settlement.id, revolutionary=True).count(),
         'merchant' : Merchant.query.filter_by(settlement_id=settlement.id).first() is not None,
     }
 
@@ -55,6 +57,7 @@ def character_serializer(character: Character) -> dict:
         'asleep' : character.start_sleep is not None,
         'jailed' : character.jailed,
         'taxes' : character.taxes,
+        'revolutionary' : character.revolutionary,
         'inventory' : [inventory_item_serializer(inventory_item) for inventory_item in InventoryItem.query.filter_by(character_id=character.id).all()],
     }
 
@@ -73,6 +76,7 @@ def properties_serializer(character: Character) -> dict:
         'asleep' : character.start_sleep is not None,
         'jailed' : character.jailed,
         'taxes' : character.taxes,
+        'revolutionary' : character.revolutionary,
     }
 
 
