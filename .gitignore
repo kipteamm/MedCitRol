@@ -12,3 +12,6 @@ migrations/*
 
 # Ignore media
 media/*
+
+.replit
+replit.nix
