@@ -109,13 +109,21 @@ def _update_character(character: Character, world: World):
 
     if character.hunger > 0:
         character.hunger -= min(hours_passed, 16)
+
+        if character.hunger <= 0:
+            character.health -= abs(character.hunger)
+            character.health = max(character.health, 0)
+
         character.hunger = max(character.hunger, 0) 
-        character.health -= min(hours_passed, 16)
-        character.health = max(character.health, 0) 
 
     if character.fatigue > 0:
         character.fatigue -= min(hours_passed, 16)
-        character.fatigue = max(character.fatigue, 0) 
+
+        if character.fatigue <= 0:
+            character.health -= abs(character.fatigue)
+            character.health = max(character.health, 0)
+
+        character.fatigue = max(character.fatigue, 0)
                 
     character.last_update = world.current_time
 

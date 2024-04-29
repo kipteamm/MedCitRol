@@ -292,7 +292,7 @@ def eat():
     character.hunger += 6
 
     if character.hunger <= 24:
-        character.health += 7
+        character.health += 8
 
     elif character.hunger > 28:
         character.health -= 1

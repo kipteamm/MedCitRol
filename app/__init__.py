@@ -116,6 +116,8 @@ def create_app():
 
                     if character.hunger > 0 and not character.jailed:
                         character.hunger -= 1
+                    
+                    elif character.hunger <= 0 and not character.jailed and character.health > 0:
                         character.health -= 1
 
                     if character.start_sleep:
@@ -128,6 +130,9 @@ def create_app():
 
                     elif character.fatigue > 0 and not character.jailed:
                         character.fatigue -= 1
+
+                    elif character.fatigue <= 0 and not character.jailed and character.health > 0:
+                        character.health -= 1
 
                     if character.fatigue < 7 and random.randint(1, 4) == 2 and not character.start_sleep:
                         socketio.emit("close_eyes", {"id" : character.id}, room=character.settlement_id) # type: ignore

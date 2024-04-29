@@ -111,15 +111,6 @@ class Ruler:
 
     def evaluate_economy(self) -> int:
         value = self._settlement.taxes
-        
-        health_sum = Character.query.filter(
-            Character.settlement_id == self._settlement.id,
-            Character.profession != None
-        ).with_entities(func.round(func.sum(100 - Character.health))).scalar() or 0
-
-        print(health_sum)
-
-        value += health_sum
 
         stored_resources_sum = InventoryItem.query.with_entities(func.sum(InventoryItem.amount)).filter_by(
             settlement_id=self._settlement.id,
