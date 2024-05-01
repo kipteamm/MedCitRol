@@ -14,7 +14,7 @@ function openBuildMenu() {
     content.innerHTML = '';
 
     character.inventory.forEach(item => {
-        if (item.buildable) {
+        if (item.buildable && item.amount > 0) {
             content.appendChild(inventoryItem(item, true));
         }
     });
