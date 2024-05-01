@@ -61,7 +61,7 @@ function chooseProfession(level) {
     const availableProfessions = professions.slice(0, level);
 
     workContent.classList.add("profession-selector")
-
+    
     availableProfessions.forEach(profession => {
         workContent.appendChild(professionComponent(profession))
     })
