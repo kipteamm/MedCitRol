@@ -1,4 +1,4 @@
-from app.utils.serializers import properties_serializer, tile_serializer
+from app.utils.serializers import settlement_ruler_serializer, properties_serializer, tile_serializer
 from app.utils.inventory import Inventory
 from app.game.models import Settlement, SettlementRuler, TraderouteRequest, Character, Tile, Warehouse, InventoryItem, MarketItem
 from app.extensions import db, socketio
@@ -108,6 +108,8 @@ class Ruler:
 
         db.session.add(ruler)
         db.session.commit()
+
+        socketio.emit('update_ruler', settlement_ruler_serializer(ruler), room=self._settlement.id) # type: ignore
 
     def evaluate_economy(self) -> int:
         value = self._settlement.taxes

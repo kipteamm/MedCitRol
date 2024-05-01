@@ -17,7 +17,7 @@ from .auth.views import auth_blueprint
 
 from .game.views import game_blueprint
 from .game.events import register_events
-from .game.models import World, SettlementRuler, Character, Merchant
+from .game.models import World, Settlement, SettlementRuler, Character, Merchant
 
 from .main.views import main_blueprint
 
@@ -98,6 +98,11 @@ def create_app():
                 for sid, user in active_connections.items():
                     world = World.query.get(user['active_world'])
 
+                    if user['id'] in user_ids:
+                        continue
+
+                    user_ids.append(user['id'])
+
                     if not user['active_world'] in worlds:
                         world.current_time += timedelta(hours=1)
                         world.last_time_update = datetime.now()
@@ -108,63 +113,87 @@ def create_app():
 
                         worlds.append(user['active_world'])
 
-                    if user['id'] in user_ids:
-                        continue
-
                     character = Character.query.filter_by(user_id=user['id'], world_id=user['active_world']).first()
-
                     character.last_update = world.current_time
 
-                    if character.hunger > 0 and not character.jailed:
-                        character.hunger -= 1
-                    
-                    elif character.hunger <= 0 and not character.jailed and character.health > 0:
-                        character.health -= 1
+                    if character.jailed and world.current_time >= character.jail_end:
+                        character.jailed = False
+                        character.jail_end = None
 
-                    if character.start_sleep:
-                        if world.current_time >= character.end_sleep:
+                    else:
+                        if character.hunger > 0:
+                            character.hunger -= 1
+                    
+                        if character.hunger <= 0 and character.health > 0:
+                            character.health -= 1
+
+                        if character.start_sleep and world.current_time >= character.end_sleep:
                             character.fatigue += math.floor((character.end_sleep - character.start_sleep).total_seconds() / 3600) + 1
 
                             character.start_sleep = None
 
                             character.health += 6
 
-                    elif character.fatigue > 0 and not character.jailed:
-                        character.fatigue -= 1
+                        elif character.fatigue > 0:
+                            character.fatigue -= 1
 
-                    elif character.fatigue <= 0 and not character.jailed and character.health > 0:
-                        character.health -= 1
+                        elif character.fatigue <= 0 and character.health > 0:
+                            character.health -= 1
 
-                    if character.fatigue < 7 and random.randint(1, 4) == 2 and not character.start_sleep:
-                        socketio.emit("close_eyes", {"id" : character.id}, room=character.settlement_id) # type: ignore
+                        if character.fatigue < 7 and random.randint(1, 4) == 2 and not character.start_sleep:
+                            socketio.emit("close_eyes", {"id" : character.id}, room=character.settlement_id) # type: ignore
 
-                        character.health -= 1
-
-                    if character.jailed:
-                        if world.current_time >= character.jail_end:
-                            character.jailed = False
-                            character.jail_end = None
-
-                    if not character.settlement_id in settlements:
-                        settlements.append(character.settlement_id)
-
-                        settlement_ruler = SettlementRuler.query.filter_by(settlement_id=character.settlement_id).first()
-
-                        Ruler(settlement_ruler).work(world.current_time)
-
-                        merchant = Merchant.query.filter_by(settlement_id=character.settlement_id).first()
-
-                        if merchant and merchant.end_date < world.current_time:
-                            db.session.delete(merchant)
-
-                            socketio.emit("merchant_leave", room=character.settlement_id) # type: ignore
-
-                        elif not merchant and random.randint(1, 24) == 13:
-                            add_merchant(character.settlement_id, world.current_time, random.randint(2, 6))
+                            character.health -= 1
 
                     socketio.emit('update_character', properties_serializer(character), room=character.settlement_id) #type: ignore
 
-                    user_ids.append(user['id'])
+                    if character.settlement_id in settlements:
+                        continue
+
+                    settlements.append(character.settlement_id)
+
+                    settlement_ruler = SettlementRuler.query.filter_by(settlement_id=character.settlement_id).first()
+
+                    Ruler(settlement_ruler).work(world.current_time)
+
+                    merchant = Merchant.query.filter_by(settlement_id=character.settlement_id).first()
+
+                    if merchant and merchant.end_date < world.current_time:
+                        db.session.delete(merchant)
+
+                        socketio.emit("merchant_leave", room=character.settlement_id) # type: ignore
+
+                    elif not merchant and random.randint(1, 24) == 13:
+                        add_merchant(character.settlement_id, world.current_time, random.randint(2, 6))
+
+                    settlement = Settlement.query.filter(Settlement.id == character.settlement_id, Settlement.revolution == True, Settlement.revolution_start + timedelta(days=1) <= world.current_time).first()
+
+                    if not settlement:
+                        continue
+                    
+                    if random.randint(1, 10) == 5:
+                        settlement.revolution = False
+                        settlement.revolution_start = None
+
+                        db.session.delete(settlement_ruler)
+                        db.session.commit()
+
+                        Ruler().create(settlement.id)
+
+                        socketio.emit('alert', {'type' : "sucess", 'message' : "The revolution has ended and a new ruler has been chosen"}, room=character.settlement_id) #type: ignore
+
+                        for character in Character.query.filter_by(settlement_id=settlement.id, revolutionary=True).all():
+                            character.revolutionary = False
+
+                        db.session.commit()
+
+                        continue
+
+                    for character in Character.query.filter_by(settlement_id=settlement.id, revolutionary=True).all():
+                        character.jailed = True
+                        character.jail_end = world.current_time + timedelta(hours=random.randint(12, 24))
+                        character.taxes = 0
+                        character.happiness -= max(0, character.happiness - 6)
 
                 db.session.commit()
 
