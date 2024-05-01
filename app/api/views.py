@@ -129,21 +129,43 @@ def set_profession():
     if not json or 'profession' not in json:
         return make_response({"error" : "Invalid profession."}, 400)
     
-    profession = json['profession']
-
     character = g.character
+
+    if character.profession:
+        return make_response({"error" : "You already have a profession."}, 400)
+
+    profession = json['profession']
 
     character.profession = profession
 
     if profession == 'farmer':
         Inventory(character.settlement_id, None, character.id).add_item('farm_land', 9)
 
-    if profession == 'miller':
+    elif profession == 'miller':
         Inventory(character.settlement_id, None, character.id).add_item('windmill', 1)
 
-    if profession == 'baker':
+    elif profession == 'baker':
         Inventory(character.settlement_id, None, character.id).add_item('bakery', 1)
 
+    elif profession == 'merchant':
+        Inventory(character.settlement_id, None, character.id).add_item('merchant_stall', 1)
+
+    elif profession == 'shoemaker':
+        Inventory(character.settlement_id, None, character.id).add_item('shoemaker', 1)
+    
+    elif profession == 'tanner':
+        Inventory(character.settlement_id, None, character.id).add_item('tanner', 1)
+
+    elif profession == 'weaver':
+        Inventory(character.settlement_id, None, character.id).add_item('weaver', 1)
+
+    elif profession == 'birdcatcher':
+        Inventory(character.settlement_id, None, character.id).add_item('birdcatcher', 1)
+
+    else:
+        return make_response({"error" : "Invalid profession."}, 400)
+
+    socketio.emit("update_character", properties_serializer(character), room=character.settlement_id) # type: ignore
     socketio.emit("alert", {"id" : character.id, "type" : "success", "message" : "Check your build menu!"}, room=character.settlement_id) # type: ignore
 
     db.session.commit()

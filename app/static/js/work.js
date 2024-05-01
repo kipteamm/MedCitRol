@@ -23,7 +23,9 @@ async function work() {
 
     if (!response.ok) {
         if (json.error === "You have no profession.") {
-            return chooseProfession(2);
+            if (settlement.value < 200) return chooseProfession(3);
+
+            return chooseProfession(8);
         }
 
         if (json.error === "No task found.") {
@@ -56,7 +58,7 @@ function stopWorking() {
 let professions = ["Farmer", "Miller", "Baker", "Merchant", "Shoemaker", "Tanner", "Weaver", "Birdcatcher"]
 
 function chooseProfession(level) {
-    const availableProfessions = professions.slice(0, level + 1);
+    const availableProfessions = professions.slice(0, level);
 
     workContent.classList.add("profession-selector")
 

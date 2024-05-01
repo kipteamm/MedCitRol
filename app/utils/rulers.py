@@ -140,6 +140,14 @@ class Ruler:
 
         db.session.commit()
 
+        if value > 200:
+            for character in Character.query.filter_by(settlement_id=self._settlement.id).all():
+                character.profession = None
+
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "You have progressed in level."})
+            
+            db.session.commit()
+
         return value
 
     def _get_action(self) -> Optional[Action]:
