@@ -375,7 +375,7 @@ def revolution():
     db.session.commit()
 
     socketio.emit("update_character", properties_serializer(character), room=character.settlement_id) # type: ignore
-    socketio.emit("update_character", settlement_serializer(settlement), room=character.settlement_id) # type: ignore
+    socketio.emit("update_settlement", settlement_serializer(settlement), room=character.settlement_id) # type: ignore
 
     return make_response({"success" : True}, 204)
 

@@ -9,6 +9,7 @@ from flask import Flask, redirect, url_for, flash, request
 from .teacher.views import teacher_blueprint
 
 from .utils.serializers import properties_serializer
+from .utils.presence import add_merchant
 from .utils.rulers import Ruler
 
 from .auth.models import User
@@ -145,21 +146,21 @@ def create_app():
                             character.jail_end = None
 
                     if not character.settlement_id in settlements:
+                        settlements.append(character.settlement_id)
+
                         settlement_ruler = SettlementRuler.query.filter_by(settlement_id=character.settlement_id).first()
 
                         Ruler(settlement_ruler).work(world.current_time)
 
-                        settlements.append(character.settlement_id)
+                        merchant = Merchant.query.filter_by(settlement_id=character.settlement_id).first()
 
-                        merchant = Merchant.query.filter(
-                            Merchant.settlement_id == character.settlement_id,
-                            Merchant.end_date < world.current_time
-                        ).first()
-
-                        if merchant:
+                        if merchant and merchant.end_date < world.current_time:
                             db.session.delete(merchant)
 
                             socketio.emit("merchant_leave", room=character.settlement_id) # type: ignore
+
+                        elif not merchant and random.randint(1, 24) == 13:
+                            add_merchant(character.settlement_id, world.current_time, random.randint(2, 6))
 
                     socketio.emit('update_character', properties_serializer(character), room=character.settlement_id) #type: ignore
 

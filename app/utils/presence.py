@@ -5,7 +5,7 @@ from app.game.models import World, Settlement, Character, Tile, Merchant
 from app.auth.models import User
 from app.extensions import db, socketio
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 import random
 import json
@@ -32,6 +32,15 @@ def _get_random_city_name():
     return random.choice(CITY_NAMES_DATA)
 
 
+def add_merchant(settlement_id: int, current_time: datetime, weeks: int) -> None:
+    merchant = Merchant(settlement_id=settlement_id, name=_get_random_name(), surname=_get_random_surname(), merchant_type="grain", end_date=(current_time + timedelta(weeks=weeks)))
+
+    db.session.add(merchant)
+    db.session.commit()
+
+    return
+
+
 def _create_settlement(world: World, colour: str) -> Settlement:
     settlement = Settlement(world_id=world.id, name=_get_random_city_name(), colour=colour)
 
@@ -45,10 +54,7 @@ def _create_settlement(world: World, colour: str) -> Settlement:
     db.session.add(tile)
     db.session.commit()
 
-    merchant = Merchant(settlement_id=settlement.id, name=_get_random_name(), surname=_get_random_surname(), merchant_type="grain", end_date=(world.current_time + timedelta(weeks=8)))
-
-    db.session.add(merchant)
-    db.session.commit()
+    add_merchant(settlement.id, world.current_time, 8)
 
     return settlement
 
