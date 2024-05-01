@@ -31,8 +31,8 @@ def task():
     if not character.profession:
         return make_response({"error" : "You have no profession."}, 400)
     
-    if character.hunger < 1 and random.randint(1, 4) < 4:
-        return make_response({"error": "Your too hungry to work."}, 400)
+    if character.health < 15:
+        return make_response({"error": "You're too ill to work."}, 400)
     
     task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
     

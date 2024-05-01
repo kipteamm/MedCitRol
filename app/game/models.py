@@ -123,7 +123,7 @@ class Character(db.Model):
     # properties
     hunger = db.Column(db.Integer, default=30)
     fatigue = db.Column(db.Integer, default=20)
-    health = db.Column(db.Float, default=40)
+    health = db.Column(db.Float, default=20)
     happiness = db.Column(db.Integer, default=15)
     pennies = db.Column(db.Integer, default=12)
     taxes = db.Column(db.Integer, default=0)

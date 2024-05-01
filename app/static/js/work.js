@@ -32,6 +32,8 @@ async function work() {
             workContent.innerHTML = '<h2>There is nothing for you to do right now..</h2>'
         }
 
+        workContent.innerHTML = '<h2>Come back later..</h2>'
+
         activeTask = null;
 
         sendAlert("error", json.error);

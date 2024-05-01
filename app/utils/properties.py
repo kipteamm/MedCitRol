@@ -57,19 +57,19 @@ class Properties:
         if self._health < 1:
             return "dead"
 
-        if self._health < 5:
+        if self._health < 3:
             return "near death"
 
-        if self._health < 10:
+        if self._health < 6:
             return "very ill"
 
-        if self._health < 15:
+        if self._health < 12:
             return "ill"
 
-        if self._health < 20:
+        if self._health < 15:
             return "little unwell"
         
-        if self._health < 30:
+        if self._health < 18:
             return "healthy"
 
         return "fit and healthy"
