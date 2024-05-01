@@ -2,6 +2,7 @@ const buildPanel = document.getElementById('build-panel');
 
 function openBuildMenu() {
     closeMarket()
+    closeWorkPopup()
 
     if (buildPanel.classList.contains("active")) return cancelBuild();
 
@@ -15,7 +16,7 @@ function openBuildMenu() {
 
     character.inventory.forEach(item => {
         if (item.buildable && item.amount > 0) {
-            content.appendChild(inventoryItem(item, true));
+            content.appendChild(inventoryItemComponent(item, true));
         }
     });
 

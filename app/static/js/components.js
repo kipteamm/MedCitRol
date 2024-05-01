@@ -279,7 +279,55 @@ function connectAswerComponent(options, fieldId) {
     return wrapper;
 }
 
-function inventoryItem(item, building) {
+function workStatusComponent() {
+    const wrapper = document.createElement("div");
+
+    if (character.inventory.some(item => item.buildable === true && item.amount > 0)) {
+        wrapper.innerHTML = `
+            <h2>Unfinished buildings!</h2>
+            <p>
+                You have some unbuild things left over. Placing buildings can potentially improve your productivity. Check the build menu for more!
+            </p>
+            <button class="primary-btn" onclick="openBuildMenu()">Build menu</button>
+            <button class="primary-btn" onclick="loadTask()">Work anyway</button>
+            <button class="primary-btn" onclick="closeWorkPopup()">Close</button>
+        `
+    } else {
+        let action = 'Milling';
+        let reactant = 'rye';
+        let product = 'flower';
+        let recommendedAmount = 4;
+
+        if (character.profession === 'baker') {
+            action = 'Baking';
+            reactant = 'rye_flour';
+            product = 'bread';
+            recommendedAmount = 16;
+        }
+
+        const item = character.inventory.find(item => item.item_type === reactant);
+
+        let amount = 0;
+
+        if (item) {
+            amount = item.amount;
+        }
+
+        wrapper.innerHTML = `
+            <h2>${action}</h2>
+            <p>
+                You are not getting everything out of your day! You can buy more ${reactant} to produce more ${product}. You have ${amount} out of the recommended ${recommendedAmount} rye.
+            </p>
+            <button class="primary-btn" onclick="openMarket()">Visit market</button>
+            <button class="primary-btn" onclick="loadTask()">Work anyway</button>
+            <button class="primary-btn" onclick="closeWorkPopup()">Close</button>
+        `
+    }
+
+    return wrapper;
+}
+
+function inventoryItemComponent(item, building) {
     const wrapper = document.createElement("div");
 
     wrapper.id = item.id;

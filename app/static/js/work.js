@@ -1,11 +1,39 @@
 const workContent = document.getElementById('work-content');
 const workPanel = document.getElementById('work-panel');
+const workPopup = document.getElementById('work-popup');
 
 let activeTask = null;
 let activeTaskJson = null;
 
+function work() {
+    cancelBuild();
+    closeMarket();
+
+    if (character.profession === "unemployed") {
+        workPanel.classList.add("active");
+
+        if (settlement.value < 200) return chooseProfession(3);
+
+        return chooseProfession(8);
+    }
+
+    if (character.profession === 'farmer') return loadTask();
+    if (character.profession === 'miller' && character.inventory.some(item => item.item_type === "rye" && item.amount > 3)) return loadTask();
+    if (character.profession === 'baker' && character.inventory.some(item => item.item_type === "rye_flour" && item.amount > 12)) return loadTask();
+
+    workPopup.appendChild(workStatusComponent());
+    workPopup.classList.add("active");
+}
+
+function closeWorkPopup() {
+    workPopup.classList.remove("active");
+    workPopup.innerHTML = '';
+}
+
 // working
-async function work() {
+async function loadTask() {
+    closeWorkPopup();
+
     workPanel.classList.add("active");
 
     if (activeTask === character.task_index) return;
@@ -90,8 +118,8 @@ async function updateProfession(profession) {
     activeTask = null;
     
     workContent.classList.remove("profession-selector");
-
-    return work();
+    
+    return stopWorking();
 }
 
 async function submitTask() {

@@ -359,6 +359,9 @@ def sleep():
 @character_auhtorized
 def revolution():
     character = g.character
+
+    if character.happiness > 10:
+        return make_response({"error" : "You are not able to join the revolution."}, 400)
     
     character.revolutionary = not character.revolutionary
 

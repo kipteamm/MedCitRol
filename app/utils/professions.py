@@ -122,7 +122,7 @@ class Profession:
         
         inventory = Inventory(self._character.settlement_id, None, self._character.id)
         
-        amount = min(inventory.get_amount("rye_flour"), 12)
+        amount = min(inventory.get_amount("rye_flour"), 16)
 
         if amount > 0:
             inventory.remove_item("rye_flour", amount)
