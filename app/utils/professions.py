@@ -162,17 +162,37 @@ class Profession:
     def _weaver(self) -> None:
         print("weaver worked")
 
-        tile = Tile.query.filter_by(settlement_id=self._character.settlement_id, character_id=self._character.id, tile_type="bakery").first()
+        tile = Tile.query.filter_by(settlement_id=self._character.settlement_id, character_id=self._character.id, tile_type="weaver").first()
 
         if not tile:
-            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to build your bakery first (see build menu)."}, room=self._character.settlement_id) # type: ignore
+            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to build your weaver first (see build menu)."}, room=self._character.settlement_id) # type: ignore
 
             return
+
+        inventory = Inventory(self._character.settlement_id, None, self._character.id)
+        
+        amount = random.randint(1, 3)
+
+        inventory.add_item("clothing", amount)
 
         return
     
     def _goldsmith(self) -> None:
         print("goldsmith worked")
+
+        tile = Tile.query.filter_by(settlement_id=self._character.settlement_id, character_id=self._character.id, tile_type="goldsmith").first()
+
+        if not tile:
+            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to build your goldsmith first (see build menu)."}, room=self._character.settlement_id) # type: ignore
+
+            return
+
+        inventory = Inventory(self._character.settlement_id, None, self._character.id)
+        
+        amount = random.randint(0, 1)
+
+        if amount > 0:
+            inventory.add_item("jewelry", amount)
 
         return
 
