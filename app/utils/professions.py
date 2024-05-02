@@ -1,6 +1,6 @@
 from app.utils.serializers import tile_serializer
 from app.utils.inventory import Inventory
-from app.game.models import Character, Farmer, World, Tile
+from app.game.models import Character, Farmer, World, Tile, Warehouse, InventoryItem
 from app.extensions import db, socketio
 
 from datetime import timedelta
@@ -129,6 +129,52 @@ class Profession:
             inventory.add_item("bread", amount)
 
         return
+    
+    def _merchant(self) -> None:
+        print("merchant worked")
+
+        tile = Tile.query.filter_by(settlement_id=self._character.settlement_id, character_id=self._character.id, tile_type="merchant_stall").first()
+
+        if not tile:
+            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to build your merchant stall first (see build menu)."}, room=self._character.settlement_id) # type: ignore
+
+            return
+
+        warehouse = Warehouse.query.filter(Warehouse.settlement_id == self._character.settlement_id, Warehouse.capacity < 100, Warehouse.capacity > 0).ordre_by('?').first()
+
+        if not warehouse:
+            return
+        
+        inventory_item = InventoryItem.query.filter_by(settlement_id=self._character.settlement_id, warehouse_id=warehouse.id).order_by('?').first()
+
+        if not inventory_item:
+            return
+        
+        amount = min(warehouse.capacity + random.randint(1, 3), 100)
+
+        inventory_item.amount += amount
+        warehouse.capacity += amount
+
+        db.session.commit()
+
+        return
+    
+    def _weaver(self) -> None:
+        print("weaver worked")
+
+        tile = Tile.query.filter_by(settlement_id=self._character.settlement_id, character_id=self._character.id, tile_type="bakery").first()
+
+        if not tile:
+            socketio.emit("alert", {"id" : self._character.id, "type" : "error", "message" : "You need to build your bakery first (see build menu)."}, room=self._character.settlement_id) # type: ignore
+
+            return
+
+        return
+    
+    def _goldsmith(self) -> None:
+        print("goldsmith worked")
+
+        return
 
     def work(self) -> None:
         if self._character.profession == "farmer":
@@ -139,3 +185,12 @@ class Profession:
         
         if self._character.profession == "baker":
             return self._baker()
+        
+        if self._character.profession == "merchant":
+            return self._merchant()
+
+        if self._character.profession == "weaver":
+            return self._weaver()
+
+        if self._character.profession == "goldsmith":
+            return self._goldsmith()

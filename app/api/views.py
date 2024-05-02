@@ -159,8 +159,8 @@ def set_profession():
     elif profession == 'weaver':
         Inventory(character.settlement_id, None, character.id).add_item('weaver', 1)
 
-    elif profession == 'birdcatcher':
-        Inventory(character.settlement_id, None, character.id).add_item('birdcatcher', 1)
+    elif profession == 'goldsmith':
+        Inventory(character.settlement_id, None, character.id).add_item('goldsmith', 1)
 
     else:
         return make_response({"error" : "Invalid profession."}, 400)

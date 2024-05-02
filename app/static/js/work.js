@@ -53,7 +53,7 @@ async function loadTask() {
         if (json.error === "You have no profession.") {
             if (settlement.value < 200) return chooseProfession(3);
 
-            return chooseProfession(8);
+            return chooseProfession(6);
         }
 
         if (json.error === "No task found.") {
@@ -85,7 +85,7 @@ function stopWorking() {
 }
 
 // professions
-let professions = ["Farmer", "Miller", "Baker", "Merchant", "Shoemaker", "Tanner", "Weaver", "Birdcatcher"]
+let professions = ["Farmer", "Miller", "Baker", "Merchant", "Weaver", "Goldsmith"]
 
 function chooseProfession(level) {
     const availableProfessions = professions.slice(0, level);

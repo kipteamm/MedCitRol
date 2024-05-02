@@ -493,10 +493,10 @@ class Ruler:
 
             return False
         
-        max_amount = min(random_item.amount, math.floor(self._settlement.taxes / random_item.price))
-        amount = max(1, random.randint(1, max_amount))
+        amount = min(100 - warehouse.capacity, random_item.amount, math.floor(self._settlement.taxes / random_item.price))
 
         random_item.amount -= amount
+        warehouse.capacity += amount
 
         if random_item.amount == 0:
             db.session.delete(random_item)
