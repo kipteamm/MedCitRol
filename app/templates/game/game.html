@@ -20,7 +20,8 @@
     <script src="{{ url_for('static', filename='js/market.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/basics.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/character.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='js/game_socket.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/globalMap.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/gameSocket.js') }}" defer></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
 
@@ -87,7 +88,7 @@
     <div class="ui actions">
         <button class="primary-btn" onclick="openBuildMenu()">Build</button>
         <button class="primary-btn" onclick="openMarket()">Market</button>
-        <button style="display: none;" class="primary-btn" onclick="openMap()">Map</button>
+        <button class="primary-btn" onclick="toggleMap()">Map</button>
         <button class="primary-btn" onclick="window.open('/help')">Help</button>
     </div>
 
@@ -158,6 +159,15 @@
         </p>
 
         <button class="primary-btn" onclick="revolution(this)">{% if character.revolutionary %}Leave{% else %}Join{% endif %} revolution</button>
+    </div>
+
+    <div class="ui global-map" id="global-map">
+        <div class="global-map-container">
+            <button class="primary-btn" onclick="toggleMap()">&times;</button>
+            {% for _settlement in world.settlements %}
+                <div onclick="{% if _settlement == settlement.colour %}toggleMap(){% else %}window.location.href='/game/{{ world.id }}/{{ settlement.id }}'{% endif %}" class="settlement-indicator {{ _settlement }}"></div>
+            {% endfor %}
+        </div>
     </div>
 </body>
 </html>

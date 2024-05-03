@@ -10,7 +10,8 @@ def world_serializer(world: World) -> dict:
         'id' : world.id,
         'user_id' : world.id,
         'code' : world.code,
-        'current_time' : world.get_world_time()
+        'current_time' : world.get_world_time(),
+        'settlements' : ['cyan', 'lime', 'purple', 'red'][:Settlement.query.filter_by(world_id=world.id).count()],
     }
 
 

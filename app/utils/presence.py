@@ -64,21 +64,21 @@ def _create_settlement(world: World, colour: str) -> Settlement:
     return settlement
 
 
-settlement_colours = ['cyan', 'lime', 'purple', 'red', 'brown']
+SETTLEMENT_COLOURS = ['cyan', 'lime', 'purple', 'red']
 
 
 def _get_settlement(world: World) -> Settlement:
     settlements = Settlement.query.filter_by(world_id=world.id).all()
 
     if not settlements:
-        return _create_settlement(world, settlement_colours[0])
+        return _create_settlement(world, SETTLEMENT_COLOURS[0])
 
-    if len(settlements) < len(settlement_colours):
+    if len(settlements) < len(SETTLEMENT_COLOURS):
         for i, settlement in enumerate(settlements):
             if Character.query.filter_by(world_id=world.id, settlement_id=settlement.id).count() < MIN_CHARACTERS:
                 return settlement
 
-        return _create_settlement(world, settlement_colours[len(settlements)])
+        return _create_settlement(world, SETTLEMENT_COLOURS[len(settlements)])
     
     smallest_settlement = min(settlements, key=lambda s: Character.query.filter_by(world_id=world.id, settlement_id=s.id).count())
 
