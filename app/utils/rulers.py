@@ -3,7 +3,7 @@ from app.utils.inventory import Inventory
 from app.game.models import Settlement, SettlementRuler, TraderouteRequest, Character, Tile, Warehouse, InventoryItem, MarketItem
 from app.extensions import db, socketio
 
-from sqlalchemy import func
+from sqlalchemy import func, or_
 
 from datetime import timedelta, datetime
 
@@ -16,7 +16,7 @@ import json
 import math
 
 
-# 15, 13, 6, 8, 14 -> MORE SOCIAL AND RELIGION
+# 15, 13, 7, 9, 14 -> MORE SOCIAL AND RELIGION
 
 CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social', 'military']
 
@@ -46,8 +46,8 @@ class Action(Enum):
     STOCK_ITEMS = {"characteristics": ["tyranny", "economy", "religion", "social", "military"], "price" : 1, "previous" : "WAREHOUSE", "repeatable" : True}
     TRADEROUTE = {"characteristics": ["economy"], "price": 0, "previous" : None, "repeatable" : True}
     HALLMARK = {"characteristics": ["tyranny", "military", "religion", "economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
+    ALMGSGIVING = {"characteristics" : ["social", "religion"], "price": 0, "previous" : None, "repeatable" : True}
     #FAIR = {"characteristics": ["economy", "social"], "price": 25, "previous" : None, "repeatable" : True}
-    #WAR = {"characteristics": ["tyranny", "military"], "price": 100, "previous" : None, "repeatable" : True}
 
     @property
     def characteristics(self):
@@ -603,6 +603,23 @@ class Ruler:
         socketio.emit('alert', {'type' : 'ruler', 'message' : "Your city is now approved by your king."})
 
         return True
+    
+    def _almsgiving(self) -> bool:
+        needing = Character.query.filter(or_(Character.pennies < 4, Character.hunger < 4, Character.health < 6)).all()
+
+        if not needing:
+            print("no needing")
+
+            return False
+        
+        for character in needing:
+            amount = random.randint(1 if self._characteristics['tyranny'] + self._characteristics['military'] + self._characteristics['economy'] < self._characteristics['social'] + self._characteristics['religion'] else 2, 3) 
+
+            Inventory(self._settlement.id, None, character.id).add_item('bread', amount)
+
+            socketio.emit("alert", {"id" : character.id, "type" : "ruler", "message", "Your ruler came to give you some food."}, room=self._settlement.id) # type: ignore
+
+        return True
 
     def work(self, current_time: datetime) -> None:
         if random.randint(1, 4) != 2:
@@ -663,6 +680,9 @@ class Ruler:
 
         if action == Action.HALLMARK:
             success = self._hallmark()
+
+        if action == Action.ALMGSGIVING:
+            success = self._almsgiving()
 
         if not success:
             print(f"no success on {action.name}")
