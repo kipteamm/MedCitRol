@@ -1,6 +1,6 @@
 from flask import Blueprint, request, make_response, g
 
-from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, task_field_serializer, inventory_item_serializer, settlement_serializer
+from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, task_field_serializer, inventory_item_serializer, settlement_serializer, tile_serializer
 from app.utils.decorators import character_auhtorized, authorized
 from app.utils.professions import Profession
 from app.utils.properties import Properties
@@ -20,6 +20,46 @@ import os
 
 
 api_blueprint = Blueprint('api', __name__, url_prefix="/api")
+
+
+@api_blueprint.route("/build", methods=["PUT"])
+@character_auhtorized
+def build():
+    json = request.json
+
+    if not json:
+        return make_response({"error" : "Invalid building."}, 400)
+    
+    access_key = g.access_key
+    
+    settlement = Settlement.query.get(access_key.settlement_id)
+
+    if not settlement:
+        return make_response({"error": "You cannot build here."}, 400)
+
+    inventory = Inventory(access_key.settlement_id, None, access_key.character_id)
+
+    tiles = []
+
+    for tile in json:
+        if not inventory.has_items(tile['tile_type'], 1):
+            return make_response({"error": f"You don't have any {tile['tile_type']}."}, 400)
+
+        if Tile.query.filter_by(settlement_id=settlement.id, pos_x=tile['pos_x'], pos_y=tile['pos_y']).first():
+            return make_response({"error": f"Something is already built here."}, 400)
+
+        inventory.remove_item(tile['tile_type'], 1)
+
+        tile = Tile(character_id=access_key.character_id, settlement_id=settlement.id, pos_x=tile['pos_x'], pos_y=tile['pos_y'], tile_type=tile['tile_type'])
+
+        db.session.add(tile)
+        db.session.commit()
+
+        tiles.append(tile_serializer(tile))
+            
+    socketio.emit('new_tiles', tiles, room=settlement.id) # type: ignore
+
+    return make_response({'success' : True}, 204)
 
 
 @api_blueprint.route("/task", methods=["GET"])

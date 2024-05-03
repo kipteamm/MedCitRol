@@ -41,12 +41,25 @@ function updateAmount(item, amount) {
     document.getElementById(`count-${item.id}`).innerText = `${item.amount}x`;
 }
 
-function confirmBuild() {
+async function confirmBuild() {
     if (buildings.length === 0) return cancelBuild();
 
-    // REDO
+    const response = await fetch('/api/build', {
+        method: 'PUT',
+        body: JSON.stringify(buildings),
+        headers: {
+            'Authorization': `${getCookie('psk')}`,
+            'Content-Type': 'application/json',
+        },
+    });
 
-    //send('build', buildings)
+    if (!response.ok) {
+        const json = await response.json();
+
+        sendAlert("error", json.error);
+
+        return;
+    }
 
     buildPanel.classList.remove('active');
 
@@ -86,4 +99,12 @@ async function buyBuildable(type, price) {
             'Authorization': `${getCookie('psk')}`,
         },
     })
+
+    if (!response.ok) {
+        const json = await response.json();
+
+        sendAlert("error", json.error);
+
+        return;
+    }
 }
