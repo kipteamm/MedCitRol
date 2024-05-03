@@ -109,7 +109,7 @@ class Ruler:
         db.session.add(ruler)
         db.session.commit()
 
-        socketio.emit('update_ruler', settlement_ruler_serializer(ruler), room=self._settlement.id) # type: ignore
+        socketio.emit('update_ruler', settlement_ruler_serializer(ruler), room=settlement_id) # type: ignore
 
     def evaluate_economy(self) -> int:
         value = self._settlement.taxes
@@ -617,7 +617,7 @@ class Ruler:
 
             Inventory(self._settlement.id, None, character.id).add_item('bread', amount)
 
-            socketio.emit("alert", {"id" : character.id, "type" : "ruler", "message", "Your ruler came to give you some food."}, room=self._settlement.id) # type: ignore
+            socketio.emit("alert", {"id" : character.id, "type" : "ruler", "message" : "Your ruler came to give you some food."}, room=self._settlement.id) # type: ignore
 
         return True
 

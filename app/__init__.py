@@ -166,14 +166,14 @@ def create_app():
                     elif not merchant and random.randint(1, 24) == 13:
                         add_merchant(character.settlement_id, world.current_time, random.randint(2, 6))
 
-                    settlement = Settlement.query.filter(Settlement.id == character.settlement_id, Settlement.revolution == True, Settlement.revolution_start + timedelta(days=1) <= world.current_time).first()
+                    settlement = Settlement.query.filter(Settlement.id == character.settlement_id, Settlement.revolution == True, Settlement.start_revolution + timedelta(days=1) <= world.current_time).first()
 
                     if not settlement:
                         continue
                     
-                    if random.randint(1, 10) == 5:
+                    if random.random() < Character.query.filter_by(settlement_id=settlement.id, revolutionary=True).count() / Character.query.filter_by(settlement_id=settlement.id).count():
                         settlement.revolution = False
-                        settlement.revolution_start = None
+                        settlement.start_revolution = None
 
                         db.session.delete(settlement_ruler)
                         db.session.commit()

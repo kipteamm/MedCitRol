@@ -17,11 +17,15 @@ function work() {
         return chooseProfession(8);
     }
 
-    if (character.profession === 'farmer') return loadTask();
-    if (character.profession === 'miller' && character.inventory.some(item => item.item_type === "rye" && item.amount > 3)) return loadTask();
-    if (character.profession === 'baker' && character.inventory.some(item => item.item_type === "rye_flour" && item.amount > 12)) return loadTask();
+    const shouldBuild = character.inventory.some(item => item.buildable === true && item.amount > 0);
 
-    workPopup.appendChild(workStatusComponent());
+    if (!shouldBuild) {
+        if (character.profession === 'farmer') return loadTask();
+        if (character.profession === 'miller' && character.inventory.some(item => item.item_type === "rye" && item.amount > 3)) return loadTask();
+        if (character.profession === 'baker' && character.inventory.some(item => item.item_type === "rye_flour" && item.amount > 12)) return loadTask();
+    }
+
+    workPopup.appendChild(workStatusComponent(shouldBuild));
     workPopup.classList.add("active");
 }
 

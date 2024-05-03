@@ -11,6 +11,9 @@ import random
 import json
 
 
+MIN_CHARACTERS = 3
+
+
 with open('app/static/data/names.json') as names_file:
     NAMES_DATA = json.load(names_file)
 
@@ -20,6 +23,7 @@ with open('app/static/data/surnames.json') as surnames_file:
 with open('app/static/data/city_names.json') as city_names_file:
     CITY_NAMES_DATA = json.load(city_names_file)
 
+
 # Function to get a random name
 def _get_random_name():
     return random.choice(NAMES_DATA)
@@ -27,6 +31,7 @@ def _get_random_name():
 # Function to get a random surname
 def _get_random_surname():
     return random.choice(SURNAMES_DATA)
+
 
 def _get_random_city_name():
     return random.choice(CITY_NAMES_DATA)
@@ -70,7 +75,7 @@ def _get_settlement(world: World) -> Settlement:
 
     if len(settlements) < len(settlement_colours):
         for i, settlement in enumerate(settlements):
-            if Character.query.filter_by(world_id=world.id, settlement_id=settlement.id).count() < 8:
+            if Character.query.filter_by(world_id=world.id, settlement_id=settlement.id).count() < MIN_CHARACTERS:
                 return settlement
 
         return _create_settlement(world, settlement_colours[len(settlements)])

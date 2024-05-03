@@ -15,7 +15,9 @@ let buildings = [];
 
 const terrainTileSet = new Image();
 
-terrainTileSet.src = `/static/images/tilesets/${settlement.colour}_tilemap.png`;
+//terrainTileSet.src = `/static/images/tilesets/${settlement.colour}_tilemap.png`;
+
+terrainTileSet.src = `/static/images/tilesets/cyan_tilemap.png`;
 
 terrainTileSet.onload = function() {
     loadTerrain();

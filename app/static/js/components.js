@@ -279,10 +279,10 @@ function connectAswerComponent(options, fieldId) {
     return wrapper;
 }
 
-function workStatusComponent() {
+function workStatusComponent(shouldBuild=false) {
     const wrapper = document.createElement("div");
 
-    if (character.inventory.some(item => item.buildable === true && item.amount > 0)) {
+    if (shouldBuild) {
         wrapper.innerHTML = `
             <h2>Unfinished buildings!</h2>
             <p>
