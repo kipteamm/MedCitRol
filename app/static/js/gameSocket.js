@@ -1,9 +1,9 @@
-const defaultData = {access_key : getCookie('psk'), world_id : world.id, settlement_id : settlement.id, character_id: character.id};
 const socket = io();
 
 socket.on('connect', function() {
     console.log('connect');
-    socket.emit('join', defaultData);
+
+    socket.emit('join', {access_key : getCookie('psk'), user_id : userId, world_id : world.id, settlement_id : settlement.id, character_id: character.id});
 })
 
 socket.on('disconnect', function() {
@@ -119,10 +119,3 @@ socket.on('alert', function(data) {
 
     sendAlert(data.type, data.message)
 })
-
-function send(event, data) {
-    eventData = defaultData
-    eventData.event_data = data
-
-    socket.emit(event, eventData)
-}

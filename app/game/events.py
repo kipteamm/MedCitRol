@@ -2,19 +2,28 @@ from flask_socketio import SocketIO, join_room
 
 from app.utils.serializers import tile_serializer
 from app.utils.inventory import Inventory
-from app.utils.functions import authenticated
 from app.extensions import db
 
-from .models import Tile
+from .models import AccessKey, Tile
 
 
 def register_events(socketio: SocketIO):
     @socketio.on('join')
     def join(data):
-        if not authenticated(data):
+        access_key = AccessKey.query.filter_by(world_id=data['world_id'], user_id=data['user_id'], key=data['access_key']).first()
+
+        if not access_key:
             return
         
+        print("here 1")
+        
         join_room(data['world_id'])
+        
+        if access_key.settlement_id != data['settlement_id']:
+            return
+
+        print("here 2")
+
         join_room(data['settlement_id'])
 
     @socketio.on('build')

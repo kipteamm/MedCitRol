@@ -388,7 +388,7 @@ function informationComponent(tile) {
     if (tile.character_id) {
         owner = tile.character_id === character.id? `<p>This is your ${tile.tile_type}</p>` : `<p>This is owned by ${tile.name} ${tile.surname}.</p>`;
     } else {
-        owner = `<p>This is owned by your ruler (${settlementRuler.name} ${settlementRuler.surname}).</p>`;
+        owner = `<p>This is owned by ${character.id? "your" : "the"} ruler (${settlementRuler.name} ${settlementRuler.surname}).</p>`;
 
         if (tile.tile_type === "claimed") {
             future = `<p>This will become a ${tile.future}</p>`;

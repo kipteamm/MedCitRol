@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Game</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ui.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tasks.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/basics.css') }}">
+
+    <script src="{{ url_for('static', filename='js/tasks.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/map.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/work.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/game.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/components.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/basics.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/character.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/globalMap.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/gameSocket.js') }}" defer></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+
+    <script>
+        let tiles = {{ tiles|tojson }};
+
+        const userId = {{ user_id }};
+        const world = {{ world|tojson }};
+        const settlement = {{ settlement|tojson }};
+        const settlementRuler = {{ settlement_ruler|tojson }};
+        const character = {id: null};
+    </script>
+</head>
+<body>
+    <div class="tired-overlay" id="tired-overlay">
+        <div class="top"></div>
+        <div class="bottom"></div>
+    </div>
+
+    <div class="night" id="night"></div>
+
+    <div class="alert" id="alert"></div>
+
+    <div class="ui time">
+        <img src="/static/images/assets/time.png"/>
+        
+        <div>
+            <b id="clock">00:00</b>
+            <b id="date">00/00/00</b>
+        </div>
+    </div>
+
+    <div class="ui actions">
+        <button class="primary-btn" onclick="window.location.href='/game/{{ world.id }}'">Back</button>
+        <button class="primary-btn" onclick="toggleMap()">Map</button>
+        <button class="primary-btn" onclick="window.open('/help')">Help</button>
+    </div>
+
+    <div class="map-container" id="map-container">
+        <canvas id="map"></canvas>
+    </div>
+
+    <div class="ui information" id="information-panel"></div>
+
+    <div class="ui global-map" id="global-map">
+        <div class="global-map-container">
+            <button class="primary-btn" onclick="toggleMap()">&times;</button>
+            {% for _settlement in world.settlements %}
+                <div onclick="{% if _settlement == settlement.colour %}toggleMap(){% else %}window.location.href='/game/{{ world.id }}/{{ _settlement }}'{% endif %}" class="settlement-indicator {{ _settlement }}"></div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

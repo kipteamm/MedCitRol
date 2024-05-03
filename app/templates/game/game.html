@@ -28,6 +28,7 @@
     <script>
         let tiles = {{ tiles|tojson }};
 
+        const userId = {{ user_id }};
         const world = {{ world|tojson }};
         const settlement = {{ settlement|tojson }};
         const settlementRuler = {{ settlement_ruler|tojson }}
@@ -165,7 +166,7 @@
         <div class="global-map-container">
             <button class="primary-btn" onclick="toggleMap()">&times;</button>
             {% for _settlement in world.settlements %}
-                <div onclick="{% if _settlement == settlement.colour %}toggleMap(){% else %}window.location.href='/game/{{ world.id }}/{{ settlement.id }}'{% endif %}" class="settlement-indicator {{ _settlement }}"></div>
+                <div onclick="{% if _settlement == settlement.colour %}toggleMap(){% else %}window.location.href='/game/{{ world.id }}/{{ _settlement }}'{% endif %}" class="settlement-indicator {{ _settlement }}"></div>
             {% endfor %}
         </div>
     </div>

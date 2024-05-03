@@ -9,7 +9,7 @@ from app.utils.rulers import Ruler
 from app.auth.models import UserWorlds
 from app.extensions import db
 
-from .models import World, Tile, SettlementRuler
+from .models import World, Tile, SettlementRuler, Settlement, Character
 
 
 game_blueprint = Blueprint('game', __name__)
@@ -82,11 +82,31 @@ def game(id):
 
     tiles = [tile_serializer(tile) for tile in Tile.query.filter_by(settlement_id=settlement.id).all()]
 
-    response = make_response(render_template('game/game.html', tiles=tiles, world=world_serializer(world), settlement=settlement_serializer(settlement), settlement_ruler=settlement_ruler_serializer(SettlementRuler.query.filter_by(settlement_id=settlement.id).first()), character=character_serializer(character)))
+    response = make_response(render_template('game/game.html', tiles=tiles, user_id=current_user.id, world=world_serializer(world), settlement=settlement_serializer(settlement), settlement_ruler=settlement_ruler_serializer(SettlementRuler.query.filter_by(settlement_id=settlement.id).first()), character=character_serializer(character)))
 
     response.set_cookie('psk', get_key(current_user.id, world.id, settlement.id, character.id))
 
     return response
+
+
+@game_blueprint.route('/game/<id>/<colour>')
+@login_required
+def settlement(id, colour):
+    user_world = UserWorlds.query.filter_by(user_id=current_user.id, world_id=id).first()
+
+    if not user_world:
+        return redirect(url_for('game.home'))
+    
+    world = World.query.get(id)
+
+    settlement = Settlement.query.filter_by(world_id=world.id, colour=colour).first()
+
+    if not settlement or Character.query.filter_by(user_id=current_user.id, settlement_id=settlement.id).first():
+        return redirect(f'/game/{id}')
+
+    tiles = [tile_serializer(tile) for tile in Tile.query.filter_by(settlement_id=settlement.id).all()]
+
+    return render_template('game/settlement.html', tiles=tiles, user_id=current_user.id, world=world_serializer(world), settlement=settlement_serializer(settlement), settlement_ruler=settlement_ruler_serializer(SettlementRuler.query.filter_by(settlement_id=settlement.id).first()))
 
 
 @game_blueprint.route('/ruler')
