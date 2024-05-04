@@ -180,7 +180,7 @@ function editableTaskFieldComponent(taskField) {
         console.log(taskField.options)
 
         taskField.options.forEach(option => {
-            const previous = wrapper.querySelector(`#task-option-${option.connected}`);
+            const previous = wrapper.querySelector(`#${option.connected}`);
 
             if (previous) {
                 previous.insertAdjacentElement("afterend", orderOption(option, taskField.id));

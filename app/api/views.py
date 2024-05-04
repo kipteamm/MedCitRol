@@ -710,7 +710,7 @@ def delete_field(field_id):
 
         db.session.commit()
 
-    if task_field.field_type == "image" and not TaskField.query.filter_by(content=task_field.content).first():
+    if task_field.field_type == "image" and not TaskField.query.filter(TaskField.id != task_field.id, TaskField.content==task_field.content).first():
         path = os.path.join(os.getcwd(), 'media', 'tasks', task_field.content)
 
         if os.path.exists(path):

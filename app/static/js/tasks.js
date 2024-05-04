@@ -16,7 +16,7 @@ function handleDrop(event) {
     const dropTarget = event.target.closest('.option');
 
     if (draggedElement && dropTarget) {
-        const optionsContainer = document.getElementById(`task-field-${draggedElement.getAttribute("task-id")}`);
+        const optionsContainer = document.getElementById(draggedElement.getAttribute("task-id"));
         const draggedIndex = Array.from(optionsContainer.children).indexOf(draggedElement);
         const dropIndex = Array.from(optionsContainer.children).indexOf(dropTarget);
 
@@ -47,7 +47,7 @@ function handleDrop(event) {
 }
 
 function selectOption(fieldId, optionId) {
-    const option = document.getElementById(`task-option-${optionId}`);
+    const option = document.getElementById(optionId);
 
     let answer = answers.find(field => field.field_id === fieldId);
 
@@ -63,7 +63,7 @@ function selectOption(fieldId, optionId) {
         const previousOptionId = answer.content[0];
         answer.content = [optionId];
 
-        const previousOption = document.getElementById(`task-option-${previousOptionId}`)
+        const previousOption = document.getElementById(previousOptionId)
         
         if (previousOption) {
             previousOption.classList.remove("active"); 
@@ -94,7 +94,7 @@ function connectAnswer(fieldId, _input=null) {
 
     answer.content = []
 
-    document.getElementById(`task-field-${fieldId}`).querySelectorAll("input.connect-answer").forEach(input => {
+    document.getElementById(fieldId).querySelectorAll("input.connect-answer").forEach(input => {
         if (input.value) {
             const letter = input.value.toUpperCase()
             const indexOption = document.getElementById(`${fieldId}-${input.getAttribute("index")}`);

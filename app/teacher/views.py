@@ -92,7 +92,7 @@ def delete_task(world_id, task_id):
 
     for field in TaskField.query.filter_by(task_id=task.id).all():
         if field.field_type == "image":
-            if TaskField.query.filter_by(content=field.content).first():
+            if TaskField.query.filter(TaskField.id != field.id, TaskField.content==field.content).first():
                 db.session.delete(field)
 
                 continue

@@ -29,7 +29,7 @@ async function editField(fieldId, value) {
         return console.log(response, await response.json());
     }
 
-    return task.replaceChild(editableTaskFieldComponent(await response.json()), document.getElementById(`task-field-${fieldId}`));
+    return task.replaceChild(editableTaskFieldComponent(await response.json()), document.getElementById(fieldId));
 }
 
 function handleImage(event) {
@@ -89,7 +89,7 @@ async function addOption(fieldId) {
         return console.log(response, await response.json());
     }
 
-    return task.replaceChild(editableTaskFieldComponent(await response.json()), document.getElementById(`task-field-${fieldId}`));
+    return task.replaceChild(editableTaskFieldComponent(await response.json()), document.getElementById(fieldId));
 }
 
 async function editOption(optionId, value) {
@@ -108,7 +108,7 @@ async function editOption(optionId, value) {
 
     const json = await response.json();
 
-    return task.replaceChild(editableTaskFieldComponent(json), document.getElementById(`task-field-${json.id}`));
+    return task.replaceChild(editableTaskFieldComponent(json), document.getElementById(json.id));
 }
 
 async function updateAnswers(taskId) {
@@ -234,7 +234,7 @@ async function deleteField() {
         return console.log(response, await response.json());
     }
 
-    const field = document.getElementById(`task-field-${fieldId}`);
+    const field = document.getElementById(fieldId);
     const nextSibling = field.nextElementSibling;
     const previousSibling = field.previousElementSibling
     
