@@ -61,7 +61,7 @@ class Profession:
             db.session.delete(farmer)
             db.session.commit()
 
-            Inventory(self._character.settlement_id, None, self._character.id).add_item("rye", len(tiles) * random.randint(15, 20))
+            Inventory(self._character.settlement_id, None, self._character.id).add_item("rye", len(tiles) * random.randint(5, 7))
 
             socketio.emit("alert", {"id" : self._character.id, "type" : "success", "message" : "You had a successfull harvest."}, room=self._character.settlement_id) # type: ignore
 

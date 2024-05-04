@@ -1,6 +1,6 @@
 from flask import Blueprint, request, make_response, g
 
-from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, task_field_serializer, inventory_item_serializer, settlement_serializer, tile_serializer
+from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, task_field_serializer, inventory_item_serializer, settlement_serializer, tile_serializer, character_serializer
 from app.utils.decorators import character_auhtorized, authorized
 from app.utils.professions import Profession
 from app.utils.properties import Properties
