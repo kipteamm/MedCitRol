@@ -57,7 +57,7 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         # Implement the logic to load the user object from the user ID
-        return User.query.get(int(user_id))
+        return User.query.get(user_id)
 
     @login_manager.unauthorized_handler
     def unauthorized():
@@ -97,6 +97,9 @@ def create_app():
 
                 for sid, user in active_connections.items():
                     world = World.query.get(user['active_world'])
+
+                    if not world:
+                        continue
 
                     if user['id'] in user_ids:
                         continue

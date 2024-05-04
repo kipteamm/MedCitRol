@@ -27,6 +27,7 @@ def settlement_serializer(settlement: Settlement) -> dict:
         'revolutionaries' : Character.query.filter_by(settlement_id=settlement.id, revolutionary=True).count(),
         'merchant' : Merchant.query.filter_by(settlement_id=settlement.id).first() is not None,
         'value' : settlement.value_economy,
+        'seed' : settlement.seed,
     }
 
 

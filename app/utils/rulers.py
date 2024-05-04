@@ -258,7 +258,7 @@ class Ruler:
 
             socketio.emit('update_character', properties_serializer(character), room=self._settlement.id) # type: ignore
 
-        socketio.emit('alert', {'type' : 'ruler', 'message' : f"Your ruler requested {taxes} penningen in taxes."})
+        socketio.emit('alert', {'type' : 'ruler', 'message' : f"Your ruler requested {taxes} penningen in taxes."}, room=self._settlement.id) # type: ignore
 
         return True
     

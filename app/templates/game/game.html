@@ -28,7 +28,7 @@
     <script>
         let tiles = {{ tiles|tojson }};
 
-        const userId = {{ user_id }};
+        const userId = "{{ user_id }}";
         const world = {{ world|tojson }};
         const settlement = {{ settlement|tojson }};
         const settlementRuler = {{ settlement_ruler|tojson }}

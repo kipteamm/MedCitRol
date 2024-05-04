@@ -7,16 +7,21 @@ from datetime import datetime, timezone, timedelta
 
 import random
 import string
+import uuid
 
 
 initial_current_time = datetime(1100, 5, 8, 6, 0, 0, tzinfo=timezone.utc)
 
 
+def get_uuid():
+    return str(uuid.uuid4())
+
+
 class World(db.Model):
     __tablename__ = 'world'
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) # world owner
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
+    user_id = db.Column(db.String(128), db.ForeignKey('users.id'), nullable=False) # world owner
     code = db.Column(db.String(10), nullable=False)
 
     question_index = db.Column(db.Integer, default=0)
@@ -58,11 +63,16 @@ class World(db.Model):
         return int(delta.total_seconds())
 
 
+def get_seed():
+    return random.randint(0, 9999999999)
+
+
 class Settlement(db.Model):
     __tablename__ ='settlement'
 
-    id = db.Column(db.Integer, primary_key=True)
-    world_id = db.Column(db.Integer, db.ForeignKey('world.id'), nullable=False)
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
+    world_id = db.Column(db.String(128), db.ForeignKey('world.id'), nullable=False)
+    seed = db.Column(db.Integer, nullable=False, default=get_seed)
 
     name = db.Column(db.String(120), nullable=False)
     colour = db.Column(db.String(120), nullable=False)
@@ -80,8 +90,8 @@ class Settlement(db.Model):
 class SettlementRuler(db.Model):
     __tablename__ = 'settlement_ruler'
 
-    id = db.Column(db.Integer, primary_key=True)
-    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
+    settlement_id = db.Column(db.String(128), db.ForeignKey('settlement.id'), nullable=False)
 
     name = db.Column(db.String(120), nullable=False)
     surname = db.Column(db.String(120), nullable=False)
@@ -101,9 +111,9 @@ class SettlementRuler(db.Model):
 class TraderouteRequest(db.Model):
     __tablename__ = 'traderoute_request'
 
-    id = db.Column(db.Integer, primary_key=True)
-    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
-    traderoute_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
+    settlement_id = db.Column(db.String(128), db.ForeignKey('settlement.id'), nullable=False)
+    traderoute_id = db.Column(db.String(128), db.ForeignKey('settlement.id'), nullable=False)
     traderoute_taxes = db.Column(db.Integer, default=0)
 
 
@@ -111,10 +121,10 @@ class Character(db.Model):
     __tablename__ = 'character'
 
     # identification
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    world_id = db.Column(db.Integer, db.ForeignKey('world.id'), nullable=False)
-    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
+    user_id = db.Column(db.String(128), db.ForeignKey('users.id'), nullable=False)
+    world_id = db.Column(db.String(128), db.ForeignKey('world.id'), nullable=False)
+    settlement_id = db.Column(db.String(128), db.ForeignKey('settlement.id'), nullable=False)
     last_update = db.Column(DateTime(timezone=True), default=None)
 
     name = db.Column(db.String(120))
@@ -144,11 +154,11 @@ class Character(db.Model):
 class AccessKey(db.Model):
     __tablename__ = 'access_key'
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    world_id = db.Column(db.Integer, db.ForeignKey('world.id'), nullable=False)
-    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'))
-    character_id = db.Column(db.Integer, db.ForeignKey('character.id'))
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
+    user_id = db.Column(db.String(128), db.ForeignKey('users.id'), nullable=False)
+    world_id = db.Column(db.String(128), db.ForeignKey('world.id'), nullable=False)
+    settlement_id = db.Column(db.String(128), db.ForeignKey('settlement.id'))
+    character_id = db.Column(db.String(128), db.ForeignKey('character.id'))
 
     key = db.Column(db.String(128))
     key_date = db.Column(DateTime(timezone=True), default=func.now(), nullable=False)
@@ -157,9 +167,9 @@ class AccessKey(db.Model):
 class Tile(db.Model):
     __tablename__ = 'tile'
 
-    id = db.Column(db.Integer, primary_key=True)
-    character_id = db.Column(db.Integer, db.ForeignKey('character.id'))
-    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
+    character_id = db.Column(db.String(128), db.ForeignKey('character.id'))
+    settlement_id = db.Column(db.String(128), db.ForeignKey('settlement.id'), nullable=False)
 
     pos_x = db.Column(db.Integer, nullable=False)
     pos_y = db.Column(db.Integer, nullable=False)
@@ -171,10 +181,10 @@ class Tile(db.Model):
 class InventoryItem(db.Model):
     __tablename__ = 'inventory_item'
 
-    id = db.Column(db.Integer, primary_key=True)
-    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
-    character_id = db.Column(db.Integer, db.ForeignKey('character.id'))
-    warehouse_id = db.Column(db.Integer, db.ForeignKey('warehouse.id'))
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
+    settlement_id = db.Column(db.String(128), db.ForeignKey('settlement.id'), nullable=False)
+    character_id = db.Column(db.String(128), db.ForeignKey('character.id'))
+    warehouse_id = db.Column(db.String(128), db.ForeignKey('warehouse.id'))
 
     item_type = db.Column(db.String(120), nullable=False)
     amount = db.Column(db.Integer, default=0)
@@ -184,8 +194,8 @@ class InventoryItem(db.Model):
 class Farmer(db.Model):
     __tablename__ = 'farmer'
 
-    id = db.Column(db.Integer, primary_key=True)
-    character_id = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
+    character_id = db.Column(db.String(128), db.ForeignKey('character.id'), nullable=False)
 
     date = db.Column(db.DateTime, nullable=False)
     stage = db.Column(db.String(120), default="farm_land", nullable=False)
@@ -194,10 +204,10 @@ class Farmer(db.Model):
 class MarketItem(db.Model):
     __tablename__ = 'market_item'
 
-    id = db.Column(db.Integer, primary_key=True)
-    character_id = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
-    world_id = db.Column(db.Integer, db.ForeignKey('world.id'))
-    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
+    character_id = db.Column(db.String(128), db.ForeignKey('character.id'), nullable=False)
+    world_id = db.Column(db.String(128), db.ForeignKey('world.id'))
+    settlement_id = db.Column(db.String(128), db.ForeignKey('settlement.id'), nullable=False)
 
     item_type = db.Column(db.String(120), nullable=False)
     amount = db.Column(db.Integer, default=0)
@@ -207,8 +217,8 @@ class MarketItem(db.Model):
 class Merchant(db.Model):
     __tablename__ = 'merchant'
 
-    id = db.Column(db.Integer, primary_key=True)
-    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
+    settlement_id = db.Column(db.String(128), db.ForeignKey('settlement.id'), nullable=False)
     name = db.Column(db.String(120), default="Zita")
     surname = db.Column(db.String(120), default="Wainwright")
 
@@ -220,8 +230,8 @@ class Merchant(db.Model):
 class Warehouse(db.Model):
     __tablename__ = 'warehouse'
 
-    id = db.Column(db.Integer, primary_key=True)
-    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
-    tile_id = db.Column(db.Integer, db.ForeignKey('tile.id'), nullable=False)
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
+    settlement_id = db.Column(db.String(128), db.ForeignKey('settlement.id'), nullable=False)
+    tile_id = db.Column(db.String(128), db.ForeignKey('tile.id'), nullable=False)
 
     capacity = db.Column(db.Integer, default=0)

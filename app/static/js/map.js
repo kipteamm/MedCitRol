@@ -34,7 +34,7 @@ function customRandom(seed) {
     };
 }
 
-seedData = customRandom(world.id)
+seedData = customRandom(settlement.seed)
 
 function loadTerrain() {
     for (let x = 0; x < mapWidth; x++) {

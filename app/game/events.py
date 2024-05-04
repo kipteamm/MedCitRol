@@ -1,4 +1,6 @@
-from flask_socketio import SocketIO, join_room
+from flask_socketio import SocketIO, join_room, rooms
+
+from flask import request
 
 from app.utils.serializers import tile_serializer
 from app.utils.inventory import Inventory
@@ -16,10 +18,8 @@ def register_events(socketio: SocketIO):
             return
         
         join_room(access_key.world_id)
-        
+
         if access_key.settlement_id != data['settlement_id']:
             return
-
+        
         join_room(access_key.settlement_id)
-
-        print(f"joined, {access_key.settlement_id}")

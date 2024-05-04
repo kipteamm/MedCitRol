@@ -5,12 +5,18 @@ from app.extensions import db
 
 from datetime import datetime, timezone
 
+import uuid
+
+
+def get_uuid():
+    return str(uuid.uuid4())
+
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     
     # Authentication
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
 
@@ -39,5 +45,5 @@ class User(UserMixin, db.Model):
 class UserWorlds(db.Model):
     __tablename__ = 'user_worlds'
 
-    world_id = db.Column(db.Integer, db.ForeignKey('world.id'), primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    world_id = db.Column(db.String(128), db.ForeignKey('world.id'), primary_key=True)
+    user_id = db.Column(db.String(128), db.ForeignKey('users.id'), primary_key=True)
