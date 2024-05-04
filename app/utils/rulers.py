@@ -16,7 +16,7 @@ import json
 import math
 
 
-# 15, 13, 8, 9, 14 -> MORE SOCIAL AND RELIGION
+# 14, 14, 8, 11, 13 -> MORE SOCIAL AND RELIGION
 
 CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social', 'military']
 
@@ -42,11 +42,12 @@ class Action(Enum):
     UPGRADE_JAIL_3 = {"characteristics": ["tyranny", "military"], "price": 40, "previous" : "UPGRADE_JAIL_2", "repeatable" : False}
     UPGRADE_JAIL_4 = {"characteristics": ["tyranny", "military"], "price": 70, "previous" : "UPGRADE_JAIL_3", "repeatable" : False}
     UPGRADE_JAIL_5 = {"characteristics": ["tyranny", "military"], "price": 120, "previous" : "UPGRADE_JAIL_4", "repeatable" : False}
-    WAREHOUSE = {"characteristics": ["tyranny", "economy"], "price": 2, "previous" : None, "repeatable" : True}
+    WAREHOUSE = {"characteristics": ["tyranny", "economy"], "price": 5, "previous" : None, "repeatable" : True}
     STOCK_ITEMS = {"characteristics": ["tyranny", "economy", "religion", "social", "military"], "price" : 1, "previous" : "WAREHOUSE", "repeatable" : True}
-    TRADEROUTE = {"characteristics": ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
+    TRADEROUTE = {"characteristics": ["economy", "social", "religion"], "price": 0, "previous" : None, "repeatable" : True}
     HALLMARK = {"characteristics": ["tyranny", "military", "religion", "economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
     ALMGSGIVING = {"characteristics" : ["social", "religion"], "price": 5, "previous" : None, "repeatable" : True}
+    #SELL_GLOBALLY = {"characteristics" : ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
     #FAIR = {"characteristics": ["economy", "social"], "price": 25, "previous" : None, "repeatable" : True}
 
     @property
@@ -116,8 +117,6 @@ class Ruler:
 
         healthy_characters = Character.query.filter(Character.health > 15).count()
 
-        print(healthy_characters)
-
         value += healthy_characters * 2
 
         stored_resources_sum = InventoryItem.query.with_entities(func.sum(InventoryItem.amount)).filter_by(
@@ -143,6 +142,12 @@ class Ruler:
         print(warehouse_count)
 
         value += warehouse_count
+
+        traderoutes = len(self._settlement.traderoutes.split(",")) - 1
+
+        print(traderoutes)
+
+        value += traderoutes * 2
 
         self._settlement.value_economy = value
 
@@ -219,7 +224,7 @@ class Ruler:
         return True
     
     def _save_taxes(self) -> bool:
-        self._settlement.taxes = self._settlement.taxes + math.ceil(self._settlement.taxes * 0.15 * (0 if self._settlement.taxes > 100 else 1)) + (1 if self._settlement.taxes == 0 else 0)
+        self._settlement.taxes = self._settlement.taxes + math.ceil(self._settlement.taxes * 0.15 * (0 if self._settlement.taxes > 100 else 1)) + (1 if self._settlement.taxes < 50 else 0)
 
         db.session.commit()
 
@@ -533,13 +538,15 @@ class Ruler:
             traderoute = traderoute_requests.order_by(TraderouteRequest.taxes.desc()).first() # type: ignore
 
         else:
-            traderoute = traderoute_requests.order_by("?").first() # type: ignore
+            traderoute = traderoute_requests.order_by(func.random()).first() # type: ignore
 
         if not traderoute:
             return False
         
-        Settlement.query.get(traderoute.settlement).traderoutes += f",{traderoute.traderoute}"
-        Settlement.query.get(traderoute.traderoute).traderoutes += f",{self._settlement.id}"
+        settlement = Settlement.query.get(traderoute.settlement_id)
+
+        settlement.traderoutes += f"{'' if len(settlement.tradertoues.split(',')) == 1 else ','}{self._settlement.id}"
+        self._settlement.traderoutes += f"{'' if len(self._settlement.tradertoues.split(',')) == 1 else ','}{traderoute.settlement_id}"
 
         db.session.delete(traderoute)
         db.session.commit()
@@ -549,16 +556,17 @@ class Ruler:
         return True
     
     def _traderoute(self) -> bool:
-        traderoute_requests = TraderouteRequest.query.filter_by(traderoute_id=self._settlement.id).all()
+        traderoute_requests = TraderouteRequest.query.filter_by(traderoute_id=self._settlement.id)
 
-        if traderoute_requests:
+        if traderoute_requests.first():
             return self._manage_traderoute_requests(traderoute_requests)
 
         traderoute_settlement_ids = self._settlement.traderoutes.split(",")
 
         new_traderoutes = Settlement.query.filter(
-            Settlement.id!= self._settlement.id,
-            Settlement.id not in traderoute_settlement_ids
+            Settlement.id != self._settlement.id,
+            Settlement.id not in traderoute_settlement_ids,
+            TraderouteRequest.query.filter_by(traderoute_id=Settlement.id).first() == None
         ).all()
 
         if not new_traderoutes:
@@ -567,7 +575,7 @@ class Ruler:
             if not new_traderoutes:
                 return False
             
-            self._settlement.traderoutes += f'{"" if len(traderoute_settlement_ids) == 0 else ","}{random.choice(new_traderoutes)}'
+            self._settlement.traderoutes += f'{"" if len(traderoute_settlement_ids) == 1 else ","}{random.choice(new_traderoutes)}'
 
             db.session.commit()
 
@@ -578,7 +586,10 @@ class Ruler:
         if not closest_traderoute:
             return False
 
-        traderoute_request = TraderouteRequest(settlement_id=self._settlement.id, traderoute_id=closest_traderoute.id)
+        if TraderouteRequest.query.filter_by(settlement_id=self._settlement.id, traderoute_id=closest_traderoute.id).first():
+            return True
+        
+        traderoute_request = TraderouteRequest(settlement_id=self._settlement.id, traderoute_id=closest_traderoute.id, traderoute_taxes=closest_traderoute.taxes)
 
         db.session.add(traderoute_request)
 

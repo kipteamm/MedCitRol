@@ -3,6 +3,8 @@ from app.utils.inventory import Inventory
 from app.game.models import Character, Farmer, World, Tile, Warehouse, InventoryItem
 from app.extensions import db, socketio
 
+from sqlalchemy import func
+
 from datetime import timedelta
 
 import random
@@ -140,12 +142,12 @@ class Profession:
 
             return
 
-        warehouse = Warehouse.query.filter(Warehouse.settlement_id == self._character.settlement_id, Warehouse.capacity < 100, Warehouse.capacity > 0).ordre_by('?').first()
+        warehouse = Warehouse.query.filter(Warehouse.settlement_id == self._character.settlement_id, Warehouse.capacity < 100, Warehouse.capacity > 0).ordre_by(func.random()).first()
 
         if not warehouse:
             return
         
-        inventory_item = InventoryItem.query.filter_by(settlement_id=self._character.settlement_id, warehouse_id=warehouse.id).order_by('?').first()
+        inventory_item = InventoryItem.query.filter_by(settlement_id=self._character.settlement_id, warehouse_id=warehouse.id).order_by(func.random()).first()
 
         if not inventory_item:
             return

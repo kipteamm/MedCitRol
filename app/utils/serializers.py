@@ -83,7 +83,7 @@ def properties_serializer(character: Character) -> dict:
 
 
 def tile_serializer(tile: Tile) -> dict:
-    character = Character.query.get(tile.character_id)
+    character = Character.query.filter_by(id=tile.character_id).first()
 
     return {
         'id' : tile.id,
