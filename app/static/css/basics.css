@@ -20,11 +20,6 @@
     box-sizing: border-box;
 }
 
-/* width */
-*::-webkit-scrollbar {
-    width: 0px;
-}
-
 body {
     font-family: var(--font);
     margin: 0px;
@@ -69,8 +64,10 @@ textarea {
 }
 
 ::-webkit-scrollbar-thumb {
-    padding: 0px 1px;
     width: 6px;
+    background-color: var(--tertiary-bg);
+    border-radius: 12.5px;
+    cursor: pointer;
 }
 
 /* ALERTS */
