@@ -107,7 +107,7 @@ async function sellItem() {
         return;
     }
 
-    const existingMarketItem = document.getElementById(`market-item-${json.id}`);
+    const existingMarketItem = document.getElementById(json.id);
 
     if (existingMarketItem !== null) {
         marketContent.replaceChild(marketItemComponent(json), existingMarketItem);
@@ -131,7 +131,7 @@ async function buyItem(id) {
     marketItem.amount -= 1;
 
     if (marketItem.amount === 0) {
-        document.getElementById(`market-item-${id}`).style.display = "none";
+        document.getElementById(id).style.display = "none";
     } else {
         document.getElementById(`amount-${id}`).innerText = amountComponent(marketItem.amount);
     }
@@ -153,7 +153,7 @@ async function buyItem(id) {
         sendAlert("error", json.error);
 
         if (marketItem.amount === 0) {
-            document.getElementById(`market-item-${id}`).style.display = "block";
+            document.getElementById(id).style.display = "block";
         }
 
         marketItem.amount += 1;

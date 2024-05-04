@@ -162,7 +162,7 @@ async function moveField(direction) {
     if (direction === "up" && field.getAttribute("field-index") === "0") return console.log("1");
     if (direction === "down" && field.getAttribute("field-index") === (task.field_index - 1).toString()) return console.log("2");
 
-    const fieldId = parseInt(activeActions.split("-")[2]);
+    const fieldId = activeActions.split("-")
 
     const response = await fetch(`/api/task/field/move`, {
         method: "PATCH",
@@ -202,7 +202,7 @@ async function moveField(direction) {
 }
 
 async function duplicateField() {
-    const fieldId = parseInt(activeActions.split("-")[2]);
+    const fieldId = activeActions
 
     const response = await fetch(`/api/task/field/${fieldId}/duplicate`, {
         method: "POST",
@@ -220,7 +220,7 @@ async function duplicateField() {
 }
 
 async function deleteField() {
-    const fieldId = parseInt(activeActions.split("-")[2]);
+    const fieldId = activeActions
 
     const response = await fetch(`/api/task/field/${fieldId}/delete`, {
         method: "DELETE",

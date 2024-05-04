@@ -32,7 +32,7 @@ let taskIndex = 1;
 function taskFieldcomponent(taskField) {
     const wrapper = document.createElement("div");
 
-    wrapper.id = `task-field-${taskField.id}`;
+    wrapper.id = taskField.id;
     wrapper.classList.add("task-field");
 
     if (taskField.field_type === "header") {
@@ -75,7 +75,7 @@ function taskFieldcomponent(taskField) {
             }
 
             content.innerHTML += `
-                <div class="choice ${counter % 2 === 0? "even": "odd"}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', '${option.id}')" id="task-option-${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
+                <div class="choice ${counter % 2 === 0? "even": "odd"}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', '${option.id}')" id="${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
                     ${taskField.field_type === "connect"? counter % 2 === 0? indicator : '' : '<div class="indicator"></div>'}
                     <div class="content">${option.content? option.content : ''}</div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? indicator : ''}
@@ -96,7 +96,7 @@ function taskFieldcomponent(taskField) {
 
         shuffle(taskField.options).forEach(option => {
             wrapper.innerHTML += `
-                <div class="option" id="task-option-${option.id}" draggable="true" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" task-id="${taskField.id}">
+                <div class="option" id="${option.id}" draggable="true" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" task-id="${taskField.id}">
                     <div>${option.content? option.content : ''}</div>
                 </div>
             `
@@ -111,7 +111,7 @@ let correctConnectAnswers = {};
 function editableTaskFieldComponent(taskField) {
     const wrapper = document.createElement("div");
 
-    wrapper.id = `task-field-${taskField.id}`;
+    wrapper.id = taskField.id;
     wrapper.classList.add("task-field");
     wrapper.setAttribute("onmouseover", "showActions(this)")
     wrapper.setAttribute("field-index", taskField.field_index)
@@ -154,7 +154,7 @@ function editableTaskFieldComponent(taskField) {
             }
 
             content.innerHTML += `
-                <div class="choice${option.answer? " active" : ""}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', '${option.id}')" id="task-option-${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
+                <div class="choice${option.answer? " active" : ""}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', '${option.id}')" id="${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
                     ${taskField.field_type === "connect"? counter % 2 === 0? indicator : '' : '<div class="indicator"></div>'}
                     <div class="content"><input type="text" onchange="editOption('${option.id}', this.value)" value="${option.content? option.content : ''}" placeholder="Option"/></div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? indicator : ''}
@@ -201,7 +201,7 @@ function orderOption(option, taskFieldId) {
     const wrapper = document.createElement("div");
 
     wrapper.classList.add("option");
-    wrapper.id = `task-option-${option.id}`;
+    wrapper.id = option.id;
     wrapper.draggable = true;
     wrapper.setAttribute("ondragstart", "handleDragStart(event)");
     wrapper.setAttribute("ondragover", "handleDragOver(event)");
@@ -346,7 +346,7 @@ function inventoryItemComponent(item, building) {
 function marketItemComponent(item) {
     const wrapper = document.createElement("div");
 
-    wrapper.id = `market-item-${item.id}`;
+    wrapper.id = item.id;
     wrapper.classList.add("market-item");
     wrapper.innerHTML = `
         <h3>${item.item_type} (<span id="amount-${item.id}">${amountComponent(item.amount)}</span>)</h3>

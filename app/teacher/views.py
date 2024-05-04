@@ -91,14 +91,23 @@ def delete_task(world_id, task_id):
     task = Task.query.get(task_id)
 
     for field in TaskField.query.filter_by(task_id=task.id).all():
-        for option in TaskOption.query.filter_by(task_field_id=field.id).all():
-            db.session.delete(option)
-
         if field.field_type == "image":
+            if TaskField.query.filter_by(content=field.content).first():
+                db.session.delete(field)
+
+                continue
+
             path = os.path.join(os.getcwd(), 'media', 'tasks', field.content)
 
             if os.path.exists(path):
                 os.remove(path)
+
+            db.session.delete(field)
+
+            continue
+
+        for option in TaskOption.query.filter_by(task_field_id=field.id).all():
+            db.session.delete(option)
 
         db.session.delete(field)
 
