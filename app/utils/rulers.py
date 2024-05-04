@@ -16,7 +16,7 @@ import json
 import math
 
 
-# 15, 13, 7, 9, 14 -> MORE SOCIAL AND RELIGION
+# 15, 13, 8, 9, 14 -> MORE SOCIAL AND RELIGION
 
 CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social', 'military']
 
@@ -42,11 +42,11 @@ class Action(Enum):
     UPGRADE_JAIL_3 = {"characteristics": ["tyranny", "military"], "price": 40, "previous" : "UPGRADE_JAIL_2", "repeatable" : False}
     UPGRADE_JAIL_4 = {"characteristics": ["tyranny", "military"], "price": 70, "previous" : "UPGRADE_JAIL_3", "repeatable" : False}
     UPGRADE_JAIL_5 = {"characteristics": ["tyranny", "military"], "price": 120, "previous" : "UPGRADE_JAIL_4", "repeatable" : False}
-    WAREHOUSE = {"characteristics": ["tyranny", "economy"], "price": 5, "previous" : None, "repeatable" : True}
+    WAREHOUSE = {"characteristics": ["tyranny", "economy"], "price": 2, "previous" : None, "repeatable" : True}
     STOCK_ITEMS = {"characteristics": ["tyranny", "economy", "religion", "social", "military"], "price" : 1, "previous" : "WAREHOUSE", "repeatable" : True}
-    TRADEROUTE = {"characteristics": ["economy"], "price": 0, "previous" : None, "repeatable" : True}
+    TRADEROUTE = {"characteristics": ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
     HALLMARK = {"characteristics": ["tyranny", "military", "religion", "economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
-    ALMGSGIVING = {"characteristics" : ["social", "religion"], "price": 0, "previous" : None, "repeatable" : True}
+    ALMGSGIVING = {"characteristics" : ["social", "religion"], "price": 5, "previous" : None, "repeatable" : True}
     #FAIR = {"characteristics": ["economy", "social"], "price": 25, "previous" : None, "repeatable" : True}
 
     @property
@@ -464,9 +464,13 @@ class Ruler:
             return False
         
         tile = Tile(settlement_id=self._settlement.id, pos_x=pos_x, pos_y=pos_y, tile_type="warehouse")
+
+        db.session.add(tile)
+        db.session.commit()
+
         warehouse = Warehouse(settlement_id=self._settlement.id, tile_id=tile.id)
 
-        db.session.add_all([warehouse, tile])
+        db.session.add(warehouse)
         db.session.commit()
 
         socketio.emit('update_tiles', [tile_serializer(tile)], room=self._settlement.id) # type: ignore
