@@ -21,34 +21,34 @@ import math
 CHARACTERISTICS = ['tyranny', 'economy', 'religion', 'social', 'military']
 
 class Action(Enum):
-    SAVE_TAXES = {"characteristics": ["social", "economy"], "price": 0, "previous" : None, "repeatable" : True}
-    COLLECT_TAXES = {"characteristics": ["tyranny", "military", "religion", "economy"], "price": 0, "previous" : None, "repeatable" : True}
-    EVALUATE_ECONOMY = {"characteristics": ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
-    CLAIM_LAND = {"characteristics": ["tyranny", "military"], "price": 0, "previous" : None, "repeatable" : False}
-    UPGRADE_FORT_1 = {"characteristics": ["tyranny", "military"], "price": 5, "previous" : "CLAIM_LAND", "repeatable" : False}
-    UPGRADE_FORT_2 = {"characteristics": ["tyranny", "military"], "price": 15, "previous" : "UPGRADE_FORT_1", "repeatable" : False}
-    UPGRADE_FORT_3 = {"characteristics": ["tyranny", "military"], "price": 40, "previous" : "UPGRADE_FORT_2", "repeatable" : False}
-    UPGRADE_FORT_4 = {"characteristics": ["tyranny", "military"], "price": 70, "previous" : "UPGRADE_FORT_3", "repeatable" : False}
-    UPGRADE_CHURCH_1 = {"characteristics": ["religion", "social"], "price": 5, "previous" : None, "repeatable" : False}
-    UPGRADE_CHURCH_2 = {"characteristics": ["religion", "social"], "price": 15, "previous" : "UPGRADE_CHURCH_1", "repeatable" : False}
-    UPGRADE_CHURCH_3 = {"characteristics": ["religion", "social"], "price": 40, "previous" : "UPGRADE_CHURCH_2", "repeatable" : False}
-    UPGRADE_BOURSE_1 = {"characteristics": ["economy"], "price": 5, "previous" : None, "repeatable" : False}
-    UPGRADE_BOURSE_2 = {"characteristics": ["economy"], "price": 15, "previous" : "UPGRADE_BOURSE_1", "repeatable" : False}
-    UPGRADE_BOURSE_3 = {"characteristics": ["economy"], "price": 40, "previous" : "UPGRADE_BOURSE_2", "repeatable" : False}
-    UPGRADE_BOURSE_4 = {"characteristics": ["economy"], "price": 70, "previous" : "UPGRADE_BOURSE_3", "repeatable" : False}
-    UPGRADE_BOURSE_5 = {"characteristics": ["economy"], "price": 120, "previous" : "UPGRADE_BOURSE_4", "repeatable" : False}
-    UPGRADE_JAIL_1 = {"characteristics": ["tyranny", "military"], "price": 5, "previous" : None, "repeatable" : False}
-    UPGRADE_JAIL_2 = {"characteristics": ["tyranny", "military"], "price": 15, "previous" : "UPGRADE_JAIL_1", "repeatable" : False}
-    UPGRADE_JAIL_3 = {"characteristics": ["tyranny", "military"], "price": 40, "previous" : "UPGRADE_JAIL_2", "repeatable" : False}
-    UPGRADE_JAIL_4 = {"characteristics": ["tyranny", "military"], "price": 70, "previous" : "UPGRADE_JAIL_3", "repeatable" : False}
-    UPGRADE_JAIL_5 = {"characteristics": ["tyranny", "military"], "price": 120, "previous" : "UPGRADE_JAIL_4", "repeatable" : False}
-    WAREHOUSE = {"characteristics": ["tyranny", "economy"], "price": 5, "previous" : None, "repeatable" : True}
-    STOCK_ITEMS = {"characteristics": ["tyranny", "economy", "religion", "social", "military"], "price" : 1, "previous" : "WAREHOUSE", "repeatable" : True}
-    TRADEROUTE = {"characteristics": ["economy", "social", "religion"], "price": 0, "previous" : None, "repeatable" : True}
-    HALLMARK = {"characteristics": ["tyranny", "military", "religion", "economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
-    ALMGSGIVING = {"characteristics" : ["social", "religion"], "price": 5, "previous" : None, "repeatable" : True}
-    #SELL_GLOBALLY = {"characteristics" : ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True}
-    #FAIR = {"characteristics": ["economy", "social"], "price": 25, "previous" : None, "repeatable" : True}
+    SAVE_TAXES = {"characteristics": ["social", "economy"], "price": 0, "previous" : None, "repeatable" : True, "uuid" : 1}
+    COLLECT_TAXES = {"characteristics": ["tyranny", "military", "religion", "economy"], "price": 0, "previous" : None, "repeatable" : True, "uuid" : 2}
+    EVALUATE_ECONOMY = {"characteristics": ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True, "uuid" : 3}
+    CLAIM_LAND = {"characteristics": ["tyranny", "military"], "price": 0, "previous" : None, "repeatable" : False, "uuid" : 4}
+    UPGRADE_FORT_1 = {"characteristics": ["tyranny", "military"], "price": 5, "previous" : "CLAIM_LAND", "repeatable" : False, "uuid" : 5}
+    UPGRADE_FORT_2 = {"characteristics": ["tyranny", "military"], "price": 15, "previous" : "UPGRADE_FORT_1", "repeatable" : False, "uuid" : 6}
+    UPGRADE_FORT_3 = {"characteristics": ["tyranny", "military"], "price": 40, "previous" : "UPGRADE_FORT_2", "repeatable" : False, "uuid" : 7}
+    UPGRADE_FORT_4 = {"characteristics": ["tyranny", "military"], "price": 70, "previous" : "UPGRADE_FORT_3", "repeatable" : False, "uuid" : 8}
+    UPGRADE_CHURCH_1 = {"characteristics": ["religion", "social"], "price": 5, "previous" : None, "repeatable" : False, "uuid" : 9}
+    UPGRADE_CHURCH_2 = {"characteristics": ["religion", "social"], "price": 15, "previous" : "UPGRADE_CHURCH_1", "repeatable" : False, "uuid" : 10}
+    UPGRADE_CHURCH_3 = {"characteristics": ["religion", "social"], "price": 40, "previous" : "UPGRADE_CHURCH_2", "repeatable" : False, "uuid" : 11}
+    UPGRADE_BOURSE_1 = {"characteristics": ["economy"], "price": 5, "previous" : None, "repeatable" : False, "uuid" : 12}
+    UPGRADE_BOURSE_2 = {"characteristics": ["economy"], "price": 15, "previous" : "UPGRADE_BOURSE_1", "repeatable" : False, "uuid" : 13}
+    UPGRADE_BOURSE_3 = {"characteristics": ["economy"], "price": 40, "previous" : "UPGRADE_BOURSE_2", "repeatable" : False, "uuid" : 14}
+    UPGRADE_BOURSE_4 = {"characteristics": ["economy"], "price": 70, "previous" : "UPGRADE_BOURSE_3", "repeatable" : False, "uuid" : 15}
+    UPGRADE_BOURSE_5 = {"characteristics": ["economy"], "price": 120, "previous" : "UPGRADE_BOURSE_4", "repeatable" : False, "uuid" : 16}
+    UPGRADE_JAIL_1 = {"characteristics": ["tyranny", "military"], "price": 5, "previous" : None, "repeatable" : False, "uuid" : 17}
+    UPGRADE_JAIL_2 = {"characteristics": ["tyranny", "military"], "price": 15, "previous" : "UPGRADE_JAIL_1", "repeatable" : False, "uuid" : 18}
+    UPGRADE_JAIL_3 = {"characteristics": ["tyranny", "military"], "price": 40, "previous" : "UPGRADE_JAIL_2", "repeatable" : False, "uuid" : 19}
+    UPGRADE_JAIL_4 = {"characteristics": ["tyranny", "military"], "price": 70, "previous" : "UPGRADE_JAIL_3", "repeatable" : False, "uuid" : 20}
+    UPGRADE_JAIL_5 = {"characteristics": ["tyranny", "military"], "price": 120, "previous" : "UPGRADE_JAIL_4", "repeatable" : False, "uuid" : 21}
+    WAREHOUSE = {"characteristics": ["tyranny", "economy"], "price": 5, "previous" : None, "repeatable" : True, "uuid" : 22}
+    STOCK_ITEMS = {"characteristics": ["tyranny", "economy", "religion", "social", "military"], "price" : 1, "previous" : "WAREHOUSE", "repeatable" : True,"uuid" : 23}
+    TRADEROUTE = {"characteristics": ["economy", "social", "religion"], "price": 0, "previous" : None, "repeatable" : True, "uuid" : 24}
+    HALLMARK = {"characteristics": ["tyranny", "military", "religion", "economy", "social"], "price": 0, "previous" : None, "repeatable" : True, "uuid" : 25}
+    ALMGSGIVING = {"characteristics": ["social", "religion"], "price": 5, "previous" : None, "repeatable" : True, "uuid" : 26}
+    SELL_GLOBALLY = {"characteristics": ["economy", "social"], "price": 0, "previous" : None, "repeatable" : True, "uuid" : 27}
+    #FAIR = {"characteristics": ["economy", "social"], "price": 25, "previous" : None, "repeatable" : True, "uuid" : 28}
 
     @property
     def characteristics(self):
@@ -641,9 +641,79 @@ class Ruler:
             socketio.emit("alert", {"id" : character.id, "type" : "ruler", "message" : "Your ruler came to give you some food."}, room=self._settlement.id) # type: ignore
 
         return True
+    
+    def _get_value(self, item_type: str) -> int:
+        if item_type == "rye":
+            return 1
+        
+        if item_type == "rye_flour":
+            return 2
+        
+        if item_type == "bread":
+            return 4
+        
+        return 0
+    
+    def _sell_globally(self) -> bool:
+        traderoutes = [traderoute for traderoute in self._settlement.traderoutes.split(",") if type(traderoute) == str]
+
+        if random.randint(len(traderoutes) - 1, 3) != 3:
+            print("no traderoutes")
+            return False
+        
+        if random.randint(self._characteristics['tyranny'] - 1, 100) > random.randint(self._characteristics['social'] - 1, 100):
+            inventory_items = InventoryItem.query.filter_by(settlement_id=self._settlement.id, character_id=None).all()
+
+            if not inventory_items:
+                print("no inventory items")
+
+                return False
+            
+            for i in range(random.randint(1, inventory_items.count())):
+                inventory_item = inventory_items[i]
+
+                amount = random.randint(1, inventory_item.amount)
+                price = self._get_value(inventory_item.item_type)
+
+                Inventory(self._settlement.id, inventory_item.warehouse_id, None).remove_item(inventory_item.item_type, amount)
+
+                self._settlement.taxes += price * amount
+
+            socketio.emit('alert', {'type' : 'ruler', 'message' : f"{random.choice(traderoutes)} purchased goods from your ruler."})
+            
+            return True
+        
+        market_items = MarketItem.query.filter(
+            Tile.query.filter_by(character_id=MarketItem.id, settlement_id=self._settlement.id, tile_type="market_stall").first() != None,
+            MarketItem.settlement_id == self._settlement.id
+        ).order_by(func.random()).all()
+
+        if not market_items:
+            print("no global market items")
+            return False
+            
+        for i in range(random.randint(1, market_items.count())):
+            market_item = market_items[i]
+
+            amount = random.randint(1, market_item.amount)
+
+            market_item.amount -= amount
+                
+            Character.query.get(market_item.character_id).pennies += amount * market_item.price
+
+            if market_item.amount == 0:
+                db.session.delete(market_item)
+
+            db.session.commit()
+
+            socketio.emit("update_character", properties_serializer(character), room=self._settlement.id) # type: ignore
+            
+        socketio.emit('alert', {'type' : 'ruler', 'message' : f"{random.choice(traderoutes)} purchased goods from the market."})
+        
+        return True
 
     def work(self, current_time: datetime) -> None:
-        if random.randint(1, 4) != 2:
+        if random.randint(1, 4) != 2 and False:
             print(f"not doing anything")
 
             return None
@@ -704,6 +774,9 @@ class Ruler:
 
         if action == Action.ALMGSGIVING:
             success = self._almsgiving()
+
+        if action == Action.SELL_GLOBALLY:
+            success = self._sell_globally()
 
         if not success:
             print(f"no success on {action.name}")
