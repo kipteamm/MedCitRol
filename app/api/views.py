@@ -326,6 +326,15 @@ def buy_item(market_type):
 
     if not market_item:
         return make_response({"error" : "Item not found."}, 400)
+    
+    if market_item.world_id != None:
+        settlement = Settlement.query.get(g.access_key.settlement_id)
+
+        if not str(market_item.settlement_id) in settlement.traderoutes.split(','):
+            return make_response({"error" : "You can't buy this item."}, 400)
+        
+    elif market_item.settlement_id != g.access_key.settlement_id:
+        return make_response({"error" : "You can't buy this item."}, 400)
 
     if character.pennies < market_item.price:
         return make_response({"error" : "You don't have enough money."}, 400)

@@ -15,9 +15,11 @@ def register_events(socketio: SocketIO):
         if not access_key:
             return
         
-        join_room(data['world_id'])
+        join_room(access_key.world_id)
         
         if access_key.settlement_id != data['settlement_id']:
             return
 
-        join_room(data['settlement_id'])
+        join_room(access_key.settlement_id)
+
+        print(f"joined, {access_key.settlement_id}")

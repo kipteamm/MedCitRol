@@ -657,7 +657,7 @@ class Ruler:
     def _sell_globally(self) -> bool:
         traderoutes = [traderoute for traderoute in self._settlement.traderoutes.split(",") if type(traderoute) == str]
 
-        if random.randint(len(traderoutes) - 1, 3) != 3:
+        if random.randint(len(traderoutes), 3) != 3:
             print("no traderoutes")
             return False
         
