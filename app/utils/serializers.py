@@ -148,11 +148,20 @@ def merchant_serializer(merchant: Merchant) -> dict:
 
 
 def task_serializer(task: Task, include_answers: bool=False) -> dict:
+    name = TaskField.query.filter_by(task_id=task.id, field_type="header").first()
+
+    if name:
+        name = name.content
+
+    else:
+        name = "Unnamed"
+    
     return {
         'id' : task.id,
         'world_id' : task.world_id,
         'index' : task.index,
         'field_index' : task.field_index,
+        'name' : name,
         'fields' : [task_field_serializer(task_field, include_answers) for task_field in TaskField.query.filter_by(task_id=task.id).order_by(TaskField.field_index)]
     }
 

@@ -36,7 +36,7 @@ def tasks(world_id):
     
     tasks = Task.query.filter_by(world_id=world.id).all()
 
-    return render_template('teacher/tasks.html', world=world, tasks=tasks)
+    return render_template('teacher/tasks.html', world=world, tasks=[task_serializer(task) for task in tasks])
 
 
 @teacher_blueprint.route('/<world_id>/task/create')

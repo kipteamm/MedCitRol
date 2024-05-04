@@ -1,7 +1,7 @@
 async function addField(fieldType) {
     const response = await fetch("/api/task/field/add", {
         method: "POST",
-        body: JSON.stringify({task_id: parseInt(getCookie('task')), field_type: fieldType}),
+        body: JSON.stringify({task_id: getCookie('task'), field_type: fieldType}),
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `${getCookie('psk')}`,

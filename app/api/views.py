@@ -583,7 +583,7 @@ def add_field():
 
     if not json or not "field_type" in json or not "task_id" in json:
         return make_response({"error" : "invalid json"}, 400)
-    
+
     task = Task.query.get(json["task_id"])
 
     field_type = json["field_type"]

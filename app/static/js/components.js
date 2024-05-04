@@ -75,7 +75,7 @@ function taskFieldcomponent(taskField) {
             }
 
             content.innerHTML += `
-                <div class="choice ${counter % 2 === 0? "even": "odd"}"${taskField.field_type !== "connect"? ` onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
+                <div class="choice ${counter % 2 === 0? "even": "odd"}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', ${option.id})" id="task-option-${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
                     ${taskField.field_type === "connect"? counter % 2 === 0? indicator : '' : '<div class="indicator"></div>'}
                     <div class="content">${option.content? option.content : ''}</div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? indicator : ''}
@@ -118,11 +118,11 @@ function editableTaskFieldComponent(taskField) {
 
     if (taskField.field_type === "header") {
         wrapper.innerHTML = `
-            <h2><input onchange="editField(${taskField.id}, this.value)" value="${taskField.content? taskField.content : ""}" placeholder="Header"/></h2>
+            <h2><input onchange="editField('${taskField.id}', this.value)" value="${taskField.content? taskField.content : ""}" placeholder="Header"/></h2>
         `;
     } else if (taskField.field_type === "text") {
         wrapper.innerHTML = `
-            <textarea onchange="editField(${taskField.id}, this.value)" placeholder="Text">${taskField.content? taskField.content : ""}</textarea>
+            <textarea onchange="editField('${taskField.id}', this.value)" placeholder="Text">${taskField.content? taskField.content : ""}</textarea>
         `;
     } else if (taskField.field_type === "image") {
         wrapper.appendChild(imageComponent(taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/assets/notfound.webp"))
@@ -154,7 +154,7 @@ function editableTaskFieldComponent(taskField) {
             }
 
             content.innerHTML += `
-                <div class="choice${option.answer? " active" : ""}"${taskField.field_type !== "connect"? ` onclick="selectOption(${taskField.id}, ${option.id})" id="task-option-${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
+                <div class="choice${option.answer? " active" : ""}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', ${option.id})" id="task-option-${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
                     ${taskField.field_type === "connect"? counter % 2 === 0? indicator : '' : '<div class="indicator"></div>'}
                     <div class="content"><input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}" placeholder="Option"/></div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? indicator : ''}
@@ -167,7 +167,7 @@ function editableTaskFieldComponent(taskField) {
         })
 
         wrapper.innerHTML += `
-            <button class="add-option" onclick="addOption(${taskField.id})">Add option</button>
+            <button class="add-option" onclick="addOption('${taskField.id}')">Add option</button>
         `
 
         if (taskField.field_type === "connect") {
@@ -190,7 +190,7 @@ function editableTaskFieldComponent(taskField) {
         })
 
         wrapper.innerHTML += `
-            <button class="add-option" onclick="addOption(${taskField.id})">Add option</button>
+            <button class="add-option" onclick="addOption('${taskField.id}')">Add option</button>
         `
     }
 

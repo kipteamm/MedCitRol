@@ -6,8 +6,11 @@
     
     {% for task in tasks %}
         <div class="task">
-            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/edit">Task {{ task.id }}</a>
-            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/delete">Delete {{ task.id }}</a>
+            <h2>{{ task.name }}</h2>
+
+            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/edit">Task</a>
+            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/duplicate">Duplicate</a>
+            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/delete">Delete</a>
         </div>
     {% endfor %}
 {% endblock %}
