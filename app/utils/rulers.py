@@ -157,7 +157,7 @@ class Ruler:
             for character in Character.query.filter_by(settlement_id=self._settlement.id).all():
                 character.profession = None
 
-            socketio.emit('alert', {'type' : 'ruler', 'message' : "You have progressed in level."})
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "You have progressed in level."}, room=self._settlement.id) # type: ignore
             
             db.session.commit()
 
@@ -219,7 +219,7 @@ class Ruler:
             tiles.append(tile_serializer(tile))
 
         socketio.emit('update_tiles', tiles, room=self._settlement.id) # type: ignore
-        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler started building a fort."})
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler started building a fort."}, room=self._settlement.id) # type: ignore
 
         return True
     
@@ -296,7 +296,7 @@ class Ruler:
         db.session.commit()
 
         socketio.emit('update_tiles', tiles, room=self._settlement.id) # type: ignore
-        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler upgraded his fort."})
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler upgraded his fort."}, room=self._settlement.id) # type: ignore
 
         return True
 
@@ -342,7 +342,7 @@ class Ruler:
 
             tiles.extend([tile_serializer(tile_1), tile_serializer(tile_2)])
 
-            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler started building a church."})
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler started building a church."}, room=self._settlement.id) # type: ignore
 
         if level == "UPGRADE_CHURCH_2":
             tile = Tile.query.filter_by(settlement_id=self._settlement.id, future="church_chapel").first()
@@ -351,7 +351,7 @@ class Ruler:
 
             tiles.append(tile_serializer(tile))
 
-            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler continued constructing the church."})
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler continued constructing the church."}, room=self._settlement.id) # type: ignore
 
         if level == "UPGRADE_CHURCH_3":
             tile = Tile.query.filter_by(settlement_id=self._settlement.id, future="church_tower").first()
@@ -360,7 +360,7 @@ class Ruler:
 
             tiles.append(tile_serializer(tile))
 
-            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler finished constructing the church."})
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler finished constructing the church."}, room=self._settlement.id) # type: ignore
 
         db.session.commit()
         
@@ -389,7 +389,7 @@ class Ruler:
 
                 tiles.append(tile_serializer(tile))
 
-            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler started building a bourse."})
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler started building a bourse."}, room=self._settlement.id) # type: ignore
 
         else:
             tile_type_mapping = {
@@ -407,7 +407,7 @@ class Ruler:
 
             tiles.append(tile_serializer(tile))
 
-            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler continued constructing the bourse."})
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler continued constructing the bourse."}, room=self._settlement.id) # type: ignore
 
         db.session.commit()
 
@@ -436,7 +436,7 @@ class Ruler:
 
                 tiles.append(tile_serializer(tile))
 
-            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler started building a jail."})
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler started building a jail."}, room=self._settlement.id) # type: ignore
 
         else:
             tile_type_mapping = {
@@ -454,7 +454,7 @@ class Ruler:
 
             tiles.append(tile_serializer(tile))
 
-            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler continued constructing the jail."})
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler continued constructing the jail."}, room=self._settlement.id) # type: ignore
 
         db.session.commit()
 
@@ -479,7 +479,7 @@ class Ruler:
         db.session.commit()
 
         socketio.emit('update_tiles', [tile_serializer(tile)], room=self._settlement.id) # type: ignore
-        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler built a warehouse."})
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler built a warehouse."}, room=self._settlement.id) # type: ignore
 
         return True
     
@@ -525,7 +525,7 @@ class Ruler:
         db.session.commit()
 
         socketio.emit("update_character", properties_serializer(character), room=self._settlement.id) # type: ignore
-        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler stored items in a warehouse."})
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler stored items in a warehouse."}, room=self._settlement.id) # type: ignore
 
         return True
     
@@ -551,7 +551,8 @@ class Ruler:
         db.session.delete(traderoute)
         db.session.commit()
 
-        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler accepted a traderoute request."})
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler accepted a traderoute request."}, room=self._settlement.id) # type: ignore
+        socketio.emit('alert', {'type' : 'ruler', 'message' : f"Your traderoute with settlement {self._settlement.name} was established."}, room=settlement.id) # type: ignore
 
         return True
     
@@ -593,7 +594,7 @@ class Ruler:
 
         db.session.add(traderoute_request)
 
-        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler requested a traderoute with another settlement."})
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler requested a traderoute with another settlement."}, room=self._settlement.id) # type: ignore
 
         return True
     
@@ -608,7 +609,7 @@ class Ruler:
             self._actions.append("HALLMARK")
             self._ruler.actions = json.dumps(self._actions)
 
-            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your city is now approved by your king."})
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "Your city is now approved by your king."}, room=self._settlement.id) # type: ignore
 
             return True
         
@@ -621,7 +622,7 @@ class Ruler:
 
         db.session.commit()
 
-        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your city is now approved by your king."})
+        socketio.emit('alert', {'type' : 'ruler', 'message' : "Your city is now approved by your king."}, room=self._settlement.id) # type: ignore
 
         return True
     
@@ -679,7 +680,7 @@ class Ruler:
 
                 self._settlement.taxes += price * amount
 
-            socketio.emit('alert', {'type' : 'ruler', 'message' : f"{random.choice(traderoutes)} purchased goods from your ruler."})
+            socketio.emit('alert', {'type' : 'ruler', 'message' : f"{random.choice(traderoutes)} purchased goods from your ruler."}, room=self._settlement.id) # type: ignore
             
             return True
         
@@ -708,7 +709,7 @@ class Ruler:
 
             socketio.emit("update_character", properties_serializer(character), room=self._settlement.id) # type: ignore
             
-        socketio.emit('alert', {'type' : 'ruler', 'message' : f"{random.choice(traderoutes)} purchased goods from the market."})
+        socketio.emit('alert', {'type' : 'ruler', 'message' : f"{random.choice(traderoutes)} purchased goods from the market."}, room=self._settlement.id) # type: ignore
         
         return True
 

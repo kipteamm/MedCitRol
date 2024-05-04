@@ -3,7 +3,7 @@ const socket = io();
 socket.on('connect', function() {
     console.log('connect');
 
-    socket.emit('join', {access_key : getCookie('psk'), user_id : userId, world_id : world.id, settlement_id : settlement.id, character_id: character.id});
+    socket.emit('join', {access_key : getCookie('psk'), user_id : userId, world_id : world.id, settlement_id : settlement.id, character_id: character.id}); // room=
 })
 
 socket.on('disconnect', function() {
