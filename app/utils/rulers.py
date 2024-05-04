@@ -535,7 +535,7 @@ class Ruler:
         traderoute = None
 
         if self._characteristics['tyranny'] > social or self._characteristics['economy'] > social:
-            traderoute = traderoute_requests.order_by(TraderouteRequest.taxes.desc()).first() # type: ignore
+            traderoute = traderoute_requests.order_by(TraderouteRequest.traderoute_taxes.desc()).first() # type: ignore
 
         else:
             traderoute = traderoute_requests.order_by(func.random()).first() # type: ignore
@@ -545,8 +545,8 @@ class Ruler:
         
         settlement = Settlement.query.get(traderoute.settlement_id)
 
-        settlement.traderoutes += f"{'' if len(settlement.tradertoues.split(',')) == 1 else ','}{self._settlement.id}"
-        self._settlement.traderoutes += f"{'' if len(self._settlement.tradertoues.split(',')) == 1 else ','}{traderoute.settlement_id}"
+        settlement.traderoutes += f"{'' if len(settlement.traderoutes.split(',')) == 1 else ','}{self._settlement.id}"
+        self._settlement.traderoutes += f"{'' if len(self._settlement.traderoutes.split(',')) == 1 else ','}{traderoute.settlement_id}"
 
         db.session.delete(traderoute)
         db.session.commit()

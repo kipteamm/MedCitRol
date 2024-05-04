@@ -11,6 +11,8 @@ from app.game.models import Settlement, Character, MarketItem, World, Merchant, 
 
 from app.extensions import db, socketio
 
+from sqlalchemy import or_
+
 from datetime import timedelta
 
 import random
@@ -222,10 +224,18 @@ def get_settlement_market(market_type):
     access_key = g.access_key
 
     if market_type == "settlement":
-        market_items = MarketItem.query.filter_by(settlement_id=access_key.settlement_id).all()
+        market_items = MarketItem.query.filter_by(world_id=None, settlement_id=access_key.settlement_id).all()
 
     else:
-        market_items = MarketItem.query.filter_by(world_id=access_key.world_id).all()
+        settlement = Settlement.query.get(access_key.settlement_id)
+
+        market_items = MarketItem.query.filter(
+            or_(
+                MarketItem.settlement_id.in_(settlement.traderoutes.split(',')),
+                MarketItem.settlement_id == settlement.id
+            ),
+            MarketItem.world_id == access_key.world_id
+        ).all()
 
     market_data = [market_item_serializer(market_item) for market_item in market_items]
 
@@ -286,7 +296,7 @@ def sell_item(market_type):
             market_item = MarketItem(character_id=character.id, settlement_id=access_key.settlement_id, item_type=json["item_type"])
         
         else:
-            market_item = MarketItem(character_id=character.id, world_id=access_key.world_id, item_type=json["item_type"])
+            market_item = MarketItem(character_id=character.id, world_id=access_key.world_id, settlement_id=access_key.settlement_id, item_type=json["item_type"])
 
         db.session.add(market_item)
         db.session.commit()

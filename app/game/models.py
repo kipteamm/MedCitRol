@@ -197,7 +197,7 @@ class MarketItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     character_id = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     world_id = db.Column(db.Integer, db.ForeignKey('world.id'))
-    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'))
+    settlement_id = db.Column(db.Integer, db.ForeignKey('settlement.id'), nullable=False)
 
     item_type = db.Column(db.String(120), nullable=False)
     amount = db.Column(db.Integer, default=0)
