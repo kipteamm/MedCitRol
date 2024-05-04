@@ -27,8 +27,6 @@ socket.on('new_tiles', function(data) {
 })
 
 socket.on('update_tiles', function(data) {
-    console.log(data)
-
     data.forEach(tile => {     
         const tileIndex = tiles.findIndex(_tile => _tile.id === tile.id)
 
@@ -50,13 +48,17 @@ socket.on('update_inventory', function(data) {
     const itemData = data.item;
     const inventory = data.settlement? settlement.inventory : character.inventory;
     const inventoryItem = inventory.find(item => item.id === itemData.id);
-
+    
     if (!inventoryItem && !data.deleted) {
         inventory.push(itemData);
     } else if (!data.deleted) {
         inventoryItem.amount = itemData.amount;
     } else {
-        inventory.splice(inventory.indexOf(inventoryItem), 1)
+        inventory.splice(inventory.indexOf(inventoryItem), 1);
+    }
+
+    if (itemData.buildable && buildPanel.classList.contains("active")) {
+        openBuildMenu(true);
     }
 
     updateSellables = true;

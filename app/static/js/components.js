@@ -177,8 +177,6 @@ function editableTaskFieldComponent(taskField) {
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
 
-        console.log(taskField.options)
-
         taskField.options.forEach(option => {
             const previous = wrapper.querySelector(`#${option.connected}`);
 
@@ -288,7 +286,7 @@ function workStatusComponent(shouldBuild=false) {
             <p>
                 You have some unbuild things left over. Placing buildings can potentially improve your productivity. Check the build menu for more!
             </p>
-            <button class="primary-btn" onclick="openBuildMenu()">Build menu</button>
+            <button class="primary-btn" onclick="openBuildMenu(false)">Build menu</button>
             <button class="primary-btn" onclick="loadTask()">Work anyway</button>
             <button class="primary-btn" onclick="closeWorkPopup()">Close</button>
         `
@@ -316,7 +314,7 @@ function workStatusComponent(shouldBuild=false) {
         wrapper.innerHTML = `
             <h2>${action}</h2>
             <p>
-                You are not getting everything out of your day! You can buy more ${reactant} to produce more ${product}. You have ${amount} out of the recommended ${recommendedAmount} rye.
+                You are not getting everything out of your day! You can buy more ${reactant} to produce more ${product}. You have ${amount} out of the recommended ${recommendedAmount} ${reactant}.
             </p>
             <button class="primary-btn" onclick="openMarket()">Visit market</button>
             <button class="primary-btn" onclick="loadTask()">Work anyway</button>

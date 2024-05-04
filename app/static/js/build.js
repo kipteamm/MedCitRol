@@ -1,16 +1,14 @@
 const buildPanel = document.getElementById('build-panel');
 
-function openBuildMenu() {
+function openBuildMenu(overWriteClose=false) {
     closeMarket()
     closeWorkPopup()
 
-    if (buildPanel.classList.contains("active")) return cancelBuild();
+    if (!overWriteClose && buildPanel.classList.contains("active")) return cancelBuild();
 
     buildPanel.classList.add('active');
 
     const content = buildPanel.querySelector('.content');
-
-    if (content.classList.contains("loaded")) return;
 
     content.innerHTML = '';
 
@@ -19,8 +17,6 @@ function openBuildMenu() {
             content.appendChild(inventoryItemComponent(item, true));
         }
     });
-
-    content.classList.add("loaded");
 }
 
 function selectItem(id) {

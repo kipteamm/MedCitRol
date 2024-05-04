@@ -159,8 +159,8 @@ window.onscroll = function() {
 async function moveField(direction) {
     const field = document.getElementById(activeActions);
 
-    if (direction === "up" && field.getAttribute("field-index") === "0") return console.log("1");
-    if (direction === "down" && field.getAttribute("field-index") === (task.field_index - 1).toString()) return console.log("2");
+    if (direction === "up" && field.getAttribute("field-index") === "0") return;
+    if (direction === "down" && field.getAttribute("field-index") === (task.field_index - 1).toString()) return;
 
     const fieldId = activeActions
 

@@ -127,8 +127,6 @@ async function updateProfession(profession) {
 }
 
 async function submitTask() {
-    console.log(answers)
-
     const response = await fetch('/api/task/submit', {
         method: "POST",
         body: JSON.stringify(answers),
