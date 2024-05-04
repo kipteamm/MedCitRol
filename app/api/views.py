@@ -159,6 +159,8 @@ def submit_task():
 
     Profession(character).work()
 
+    socketio.emit('update_character', character_serializer(character), room=character.settlement_id) # type: ignore
+
     return make_response({"status" : f"You scored {percentage}%. Great job!"}, 200)
     
 

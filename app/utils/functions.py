@@ -82,6 +82,6 @@ def get_merchandise(merchant_type: str) -> dict[str, int]:
         return {"rye" : 2, "rye_flour" : 3, "bread" : 5} 
     
     if merchant_type == "buildable":
-        return {"market_stall" : 20}
+        return {"market_stall" : 10}
     
     return {}
