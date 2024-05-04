@@ -33,15 +33,15 @@ function handleDrop(event) {
     let content = [];
 
     task.querySelectorAll(".option").forEach(option => {
-        content.push(parseInt(option.id.split("-")[2]));
+        content.push(parseInt(option.id));
     })
 
-    let answer = answers.find(field => field.field_id === parseInt(task.id.split("-")[2]));
+    let answer = answers.find(field => field.field_id === task.id);
 
     if (answer) {
         answer.content = content;
     } else {
-        answer = { field_id: parseInt(task.id.split("-")[2]), content: content };
+        answer = { field_id: task.id, content: content };
         answers.push(answer);
     }
 }

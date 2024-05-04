@@ -162,7 +162,7 @@ async function moveField(direction) {
     if (direction === "up" && field.getAttribute("field-index") === "0") return console.log("1");
     if (direction === "down" && field.getAttribute("field-index") === (task.field_index - 1).toString()) return console.log("2");
 
-    const fieldId = activeActions.split("-")
+    const fieldId = activeActions
 
     const response = await fetch(`/api/task/field/move`, {
         method: "PATCH",
