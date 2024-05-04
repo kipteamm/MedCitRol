@@ -106,3 +106,35 @@ def delete_task(world_id, task_id):
     db.session.commit()
 
     return redirect(f"/teacher/{world_id}/tasks")
+
+
+@teacher_blueprint.route('/<world_id>/task/<task_id>/duplicate')
+@login_required
+def duplicate_task(world_id, task_id):
+    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
+
+    if not world:
+        return redirect(url_for('game.home'))
+
+    task = Task(world_id=world.id, index=world.question_index)
+
+    db.session.add(task)
+    db.session.commit()
+
+    for old_field in TaskField.query.filter_by(task_id=task_id).all():
+        task_field = TaskField(task_id=task.id, field_index=old_field.field_index, field_type=old_field.field_type, content=old_field.content)
+
+        db.session.add(task_field)
+        db.session.commit()
+
+        for old_option in TaskOption.query.filter_by(task_field_id=old_field.id).all():
+            task_option = TaskOption(task_field_id=task_field.id, field_type=old_option.field_type, content=old_option.content)
+
+            db.session.add(task_option)
+            db.session.commit()
+
+    world.question_index += 1
+
+    db.session.commit()
+
+    return redirect(f"/teacher/{world_id}/task/{task.id}/edit")

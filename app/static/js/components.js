@@ -75,7 +75,7 @@ function taskFieldcomponent(taskField) {
             }
 
             content.innerHTML += `
-                <div class="choice ${counter % 2 === 0? "even": "odd"}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', ${option.id})" id="task-option-${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
+                <div class="choice ${counter % 2 === 0? "even": "odd"}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', '${option.id}')" id="task-option-${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
                     ${taskField.field_type === "connect"? counter % 2 === 0? indicator : '' : '<div class="indicator"></div>'}
                     <div class="content">${option.content? option.content : ''}</div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? indicator : ''}
@@ -154,9 +154,9 @@ function editableTaskFieldComponent(taskField) {
             }
 
             content.innerHTML += `
-                <div class="choice${option.answer? " active" : ""}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', ${option.id})" id="task-option-${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
+                <div class="choice${option.answer? " active" : ""}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', '${option.id}')" id="task-option-${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
                     ${taskField.field_type === "connect"? counter % 2 === 0? indicator : '' : '<div class="indicator"></div>'}
-                    <div class="content"><input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}" placeholder="Option"/></div>
+                    <div class="content"><input type="text" onchange="editOption('${option.id}', this.value)" value="${option.content? option.content : ''}" placeholder="Option"/></div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? indicator : ''}
                 </div>
             `
@@ -208,7 +208,7 @@ function orderOption(option, taskFieldId) {
     wrapper.setAttribute("ondrop", "handleDrop(event)");
     wrapper.setAttribute("task-id", taskFieldId);
 
-    wrapper.innerHTML += `<input type="text" onchange="editOption(${option.id}, this.value)" value="${option.content? option.content : ''}" placeholder="Option"/>`;
+    wrapper.innerHTML += `<input type="text" onchange="editOption('${option.id}', this.value)" value="${option.content? option.content : ''}" placeholder="Option"/>`;
 
     return wrapper;
 }
