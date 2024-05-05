@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 
-from flask_login import login_user, logout_user
-
-from app.extensions import db
+from flask_login import login_user, logout_user, current_user
 
 from sqlalchemy import func
 
-from .models import User
+from app.auth.models import User
+from app.game.models import AccessKey
+from app.extensions import db
 
 
 auth_blueprint = Blueprint('auth', __name__)
@@ -67,6 +67,10 @@ def login():
 
 @auth_blueprint.route('/logout')
 def logout():
+    AccessKey.query.filter_by(user_id=current_user.id).delete()
+
+    db.session.commit()
+
     logout_user()
 
     return redirect('/login')
