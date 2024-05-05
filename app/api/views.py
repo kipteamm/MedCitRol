@@ -858,10 +858,12 @@ def update_answers():
 
         elif task_field.field_type == "connect":
             for connection in answer['content']:
-                connection = connection.split("-")
+                connection = connection.split("%")
 
-                TaskOption.query.get(int(connection[0])).connected = int(connection[1])
-                TaskOption.query.get(int(connection[1])).connected = int(connection[0])
+                print(answer['content'], connection)
+
+                TaskOption.query.get(connection[0]).connected = connection[1]
+                TaskOption.query.get(connection[1]).connected = connection[0]
 
             db.session.commit()
 

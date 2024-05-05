@@ -5,13 +5,13 @@ function toggleMap() {
 }
 
 function showSettlement(event, settlementId) {
-    const settlement = document.getElementById(settlementId);
+    const settlement = document.getElementById(`id-${settlementId}`);
 
     settlement.classList.add("active");
 }
 
 function hideSettlement(settlementId) {
-    const settlement = document.getElementById(settlementId);
+    const settlement = document.getElementById(`id-${settlementId}`);
 
     settlement.classList.remove("active");
 }

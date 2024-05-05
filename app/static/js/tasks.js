@@ -33,7 +33,7 @@ function handleDrop(event) {
     let content = [];
 
     task.querySelectorAll(".option").forEach(option => {
-        content.push(parseInt(option.id));
+        content.push(option.id.slice(3));
     })
 
     let answer = answers.find(field => field.field_id === task.id);
@@ -41,13 +41,13 @@ function handleDrop(event) {
     if (answer) {
         answer.content = content;
     } else {
-        answer = { field_id: task.id, content: content };
+        answer = { field_id: task.id.slice(3), content: content };
         answers.push(answer);
     }
 }
 
 function selectOption(fieldId, optionId) {
-    const option = document.getElementById(optionId);
+    const option = document.getElementById(`id-${optionId}`);
 
     let answer = answers.find(field => field.field_id === fieldId);
 
@@ -63,7 +63,7 @@ function selectOption(fieldId, optionId) {
         const previousOptionId = answer.content[0];
         answer.content = [optionId];
 
-        const previousOption = document.getElementById(previousOptionId)
+        const previousOption = document.getElementById(`id-${previousOptionId}`)
         
         if (previousOption) {
             previousOption.classList.remove("active"); 
@@ -94,11 +94,11 @@ function connectAnswer(fieldId, _input=null) {
 
     answer.content = []
 
-    document.getElementById(fieldId).querySelectorAll("input.connect-answer").forEach(input => {
+    document.getElementById(`id-${fieldId}`).querySelectorAll("input.connect-answer").forEach(input => {
         if (input.value) {
             const letter = input.value.toUpperCase()
-            const indexOption = document.getElementById(`${fieldId}-${input.getAttribute("index")}`);
-            const letterOption = document.getElementById(`${fieldId}-${letter}`)
+            const indexOption = document.getElementById(`id-${fieldId}-${input.getAttribute("index")}`);
+            const letterOption = document.getElementById(`id-${fieldId}-${letter}`)
 
             if (indexOption === null || letterOption === null) {
                 input.value = "";
@@ -110,10 +110,10 @@ function connectAnswer(fieldId, _input=null) {
 
             if (answer.content.length > 0) {
                 answer.content.forEach(_answer => {
-                    if (_answer.split("-").includes(indexOption.getAttribute("option-id")) || _answer.split("-").includes(letterOption.getAttribute("option-id"))) {
+                    if (_answer.split("%").includes(indexOption.getAttribute("option-id").slice(3)) || _answer.split("%").includes(letterOption.getAttribute("option-id").slice(3))) {
                         input.value = "";
                     } else {
-                        const answerValue = `${indexOption.getAttribute("option-id")}-${letterOption.getAttribute("option-id")}`;
+                        const answerValue = `${indexOption.getAttribute("option-id").slice(3)}%${letterOption.getAttribute("option-id").slice(3)}`;
 
                         if (!answer.content.includes(answerValue)) {
                             answer.content.push(answerValue);
@@ -121,7 +121,7 @@ function connectAnswer(fieldId, _input=null) {
                     }
                 });
             } else {
-                answer.content.push(`${indexOption.getAttribute("option-id")}-${letterOption.getAttribute("option-id")}`);
+                answer.content.push(`${indexOption.getAttribute("option-id").slice(3)}%${letterOption.getAttribute("option-id").slice(3)}`);
             }
         }
     });

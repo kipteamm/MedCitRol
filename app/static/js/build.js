@@ -34,7 +34,7 @@ function selectItem(id) {
     document.querySelector(`.inventory-item.active`)?.classList.remove("active");
     buildInformation.style.display = 'block';
 
-    const item = document.getElementById(id);
+    const item = document.getElementById(`id-${id}`);
 
     item.classList.add("active");
 

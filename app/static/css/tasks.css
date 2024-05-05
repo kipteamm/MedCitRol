@@ -11,7 +11,7 @@
     text-align: center;
 }
 
-.edit .task-field > * {
+.edit .task-field > *:not(.connect-answer) {
     width: 1200px;
     margin: 0px auto;
 }

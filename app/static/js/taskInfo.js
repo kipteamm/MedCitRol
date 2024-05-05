@@ -2,7 +2,7 @@ function taskUserElementComponent(userId) {
     const wrapper = document.createElement("div");
 
     wrapper.classList.add("task-user")
-    wrapper.id = userId;
+    wrapper.id = `id-${userId}`;
 
     return wrapper;
 }
@@ -18,7 +18,7 @@ function taskUserEntryComponent(taskUser, first) {
 
 function loadUsers() {
     taskInfo.forEach(taskUser => {
-        let taskUserElement = document.getElementById(taskUser.user_id);
+        let taskUserElement = document.getElementById(`id-${taskUser.user_id}`);
         let first = false;
 
         if (!taskUserElement) {
@@ -33,5 +33,5 @@ function loadUsers() {
 }
 
 function toggleMore(userId) {
-    document.getElementById(userId).classList.toggle('active');
+    document.getElementById(`id-${userId}`).classList.toggle('active');
 }

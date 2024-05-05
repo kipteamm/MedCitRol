@@ -32,7 +32,7 @@ let taskIndex = 1;
 function taskFieldcomponent(taskField) {
     const wrapper = document.createElement("div");
 
-    wrapper.id = taskField.id;
+    wrapper.id = `id-${taskField.id}`;
     wrapper.classList.add("task-field");
 
     if (taskField.field_type === "header") {
@@ -75,7 +75,7 @@ function taskFieldcomponent(taskField) {
             }
 
             content.innerHTML += `
-                <div class="choice ${counter % 2 === 0? "even": "odd"}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', '${option.id}')" id="${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
+                <div class="choice ${counter % 2 === 0? "even": "odd"}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', '${option.id}')" id="id-${option.id}"` : ` id="id-${taskField.id}-${indicator}" option-id="id-${option.id}"`}>
                     ${taskField.field_type === "connect"? counter % 2 === 0? indicator : '' : '<div class="indicator"></div>'}
                     <div class="content">${option.content? option.content : ''}</div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? indicator : ''}
@@ -96,7 +96,7 @@ function taskFieldcomponent(taskField) {
 
         shuffle(taskField.options).forEach(option => {
             wrapper.innerHTML += `
-                <div class="option" id="${option.id}" draggable="true" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" task-id="${taskField.id}">
+                <div class="option" id="id-${option.id}" draggable="true" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" task-id="id-${taskField.id}">
                     <div>${option.content? option.content : ''}</div>
                 </div>
             `
@@ -111,7 +111,7 @@ let correctConnectAnswers = {};
 function editableTaskFieldComponent(taskField) {
     const wrapper = document.createElement("div");
 
-    wrapper.id = taskField.id;
+    wrapper.id = `id-${taskField.id}`;
     wrapper.classList.add("task-field");
     wrapper.setAttribute("onmouseover", "showActions(this)")
     wrapper.setAttribute("field-index", taskField.field_index)
@@ -154,7 +154,7 @@ function editableTaskFieldComponent(taskField) {
             }
 
             content.innerHTML += `
-                <div class="choice${option.answer? " active" : ""}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', '${option.id}')" id="${option.id}"` : ` id="${taskField.id}-${indicator}" option-id="${option.id}"`}>
+                <div class="choice${option.answer? " active" : ""}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', '${option.id}')" id="id-${option.id}"` : ` id="id-${taskField.id}-${indicator}" option-id="id-${option.id}"`}>
                     ${taskField.field_type === "connect"? counter % 2 === 0? indicator : '' : '<div class="indicator"></div>'}
                     <div class="content"><input type="text" onchange="editOption('${option.id}', this.value)" value="${option.content? option.content : ''}" placeholder="Option"/></div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? indicator : ''}
@@ -178,7 +178,7 @@ function editableTaskFieldComponent(taskField) {
         wrapper.classList.add("question")
 
         taskField.options.forEach(option => {
-            const previous = wrapper.querySelector(`#${option.connected}`);
+            const previous = wrapper.querySelector(`#id-${option.connected}`);
 
             if (previous) {
                 previous.insertAdjacentElement("afterend", orderOption(option, taskField.id));
@@ -199,12 +199,12 @@ function orderOption(option, taskFieldId) {
     const wrapper = document.createElement("div");
 
     wrapper.classList.add("option");
-    wrapper.id = option.id;
+    wrapper.id = `id-${option.id}`;
     wrapper.draggable = true;
     wrapper.setAttribute("ondragstart", "handleDragStart(event)");
     wrapper.setAttribute("ondragover", "handleDragOver(event)");
     wrapper.setAttribute("ondrop", "handleDrop(event)");
-    wrapper.setAttribute("task-id", taskFieldId);
+    wrapper.setAttribute("task-id", `id-${taskFieldId}`);
 
     wrapper.innerHTML += `<input type="text" onchange="editOption('${option.id}', this.value)" value="${option.content? option.content : ''}" placeholder="Option"/>`;
 
@@ -256,12 +256,12 @@ function connectAswerComponent(options, fieldId) {
         } else {
             const letter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][columnIndex];
 
-            row.innerHTML = `<input type="text" class="connect-answer" oninput="connectAnswer(${fieldId}, this)" placeholder="${letter}" index="${columnIndex + 1}" ${option.connected? `value="${correctConnectAnswers[options.find(_option => _option.id === correctConnectAnswers[`c-${columnIndex + 1}`]).connected]}` : ''}"/>`;
+            row.innerHTML = `<input type="text" class="connect-answer" oninput="connectAnswer('${fieldId}', this)" placeholder="${letter}" index="${columnIndex + 1}" ${option.connected? `value="${correctConnectAnswers[options.find(_option => _option.id === correctConnectAnswers[`c-${columnIndex + 1}`]).connected]}` : ''}"/>`;
 
             columnIndex++;
 
             if (option.connected) {
-                content.push(`${option.connected}-${options.find(_option => _option.id === option.connected).connected}`)
+                content.push(`${option.connected}%${options.find(_option => _option.id === option.connected).connected}`)
             }
         }
 
@@ -328,7 +328,7 @@ function workStatusComponent(shouldBuild=false) {
 function inventoryItemComponent(item, building) {
     const wrapper = document.createElement("div");
 
-    wrapper.id = item.id;
+    wrapper.id = `id-${item.id}`;
     wrapper.classList.add("inventory-item");
     wrapper.innerHTML = `
         <b id="count-${item.id}">${item.amount}x</b> ${item.item_type}
@@ -344,7 +344,7 @@ function inventoryItemComponent(item, building) {
 function marketItemComponent(item) {
     const wrapper = document.createElement("div");
 
-    wrapper.id = item.id;
+    wrapper.id = `id-${item.id}`;
     wrapper.classList.add("market-item");
     wrapper.innerHTML = `
         <h3>${item.item_type}</h3>
