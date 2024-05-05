@@ -565,7 +565,7 @@ class Ruler:
 
         new_traderoutes = Settlement.query.filter(
             Settlement.id != self._settlement.id,
-            Settlement.id not in traderoute_settlement_ids,
+            ~Settlement.id.in_(traderoute_settlement_ids),
             TraderouteRequest.query.filter_by(traderoute_id=Settlement.id).first() == None
         ).all()
 
