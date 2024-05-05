@@ -64,6 +64,18 @@ async function openMarket() {
         items = json.items;
     }
 
+    if (items.length === 0 && settlement.traderoutes.length === 0) {
+        marketContent.innerHTML = "You have no global trade partners.";
+
+        return;
+    }
+
+    if (items.length === 0) {
+        marketContent.innerHTML = "Nothing for sale right now! Come back later.";
+
+        return;
+    }
+
     marketContent.innerHTML = '';
 
     items.forEach(item => {
