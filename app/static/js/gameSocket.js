@@ -100,6 +100,10 @@ socket.on('update_settlement', function(data) {
     }
 })
 
+socket.on('new_settlement', function(data) {
+    world.settlements.push(data.colour);
+})
+
 socket.on('merchant_leave', function() {
     document.getElementById("merchant-market-btn").style.display = "none";
 })

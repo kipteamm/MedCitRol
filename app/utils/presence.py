@@ -61,7 +61,7 @@ def _create_settlement(world: World, colour: str) -> Settlement:
 
     add_merchant(settlement.id, world.current_time, 8)
 
-    socketio.emit('new_settlement', settlement_serializer(settlement), room=world.id) # type: ignore
+    socketio.emit('new_settlement', {'colour' : colour}, room=world.id) # type: ignore
 
     return settlement
 
