@@ -1,7 +1,12 @@
-{% for world in worlds %}
-    <a href="/game/{{ world.id}}">Visit {{ world.code }}</a>
+{% extends "/game/game_base.html" %}
 
-    {% if world.user_id == current_user.id %}
-        <a href="/teacher/{{ world.id }}/game">Teacher {{ world.code }}</a>
-    {% endif %}
-{% endfor %}
+{% block content %}
+    {% for world in worlds %}
+        <h2>{{ world.name }}</h2>
+        <button class="primary-btn" onclick="window.location.href='/game/{{ world.id}}'">Visit</button>
+
+        {% if world.user_id == current_user.id %}
+            <button class="primary-btn" onclick="window.location.href='/teacher/{{ world.id }}/game'">Teacher</button>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 
-from flask_login import login_user
+from flask_login import login_user, logout_user
 
 from app.extensions import db
 
@@ -63,3 +63,10 @@ def login():
             return render_template('auth/login.html')
 
     return render_template('auth/login.html')
+
+
+@auth_blueprint.route('/logout', methods=['GET'])
+def logout():
+    logout_user()
+
+    return redirect('/login')

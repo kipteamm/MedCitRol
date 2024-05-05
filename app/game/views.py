@@ -24,6 +24,7 @@ def home():
         worlds.append({
             'id': world.id,
             'user_id': world.user_id,
+            'name' : world.name,
             'code': world.code
         })
 

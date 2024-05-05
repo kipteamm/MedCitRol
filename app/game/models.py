@@ -22,6 +22,7 @@ class World(db.Model):
 
     id = db.Column(db.String(128), primary_key=True, default=get_uuid)
     user_id = db.Column(db.String(128), db.ForeignKey('users.id'), nullable=False) # world owner
+    name = db.Column(db.String(50), default="Unnamed")
     code = db.Column(db.String(10), nullable=False)
 
     question_index = db.Column(db.Integer, default=0)
