@@ -1,4 +1,4 @@
-from app.utils.serializers import settlement_ruler_serializer, properties_serializer, tile_serializer
+from app.utils.serializers import settlement_ruler_serializer, properties_serializer, tile_serializer, settlement_serializer
 from app.utils.inventory import Inventory
 from app.game.models import Settlement, SettlementRuler, TraderouteRequest, Character, Tile, Warehouse, InventoryItem, MarketItem
 from app.extensions import db, socketio
@@ -143,7 +143,7 @@ class Ruler:
 
         value += warehouse_count
 
-        traderoutes = len(self._settlement.traderoutes.split(",")) - 1
+        traderoutes = len(json.loads(self._settlement.traderoutes))
 
         print(traderoutes)
 
@@ -234,8 +234,6 @@ class Ruler:
         taxes = random.randint(2, 3) if self._characteristics['tyranny'] > self._characteristics['social'] else 2
 
         for character in Character.query.filter_by(settlement_id=self._settlement.id).all():
-            print(character.taxes > 0, not character.jailed, character.start_sleep == None, current_time.hour > 6)
-
             if character.taxes > 0 and not character.jailed and character.start_sleep == None and current_time.hour > 6:
                 if "UPGRADE_JAIL_2" in self._actions:
                     character.jailed = True
@@ -539,15 +537,21 @@ class Ruler:
             return False
         
         settlement = Settlement.query.get(traderoute.settlement_id)
+        settlement_traderoutes = json.loads(settlement.traderoutes)
+        settlement_traderoutes.append(self._settlement.id)
+        settlement.traderoutes = json.dumps(settlement_traderoutes)
 
-        settlement.traderoutes += f"{'' if len(settlement.traderoutes.split(',')) == 1 else ','}{self._settlement.id}"
-        self._settlement.traderoutes += f"{'' if len(self._settlement.traderoutes.split(',')) == 1 else ','}{traderoute.settlement_id}"
+        traderoutes = json.loads(self._settlement.traderoutes)
+        traderoutes.append(traderoute.settlement_id)
+        self._settlement.traderoutes = json.dumps(traderoutes)
 
         db.session.delete(traderoute)
         db.session.commit()
 
         socketio.emit('alert', {'type' : 'ruler', 'message' : "Your ruler accepted a traderoute request."}, room=self._settlement.id) # type: ignore
         socketio.emit('alert', {'type' : 'ruler', 'message' : f"Your traderoute with settlement {self._settlement.name} was established."}, room=settlement.id) # type: ignore
+        socketio.emit('update_settlement', settlement_serializer(settlement), room=self._settlement.id) # type: ignore
+        socketio.emit('update_settlement', settlement_serializer(settlement), room=settlement.id) # type: ignore
 
         return True
     
@@ -557,7 +561,7 @@ class Ruler:
         if traderoute_requests.first():
             return self._manage_traderoute_requests(traderoute_requests)
 
-        traderoute_settlement_ids = self._settlement.traderoutes.split(",")
+        traderoute_settlement_ids = json.loads(self._settlement.traderoutes)
 
         new_traderoutes = Settlement.query.filter(
             Settlement.id != self._settlement.id,
@@ -571,7 +575,8 @@ class Ruler:
             if not new_traderoutes:
                 return False
             
-            self._settlement.traderoutes += f'{"" if len(traderoute_settlement_ids) == 1 else ","}{random.choice(new_traderoutes)}'
+            traderoute_settlement_ids.append(random.choice(new_traderoutes))
+            self._settlement.traderoutes = json.dumps(traderoute_settlement_ids)
 
             db.session.commit()
 
@@ -651,7 +656,7 @@ class Ruler:
         return 0
     
     def _sell_globally(self) -> bool:
-        traderoutes = [traderoute for traderoute in self._settlement.traderoutes.split(",") if type(traderoute) == str]
+        traderoutes = [traderoute for traderoute in json.loads(self._settlement.traderoutes) if type(traderoute) == str]
 
         if random.randint(len(traderoutes), 3) != 3:
             print("no traderoutes")

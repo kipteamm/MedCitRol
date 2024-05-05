@@ -116,6 +116,9 @@ def ruler():
 
     #db.session.commit()
 
-    Ruler(SettlementRuler.query.filter_by(settlement_id=1).first()).work(World.query.get(1).current_time)
+    current_time = World.query.first().current_time
+
+    for ruler in SettlementRuler.query.all():
+        Ruler(ruler).work(current_time)
 
     return "<h1>yes</h1>"

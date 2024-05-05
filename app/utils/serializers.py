@@ -4,6 +4,8 @@ from app.utils.functions import get_merchandise
 from app.utils.tiles import get_tile_index
 from app.game.models import World, Settlement, SettlementRuler, Character, Tile, InventoryItem, MarketItem, Merchant
 
+import json
+
 
 def world_serializer(world: World) -> dict:
     return {
@@ -21,7 +23,7 @@ def settlement_serializer(settlement: Settlement) -> dict:
         'world_id' : settlement.world_id,
         'name' : settlement.name,
         'colour' : settlement.colour,
-        'traderoutes' : settlement.traderoutes.split(","),
+        'traderoutes' : json.loads(settlement.traderoutes),
         'hallmark' : settlement.hallmark,
         'citizens' : Character.query.filter_by(settlement_id=settlement.id).count(),
         'revolutionaries' : Character.query.filter_by(settlement_id=settlement.id, revolutionary=True).count(),
