@@ -347,8 +347,9 @@ function marketItemComponent(item) {
     wrapper.id = item.id;
     wrapper.classList.add("market-item");
     wrapper.innerHTML = `
-        <h3>${item.item_type} (<span id="amount-${item.id}">${amountComponent(item.amount)}</span>)</h3>
-        <p>${item.seller}${item.character_id === character.id? " (you)" : ""}</p>
+        <h3>${item.item_type}</h3>
+        <i>${item.seller}${item.character_id === character.id? " (you)" : ""}</i><br>
+        <b><span id="amount-${item.id}">${amountComponent(item.amount)}</span></b><br>
         ${item.character_id !== character.id? `<button class="primary-btn" onclick="buyItem('${item.id}')">Buy <b>(${item.price} penningen/item)</b></button>` : `<b>${item.price} penningen/item</b>`}
     `;
 

@@ -181,6 +181,20 @@
     width: 80%;
     display: grid;
     grid-template-columns: repeat(5, auto);
+    gap: 12.5px;
+}
+
+.market-item {
+    border: 2px solid var(--game-primary-bg);
+    border-radius: 12.5px;
+}
+
+.market-item h3 {
+    margin-bottom: 6.25px;
+}
+
+.market-item button {
+    margin: 0px -1px -1px -1px;
 }
 
 /* WORK POPUP */
