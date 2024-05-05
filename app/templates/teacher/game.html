@@ -1,7 +1,18 @@
 {% extends "/teacher/teacher_base.html" %}
 
 {% block content %}
-    <a href="/teacher/{{ world.id }}/tasks">Tasks</a>
+    <h3>Change name</h3>
+    
+    <form method="POST">
+        <input type="text" value="{{ world.name }}" placeholder="Name" name="name">
+        <button type="submit" class="primary-btn">Change</button>
+    </form>
 
-    {{ world }}
+    <h3>Invite players</h3>
+    <button class="primary-btn" onclick="alert('Successfully copied.');navigator.clipboard.writeText('{{ request.host_url }}invite/{{ world.code }}');">Copy invite</button>
+
+    <h3>Players</h3>
+    {% for player in players %}
+        <li>{{ player.email }}</li>
+    {% endfor %}
 {% endblock %}

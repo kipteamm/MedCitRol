@@ -1,3 +1,27 @@
+nav {
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    padding: 25px;
+    font-size: 20px;
+}
+
+nav .nav-content {
+    max-width: 1200px;
+    margin: 0px auto;
+    display: flex;
+    gap: 50px;
+}
+
+nav a {
+    text-decoration: none;
+}
+
+.teacher-wrapper {
+    margin: 100px auto;
+    max-width: 1200px;
+}
+
 .actions {
     z-index: 1;
     position: absolute;

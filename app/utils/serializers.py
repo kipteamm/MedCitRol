@@ -3,8 +3,15 @@ from app.teacher.models import Task, TaskField, TaskOption
 from app.utils.functions import get_merchandise
 from app.utils.tiles import get_tile_index
 from app.game.models import World, Settlement, SettlementRuler, Character, Tile, InventoryItem, MarketItem, Merchant
+from app.auth.models import User
 
 import json
+
+
+def user_serializer(user: User) -> dict:
+    return {
+        'email' : user.email 
+    }
 
 
 def world_serializer(world: World) -> dict:

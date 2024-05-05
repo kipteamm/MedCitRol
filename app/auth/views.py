@@ -65,7 +65,7 @@ def login():
     return render_template('auth/login.html')
 
 
-@auth_blueprint.route('/logout', methods=['GET'])
+@auth_blueprint.route('/logout')
 def logout():
     logout_user()
 

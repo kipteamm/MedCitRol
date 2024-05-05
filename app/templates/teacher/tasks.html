@@ -1,8 +1,7 @@
 {% extends "/teacher/teacher_base.html" %}
 
 {% block content %}
-    <a href="/teacher/{{ world.id }}/game">Home</a>
-    <a href="/teacher/{{ world.id }}/task/create">Create</a>
+    <button onclick="window.location.href='/teacher/{{ world.id }}/task/create'">Create task</button>
     
     {% for task in tasks %}
         <div class="task">

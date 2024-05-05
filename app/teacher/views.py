@@ -1,9 +1,10 @@
 from flask_login import current_user, login_required
 
-from flask import Blueprint, redirect, url_for, render_template, make_response
+from flask import Blueprint, redirect, url_for, render_template, make_response, request
 
-from app.utils.serializers import task_serializer
+from app.utils.serializers import task_serializer, user_serializer
 from app.utils.functions import get_key
+from app.auth.models import UserWorlds, User
 from app.game.models import World
 from app.extensions import db
 
@@ -15,15 +16,22 @@ import os
 teacher_blueprint = Blueprint('teacher', __name__, url_prefix="/teacher")
 
 
-@teacher_blueprint.route('/<world_id>/game')
+@teacher_blueprint.route('/<world_id>', methods=["GET", "POST"])
 @login_required
 def game(world_id):
     world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
 
     if not world:
         return redirect(url_for('game.home'))
+    
+    if request.method == "POST":
+        world.name = request.form['name']
 
-    return render_template('teacher/game.html', world=world)
+        db.session.commit()
+
+        return redirect(f'/teacher/{world_id}')
+
+    return render_template('teacher/game.html', world=world, players=[user_serializer(User.query.get(user_world.user_id)) for user_world in UserWorlds.query.filter_by(world_id=world_id).all()])
 
 
 @teacher_blueprint.route('/<world_id>/tasks')

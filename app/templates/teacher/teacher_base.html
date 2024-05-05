@@ -7,6 +7,7 @@
     <title>Teacher</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/basics.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css') }}">
 
     <script src="{{ url_for('static', filename='js/basics.js') }}"></script>
 
@@ -26,6 +27,16 @@
 
     <div class="alert" id="alert"></div>
 
-    {% block content %}{% endblock %}
+    <nav>
+        <div class="nav-content">
+            <a href="/home">←</a>
+            <a href="/teacher/{{ world.id }}">Home</a>
+            <a href="/teacher/{{ world.id }}/tasks">Tasks</a>
+        </div>
+    </nav>
+
+    <div class="teacher-wrapper">
+        {% block content %}{% endblock %}
+    </div>
 </body>
 </html>

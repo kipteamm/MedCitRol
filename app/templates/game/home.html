@@ -6,7 +6,7 @@
         <button class="primary-btn" onclick="window.location.href='/game/{{ world.id}}'">Visit</button>
 
         {% if world.user_id == current_user.id %}
-            <button class="primary-btn" onclick="window.location.href='/teacher/{{ world.id }}/game'">Teacher</button>
+            <button class="primary-btn" onclick="window.location.href='/teacher/{{ world.id }}'">Teacher</button>
         {% endif %}
     {% endfor %}
 {% endblock %}

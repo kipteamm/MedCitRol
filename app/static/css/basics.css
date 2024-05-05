@@ -59,6 +59,10 @@ textarea {
     height: 75px;
 }
 
+form input {
+    margin-bottom: 12.5px;
+}
+
 ::-webkit-scrollbar {
     width: 8px;
 }
