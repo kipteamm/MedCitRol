@@ -64,7 +64,7 @@ async function openMarket() {
         items = json.items;
     }
 
-    if (items.length === 0 && settlement.traderoutes.length === 0) {
+    if (items.length === 0 && market === "world") {
         marketContent.innerHTML = "You have no global trade partners.";
 
         return;
