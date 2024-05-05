@@ -6,7 +6,7 @@ from app.utils.professions import Profession
 from app.utils.properties import Properties
 from app.utils.inventory import Inventory
 from app.utils.functions import get_merchandise
-from app.teacher.models import Task, TaskField, TaskOption
+from app.teacher.models import Task, TaskField, TaskOption, TaskUser
 from app.game.models import Settlement, Character, MarketItem, World, Merchant, Tile, InventoryItem, Warehouse
 
 from app.extensions import db, socketio
@@ -142,7 +142,12 @@ def submit_task():
 
                 last_id = answer['content'][i]
 
-    percentage = round(correct / (correct + wrong) * 100) 
+    percentage = round(correct / (correct + wrong) * 100)
+
+    task_user = TaskUser(task_id=task.id, user_id=g.access_key.user_id, percentage=percentage)
+
+    db.session.add(task_user)
+    db.session.commit()
 
     if percentage < 80:
         return make_response({"status" : f"You had a bad day at work. You only scored {percentage}% on your task."}, 200)

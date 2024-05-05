@@ -5,11 +5,12 @@
     
     {% for task in tasks %}
         <div class="task">
-            <h2>{{ task.name }}</h2>
+            <h3>{{ task.name }} ({{ task.finished }}/{{ world.players }})</h3>
 
-            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/edit">Edit</a>
-            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/duplicate">Duplicate</a>
-            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/delete">Delete</a>
+            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/edit">Edit task</a>
+            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/info">Info about task</a>
+            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/duplicate">Duplicate task</a>
+            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/delete">Delete task</a>
         </div>
     {% endfor %}
 {% endblock %}

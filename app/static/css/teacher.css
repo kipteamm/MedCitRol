@@ -38,3 +38,17 @@ nav a {
 .task-field textarea:focus {
     height: 150px;
 }
+
+.task-user {
+    padding: 12.5px;
+    border: 2px solid var(--secondary-bg);
+    border-radius: 12.5px;
+}
+
+.task-user .other {
+    display: none;
+}
+
+.task-user.active .other {
+    display: block;
+}

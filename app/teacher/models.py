@@ -36,3 +36,13 @@ class TaskOption(db.Model):
 
     answer = db.Column(db.Boolean, default=False)
     connected = db.Column(db.String(128), db.ForeignKey('task_option.id'))
+
+
+class TaskUser(db.Model):
+    __tablename__ = 'task_user'
+
+    id = db.Column(db.String(128), primary_key=True, default=get_uuid)
+    task_id = db.Column(db.String(128), db.ForeignKey('task.id'), nullable=False)
+    user_id = db.Column(db.String(128), db.ForeignKey('users.id'), nullable=False)
+    
+    percentage = db.Column(db.Integer, nullable=False)

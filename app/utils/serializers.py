@@ -1,9 +1,9 @@
 from app.utils.properties import Properties
-from app.teacher.models import Task, TaskField, TaskOption
+from app.teacher.models import Task, TaskField, TaskOption, TaskUser
 from app.utils.functions import get_merchandise
 from app.utils.tiles import get_tile_index
 from app.game.models import World, Settlement, SettlementRuler, Character, Tile, InventoryItem, MarketItem, Merchant
-from app.auth.models import User
+from app.auth.models import User, UserWorlds
 
 import json
 
@@ -14,10 +14,20 @@ def user_serializer(user: User) -> dict:
     }
 
 
+def game_serializer(world: World) -> dict:
+    return {
+        'id' : world.id,
+        'user_id' : world.user_id,
+        'code' : world.code,
+        'name' : world.name,
+        'players' : UserWorlds.query.filter_by(world_id=world.id).count(),
+    }
+
+
 def world_serializer(world: World) -> dict:
     return {
         'id' : world.id,
-        'user_id' : world.id,
+        'user_id' : world.user_id,
         'code' : world.code,
         'current_time' : world.get_world_time(),
         'settlements' : [small_settlement_serializer(settlement) for settlement in Settlement.query.filter_by(world_id=world.id)],
@@ -179,6 +189,7 @@ def task_serializer(task: Task, include_answers: bool=False) -> dict:
         'index' : task.index,
         'field_index' : task.field_index,
         'name' : name,
+        'finished' : TaskUser.query.filter(TaskUser.task_id == task.id, TaskUser.percentage >= 80).count(),
         'fields' : [task_field_serializer(task_field, include_answers) for task_field in TaskField.query.filter_by(task_id=task.id).order_by(TaskField.field_index)]
     }
 
@@ -215,3 +226,13 @@ def task_option_serializer(task_option: TaskOption, include_answer: bool=False) 
         data['connected'] = task_option.connected
 
     return data
+
+
+def task_user_serializer(task_user: TaskUser) -> dict:
+    user = User.query.get(task_user.user_id)
+    
+    return {
+        'user_id' : user.id,
+        'email' : user.email,
+        'percentage' : task_user.percentage,
+    }

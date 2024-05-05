@@ -37,7 +37,7 @@ active_worlds = []
 
 def create_app():
     app = Flask(__name__)
-    app.config["DEBUG"] = True
+    #app.config["DEBUG"] = True
     app.config["SECRET_KEY"] = "secret"
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./database.db'
 
@@ -56,7 +56,6 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        # Implement the logic to load the user object from the user ID
         return User.query.get(user_id)
 
     @login_manager.unauthorized_handler
@@ -85,7 +84,7 @@ def create_app():
 
         active_connections.pop(request.sid, None) # type: ignore
 
-    if not scheduler.get_job('update_worlds') and False:
+    if not scheduler.get_job('update_worlds'):
         @scheduler.task('interval', id='update_worlds', minutes=1)
         def update_worlds():
             with app.app_context():

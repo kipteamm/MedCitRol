@@ -1,0 +1,18 @@
+{% extends "/teacher/teacher_base.html" %}
+
+{% block content %}
+    <script src="{{ url_for('static', filename='js/taskInfo.js') }}"></script>
+
+    <a href="/teacher/{{ world.id }}/task/{{ task.id }}/edit">Edit task</a>
+    <a href="/teacher/{{ world.id }}/task/{{ task.id }}/duplicate">Duplicate task</a>
+    <a href="/teacher/{{ world.id }}/task/{{ task.id }}/delete">Delete task</a>
+
+    <div id="task-users"></div>
+
+    <script>
+        const taskUsers = document.getElementById("task-users");
+        const taskInfo = {{ task_info|tojson }};
+
+        loadUsers()
+    </script>
+{% endblock %}

@@ -2,13 +2,13 @@ from flask_login import current_user, login_required
 
 from flask import Blueprint, redirect, url_for, render_template, make_response, request
 
-from app.utils.serializers import task_serializer, user_serializer
+from app.utils.serializers import task_serializer, user_serializer, game_serializer, task_user_serializer
 from app.utils.functions import get_key
 from app.auth.models import UserWorlds, User
 from app.game.models import World
 from app.extensions import db
 
-from .models import Task, TaskField, TaskOption
+from .models import Task, TaskField, TaskOption, TaskUser
 
 import os
 
@@ -31,7 +31,7 @@ def game(world_id):
 
         return redirect(f'/teacher/{world_id}')
 
-    return render_template('teacher/game.html', world=world, players=[user_serializer(User.query.get(user_world.user_id)) for user_world in UserWorlds.query.filter_by(world_id=world_id).all()])
+    return render_template('teacher/game.html', world=game_serializer(world), players=[user_serializer(User.query.get(user_world.user_id)) for user_world in UserWorlds.query.filter_by(world_id=world_id).all()])
 
 
 @teacher_blueprint.route('/<world_id>/tasks')
@@ -44,7 +44,7 @@ def tasks(world_id):
     
     tasks = Task.query.filter_by(world_id=world.id).all()
 
-    return render_template('teacher/tasks.html', world=world, tasks=[task_serializer(task) for task in tasks])
+    return render_template('teacher/tasks.html', world=game_serializer(world), tasks=[task_serializer(task) for task in tasks])
 
 
 @teacher_blueprint.route('/<world_id>/task/create')
@@ -84,6 +84,22 @@ def edit_task(world_id, task_id):
     response.set_cookie('task', str(task.id))
 
     return response
+
+
+@teacher_blueprint.route('/<world_id>/task/<task_id>/info')
+@login_required
+def task_info(world_id, task_id):
+    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
+
+    if not world:
+        return redirect(url_for('game.home'))
+    
+    task = Task.query.get(task_id)
+
+    if not task:
+        return redirect(f'/teacher/{world_id}/tasks')
+    
+    return render_template('teacher/task_info.html', world=game_serializer(world), task=task_serializer(task), task_info=[task_user_serializer(task_user) for task_user in TaskUser.query.filter_by(task_id=task_id).order_by(TaskUser.user_id, TaskUser.percentage.desc()).all()])
 
 
 @teacher_blueprint.route('/<world_id>/task/<task_id>/delete')
