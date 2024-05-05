@@ -129,7 +129,7 @@ def create_app():
                         if character.hunger <= 0 and character.health > 0:
                             character.health -= 1
 
-                        if character.start_sleep and world.current_time.hour >= 6:
+                        if character.start_sleep and world.current_time.hour >= 6 and world.current_time.hour < 20:
                             hours_slept = (world.current_time - character.start_sleep).total_seconds() / 3600
 
                             if hours_slept > 8:

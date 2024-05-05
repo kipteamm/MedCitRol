@@ -9,7 +9,7 @@
     </form>
 
     <h3>Invite players</h3>
-    <button class="primary-btn" onclick="alert('Successfully copied.');navigator.clipboard.writeText('{{ request.host_url }}invite/{{ world.code }}');">Copy invite</button>
+    {{ request.host_url }}invite/{{ world.code }}
 
     <h3>Players</h3>
     {% for player in players %}
