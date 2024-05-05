@@ -19,8 +19,20 @@ function openBuildMenu(overWriteClose=false) {
     });
 }
 
+const buildInformation = document.getElementById('build-information');
+
 function selectItem(id) {
+    if (building === character.inventory.find(item => item.id === id) && buildings.length === 0) {
+        document.querySelector(`.inventory-item.active`)?.classList.remove("active");
+        buildInformation.style.display = 'none';
+
+        building = null;
+
+        return;
+    }
+    
     document.querySelector(`.inventory-item.active`)?.classList.remove("active");
+    buildInformation.style.display = 'block';
 
     const item = document.getElementById(id);
 
@@ -30,6 +42,8 @@ function selectItem(id) {
     building.updateAmount = (item, amount) => updateAmount(item, amount);
     building.initial_amount = building.amount;
 }
+
+const confirmBuildButton = document.getElementById('confirm-build-button');
 
 function updateAmount(item, amount) {
     item.amount += amount;

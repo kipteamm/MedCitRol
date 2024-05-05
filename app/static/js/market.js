@@ -124,6 +124,10 @@ async function sellItem() {
     if (existingMarketItem !== null) {
         marketContent.replaceChild(marketItemComponent(json), existingMarketItem);
     } else {
+        if (marketContent.querySelectorAll(".market-item").length === 0) {
+            marketContent.innerHTML = '';
+        }
+
         marketContent.appendChild(marketItemComponent(json));
     }
 }

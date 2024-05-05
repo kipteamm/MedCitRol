@@ -159,6 +159,10 @@ function handleClick(event, rightClick=false) {
             
             building.updateAmount(building, +1);
 
+            if (buildings.length === 0) {
+                confirmBuildButton.style.display = 'none';
+            }
+
             return drawTilesetImage(terrainTileSet, terrain[tileX][tileY], tileX, tileY, tileSize, 1);
         }
         if (building.amount == 0) return;
@@ -167,6 +171,8 @@ function handleClick(event, rightClick=false) {
         building.updateAmount(building, -1);
 
         buildings.push({pos_x: tileX, pos_y: tileY, tile_type: building.item_type, character: character.id});
+
+        confirmBuildButton.style.display = 'block';
 
         return drawTilesetImage(terrainTileSet, building.tile_index, tileX, tileY, tileSize, 1);
     }

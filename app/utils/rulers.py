@@ -656,11 +656,7 @@ class Ruler:
         return 0
     
     def _sell_globally(self) -> bool:
-        traderoutes = [traderoute for traderoute in json.loads(self._settlement.traderoutes) if type(traderoute) == str]
-
-        if random.randint(len(traderoutes), 3) != 3:
-            print("no traderoutes")
-            return False
+        traderoutes = json.loads(self._settlement.traderoutes)
         
         if random.randint(self._characteristics['tyranny'] - 1, 100) > random.randint(self._characteristics['social'] - 1, 100):
             inventory_items = InventoryItem.query.filter_by(settlement_id=self._settlement.id, character_id=None).all()
@@ -680,7 +676,7 @@ class Ruler:
 
                 self._settlement.taxes += price * amount
 
-            socketio.emit('alert', {'type' : 'ruler', 'message' : f"{random.choice(traderoutes)} purchased goods from your ruler."}, room=self._settlement.id) # type: ignore
+            socketio.emit('alert', {'type' : 'ruler', 'message' : f"{random.choice(['Antwerp', 'Gent', 'Brugge'])} purchased goods from your ruler."}, room=self._settlement.id) # type: ignore
             
             return True
         
@@ -709,7 +705,7 @@ class Ruler:
 
             socketio.emit("update_character", properties_serializer(character), room=self._settlement.id) # type: ignore
             
-        socketio.emit('alert', {'type' : 'ruler', 'message' : f"{random.choice(traderoutes)} purchased goods from the market."}, room=self._settlement.id) # type: ignore
+        socketio.emit('alert', {'type' : 'ruler', 'message' : f"A trade partner purchased goods from the market."}, room=self._settlement.id) # type: ignore
         
         return True
 

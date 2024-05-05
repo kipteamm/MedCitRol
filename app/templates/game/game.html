@@ -108,9 +108,16 @@
     <div class="build-panel" id="build-panel">
         <button class="primary-btn" onclick="cancelBuild()">Cancel</button>
         <h2>Your buildables</h2>
+        <p>
+            Click any of these items to place them.
+        </p>
         <div class="content"></div>
+        <p id="build-information" style="display: block;">
+            Left click to place.<br>
+            Right click to remove.
+        </p>
 
-        <button class="primary-btn" onclick="confirmBuild()">Confirm build</button>
+        <button class="primary-btn" onclick="confirmBuild()" style="display: none;" id="confirm-build-button">Confirm build</button>
 
         <h2>Purchase</h2>
         <div>
