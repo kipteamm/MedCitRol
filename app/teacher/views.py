@@ -34,6 +34,20 @@ def game(world_id):
     return render_template('teacher/game.html', world=game_serializer(world), players=[user_serializer(User.query.get(user_world.user_id)) for user_world in UserWorlds.query.filter_by(world_id=world_id).all()])
 
 
+@teacher_blueprint.route('/<world_id>/delete')
+@login_required
+def delete_game(world_id):
+    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
+
+    if not world:
+        return redirect(url_for('game.home'))
+    
+    db.session.delete(world)
+    db.session.commit()
+
+    return redirect(url_for('game.home'))
+    
+
 @teacher_blueprint.route('/<world_id>/tasks')
 @login_required
 def tasks(world_id):

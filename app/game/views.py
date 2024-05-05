@@ -51,9 +51,12 @@ def invite(invite):
     return redirect(f'/game/{world.id}')
 
 
-@game_blueprint.route('/game/create')
+@game_blueprint.route('/game/create/<psw>')
 @login_required
-def create_game():
+def create_game(psw):
+    if psw != "jogHq2Hndb":
+        return redirect(url_for('game.home'))
+
     world = World(user_id=current_user.id)
 
     db.session.add(world)
@@ -62,8 +65,7 @@ def create_game():
 
     db.session.commit()
 
-    return redirect(url_for('game.home'))
-
+    return redirect(f'/teacher/{world.id}')
 
 @game_blueprint.route('/game/<id>')
 @login_required

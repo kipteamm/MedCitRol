@@ -15,4 +15,7 @@
     {% for player in players %}
         <li>{{ player.email }}</li>
     {% endfor %}
+
+    <h3>Delete game</h3>
+    <button class="primary-btn" onclick="window.location.href='/teacher/{{ world.id }}/delete'">Delete</button>
 {% endblock %}
