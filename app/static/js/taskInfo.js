@@ -11,7 +11,7 @@ function taskUserEntryComponent(taskUser, first) {
     const wrapper = document.createElement("div");
 
     wrapper.classList.add(first? 'first' : 'other')
-    wrapper.innerHTML = `${taskUser.email} - ${taskUser.percentage}%${first? ` <a onclick="toggleMore('${taskUser.user_id}')">Previous attempts</a>`: ''}`
+    wrapper.innerHTML = `${taskUser.email} - ${taskUser.percentage}%${first? `&emsp;&emsp;<a onclick="toggleMore('${taskUser.user_id}')">Previous attempts</a>`: ''}`
 
     return wrapper;
 }
