@@ -137,7 +137,7 @@ def create_app():
                                 character.fatigue += 18
 
                             else:
-                                character.fatigue += 18 - 8 + hours_slept
+                                character.fatigue += 12 - 8 + hours_slept
 
                             character.start_sleep = None
 
