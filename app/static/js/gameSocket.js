@@ -101,7 +101,7 @@ socket.on('update_settlement', function(data) {
 })
 
 socket.on('new_settlement', function(data) {
-    world.settlements.push(data.colour);
+    world.settlements.push(data);
 })
 
 socket.on('merchant_leave', function() {

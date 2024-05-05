@@ -1,4 +1,4 @@
-from app.utils.serializers import tile_serializer
+from app.utils.serializers import tile_serializer, small_settlement_serializer
 from app.utils.functions import generateRandomCoordinates
 from app.utils.rulers import Ruler
 from app.game.models import World, Settlement, Character, Tile, Merchant
@@ -61,7 +61,7 @@ def _create_settlement(world: World, colour: str) -> Settlement:
 
     add_merchant(settlement.id, world.current_time, 8)
 
-    socketio.emit('new_settlement', {'colour' : colour}, room=world.id) # type: ignore
+    socketio.emit('new_settlement', small_settlement_serializer(settlement), room=world.id) # type: ignore
 
     return settlement
 

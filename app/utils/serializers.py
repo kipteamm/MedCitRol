@@ -13,7 +13,7 @@ def world_serializer(world: World) -> dict:
         'user_id' : world.id,
         'code' : world.code,
         'current_time' : world.get_world_time(),
-        'settlements' : ['cyan', 'lime', 'purple', 'red'][:Settlement.query.filter_by(world_id=world.id).count()],
+        'settlements' : [small_settlement_serializer(settlement) for settlement in Settlement.query.filter_by(world_id=world.id)],
     }
 
 
@@ -32,6 +32,14 @@ def settlement_serializer(settlement: Settlement) -> dict:
         'seed' : settlement.seed,
     }
 
+
+def small_settlement_serializer(settlement: Settlement) -> dict:
+    return {
+        'id' : settlement.id,
+        'name' : settlement.name,
+        'colour' : settlement.colour,
+        'citizens' : Character.query.filter_by(settlement_id=settlement.id).count(),
+    }
 
 
 def settlement_ruler_serializer(settlement_ruler: SettlementRuler) -> dict:

@@ -89,9 +89,9 @@ def game(id):
     return response
 
 
-@game_blueprint.route('/game/<id>/<colour>')
+@game_blueprint.route('/game/<id>/<settlement_id>')
 @login_required
-def settlement(id, colour):
+def settlement(id, settlement_id):
     user_world = UserWorlds.query.filter_by(user_id=current_user.id, world_id=id).first()
 
     if not user_world:
@@ -99,7 +99,7 @@ def settlement(id, colour):
     
     world = World.query.get(id)
 
-    settlement = Settlement.query.filter_by(world_id=world.id, colour=colour).first()
+    settlement = Settlement.query.filter_by(id=settlement_id, world_id=id).first()
 
     if not settlement or Character.query.filter_by(user_id=current_user.id, settlement_id=settlement.id).first():
         return redirect(f'/game/{id}')
