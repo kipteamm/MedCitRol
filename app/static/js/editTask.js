@@ -166,7 +166,7 @@ async function moveField(direction) {
 
     const response = await fetch(`/api/task/field/move`, {
         method: "PATCH",
-        body: JSON.stringify({field_id: fieldId, direction: direction}),
+        body: JSON.stringify({field_id: fieldId.slice(3), direction: direction}),
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `${getCookie('psk')}`,
@@ -204,7 +204,7 @@ async function moveField(direction) {
 async function duplicateField() {
     const fieldId = activeActions
 
-    const response = await fetch(`/api/task/field/${fieldId}/duplicate`, {
+    const response = await fetch(`/api/task/field/${fieldId.slice(3)}/duplicate`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -222,7 +222,7 @@ async function duplicateField() {
 async function deleteField() {
     const fieldId = activeActions
 
-    const response = await fetch(`/api/task/field/${fieldId}/delete`, {
+    const response = await fetch(`/api/task/field/${fieldId.slice(3)}/delete`, {
         method: "DELETE",
         headers: {
             'Content-Type': 'application/json',
@@ -234,7 +234,7 @@ async function deleteField() {
         return console.log(response, await response.json());
     }
 
-    const field = document.getElementById(`id-${fieldId}`);
+    const field = document.getElementById(fieldId);
     const nextSibling = field.nextElementSibling;
     const previousSibling = field.previousElementSibling
     
