@@ -234,14 +234,9 @@ class Ruler:
         taxes = random.randint(2, 3) if self._characteristics['tyranny'] > self._characteristics['social'] else 2
 
         for character in Character.query.filter_by(settlement_id=self._settlement.id).all():
-            awake = True
+            print(character.taxes > 0, not character.jailed, character.start_sleep == None, current_time.hour > 6)
 
-            if character.end_sleep and character.end_sleep + timedelta(hours=1) < current_time:
-                awake = False
-
-            print(character.taxes > 0, not character.jailed, character.start_sleep == None, awake)
-
-            if character.taxes > 0 and not character.jailed and character.start_sleep == None and awake:
+            if character.taxes > 0 and not character.jailed and character.start_sleep == None and current_time.hour > 6:
                 if "UPGRADE_JAIL_2" in self._actions:
                     character.jailed = True
                     character.jail_end = current_time + timedelta(hours=random.randint(12, 24) if self._characteristics['tyranny'] > self._characteristics['social'] else random.randint(6, 12))

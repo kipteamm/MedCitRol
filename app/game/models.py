@@ -142,7 +142,6 @@ class Character(db.Model):
     profession = db.Column(db.String(120))
     task_index = db.Column(db.Integer, default=0)
 
-    end_sleep = db.Column(DateTime(timezone=True), default=None)
     start_sleep = db.Column(DateTime(timezone=True), default=None)
 
     jailed = db.Column(db.Boolean, default=False)

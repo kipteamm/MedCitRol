@@ -92,13 +92,3 @@ class Properties:
         
         return "really happy"
     
-    def get_hours_of_sleep(self, current_hours: int) -> int:
-        hours = 16 - self._fatigue
-
-        if current_hours < 6:
-            hours -= (6 - current_hours)
-
-        if current_hours >= 6 and current_hours < 20:
-            hours = math.ceil(hours / 2)
-
-        return min(16, hours) if hours > 0 else random.randint(2, 5)

@@ -130,12 +130,19 @@ def create_app():
                         if character.hunger <= 0 and character.health > 0:
                             character.health -= 1
 
-                        if character.start_sleep and world.current_time >= character.end_sleep:
-                            character.fatigue += math.floor((character.end_sleep - character.start_sleep).total_seconds() / 3600) + 1
+                        if character.start_sleep and world.current_time.hour >= 6:
+                            hours_slept = (world.current_time - character.start_sleep).total_seconds() / 3600
+
+                            if hours_slept > 8:
+                                character.fatigue += 18
+
+                            else:
+                                character.fatigue += 18 - 8 + hours_slept
 
                             character.start_sleep = None
 
-                            character.health += 6
+                            if character.health < 18:
+                                character.health += 6
 
                         elif character.fatigue > 0:
                             character.fatigue -= 1

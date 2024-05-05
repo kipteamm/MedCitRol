@@ -392,22 +392,26 @@ def eat():
 def sleep():
     character = g.character
     world = World.query.get(character.world_id)
-    properties = Properties(character)
 
     if character.start_sleep:
-        if world.current_time > character.end_sleep:
-            character.fatigue += math.floor((character.end_sleep - character.start_sleep).total_seconds() / 3600) + 1
+        hours_slept = (world.current_time - character.start_sleep).total_seconds() / 3600
+
+        if hours_slept > 8:
+            character.fatigue += 18
 
         else:
-            character.fatigue += math.floor((world.current_time - character.start_sleep).total_seconds() / 3600) - 1
+            character.fatigue += 18 - 8 + hours_slept
 
         character.start_sleep = None
 
-        character.health += 6
+        if character.health < 18:
+            character.health += 6
 
+    elif world.current_time.hour < 20 and world.current_time.hour > 6:
+        return make_response({"error" : "You are not really feeling sleepy."}, 400)
+    
     else:
         character.start_sleep = world.current_time
-        character.end_sleep = world.current_time + timedelta(hours=properties.get_hours_of_sleep(world.current_time.hour))
     
     db.session.commit()
 
