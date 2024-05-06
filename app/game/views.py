@@ -1,6 +1,6 @@
 from flask_login import current_user, login_required
 
-from flask import Blueprint, render_template, redirect, url_for, make_response
+from flask import Blueprint, render_template, redirect, url_for, make_response, request
  
 from app.utils.serializers import world_serializer, settlement_serializer, character_serializer, tile_serializer, settlement_ruler_serializer
 from app.utils.functions import get_key
@@ -18,6 +18,11 @@ game_blueprint = Blueprint('game', __name__)
 @game_blueprint.route('/home')
 @login_required
 def home():
+    world_id = request.args.get('game')
+
+    if UserWorlds.query.filter_by(world_id=world_id).first():
+        return redirect(f'/game/{world_id}')
+
     worlds = []
 
     for world in current_user.worlds:
@@ -112,7 +117,6 @@ def settlement(id, settlement_id):
     return render_template('game/settlement.html', tiles=tiles, user_id=current_user.id, world=world_serializer(world), settlement=settlement_serializer(settlement), settlement_ruler=settlement_ruler_serializer(SettlementRuler.query.filter_by(settlement_id=settlement.id).first()))
 
 
-"""
 @game_blueprint.route('/ruler')
 @login_required
 def ruler():
@@ -126,4 +130,3 @@ def ruler():
         Ruler(ruler).work(current_time)
 
     return "<h1>yes</h1>"
-"""

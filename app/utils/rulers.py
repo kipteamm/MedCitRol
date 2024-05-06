@@ -664,7 +664,12 @@ class Ruler:
         if not json.loads(self._settlement.traderoutes):
             return False
         
-        if random.randint(self._characteristics['tyranny'] - 1, 100) > random.randint(self._characteristics['social'] - 1, 100):
+        market_items = MarketItem.query.filter(
+            Tile.query.filter_by(character_id=MarketItem.id, settlement_id=self._settlement.id, tile_type="market_stall").first() != None,
+            MarketItem.settlement_id == self._settlement.id
+        ).order_by(func.random()).all()
+
+        if not market_items:
             inventory_items = InventoryItem.query.filter_by(settlement_id=self._settlement.id, character_id=None).all()
 
             if not inventory_items:
@@ -685,15 +690,6 @@ class Ruler:
             socketio.emit('alert', {'type' : 'ruler', 'message' : f"{random.choice(['Antwerp', 'Gent', 'Brugge'])} purchased goods from your ruler."}, room=self._settlement.id) # type: ignore
             
             return True
-        
-        market_items = MarketItem.query.filter(
-            Tile.query.filter_by(character_id=MarketItem.id, settlement_id=self._settlement.id, tile_type="market_stall").first() != None,
-            MarketItem.settlement_id == self._settlement.id
-        ).order_by(func.random()).all()
-
-        if not market_items:
-            print("no global market items")
-            return False
             
         for i in range(random.randint(1, market_items.count())):
             market_item = market_items[i]
@@ -713,7 +709,7 @@ class Ruler:
             
         socketio.emit('alert', {'type' : 'ruler', 'message' : f"A trade partner purchased goods from the market."}, room=self._settlement.id) # type: ignore
         
-        return True
+        return True 
 
     def work(self, current_time: datetime) -> None:
         if self._ruler.last_action_date and self._ruler.last_action_date + timedelta(days=1) < current_time:

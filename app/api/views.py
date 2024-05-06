@@ -387,7 +387,10 @@ def eat():
         character.health += 8
 
     elif character.hunger > 28:
-        character.health -= 1
+        character.health -= 2
+
+    if character.health > 24:
+        character.health = min(character.health, 25)
     
     db.session.commit()
 
