@@ -22,7 +22,7 @@ body {
     transition: 0s;
 }
 .night.active {
-    opacity: .85;
+    opacity: .75;
 }
 
 .sleep-overlay {
