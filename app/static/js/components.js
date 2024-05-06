@@ -27,8 +27,6 @@ function taskComponent(task) {
     return wrapper;
 }
 
-let taskIndex = 1;
-
 function taskFieldcomponent(taskField) {
     const wrapper = document.createElement("div");
 
@@ -46,12 +44,9 @@ function taskFieldcomponent(taskField) {
     } else if (taskField.field_type === "image") {
         wrapper.appendChild(imageComponent(taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/assets/notfound.webp"))
     } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes" || taskField.field_type === "connect") {
-        taskIndex++
-
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
-
-        wrapper.innerHTML += `<span>(vraag ${taskIndex})</span><div class="grid"></div>`
+        wrapper.innerHTML += `<div class="grid"></div>`
 
         const content = wrapper.querySelector(".grid")
 
@@ -87,10 +82,6 @@ function taskFieldcomponent(taskField) {
             wrapper.appendChild(connectAswerComponent(taskField.options, taskField.id))
         }
     } else if (taskField.field_type === "order") {
-        taskIndex++
-
-        wrapper.innerHTML = `<span>(vraag ${taskIndex})</span>`
-
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
 
