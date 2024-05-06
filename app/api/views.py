@@ -860,8 +860,6 @@ def update_answers():
             for connection in answer['content']:
                 connection = connection.split("%")
 
-                print(answer['content'], connection)
-
                 TaskOption.query.get(connection[0]).connected = connection[1]
                 TaskOption.query.get(connection[1]).connected = connection[0]
 

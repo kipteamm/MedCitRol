@@ -11,7 +11,7 @@ import random
 import json
 
 
-MIN_CHARACTERS = 3
+MIN_CHARACTERS = 8
 
 
 with open('app/static/data/names.json') as names_file:

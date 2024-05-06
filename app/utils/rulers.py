@@ -124,8 +124,6 @@ class Ruler:
             character_id=None
         ).scalar() or 0
 
-        print(stored_resources_sum)
-        
         value += stored_resources_sum
 
         upgrade_fort_values = sum(2 ** i for i in range(4) if f"UPGRADE_FORT_{i + 1}" in self._actions)
@@ -133,19 +131,13 @@ class Ruler:
         upgrade_bourse_values = sum(2 ** i for i in range(4) if f"UPGRADE_BOURSE_{i + 2}" in self._actions)
         upgrade_jail_values = sum(2 ** i for i in range(4) if f"UPGRADE_JAIL_{i + 2}" in self._actions)
 
-        print(upgrade_fort_values + upgrade_church_values + upgrade_bourse_values + upgrade_jail_values)
-
         value += upgrade_fort_values + upgrade_church_values + upgrade_bourse_values + upgrade_jail_values
 
         warehouse_count = Tile.query.filter_by(settlement_id=self._settlement.id, tile_type="warehouse").count()
 
-        print(warehouse_count)
-
         value += warehouse_count
 
         traderoutes = len(json.loads(self._settlement.traderoutes))
-
-        print(traderoutes)
 
         value += traderoutes * 2
 
