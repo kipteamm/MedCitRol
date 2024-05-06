@@ -194,26 +194,29 @@ def set_profession():
 
     character.profession = profession
 
+    inventory = Inventory(character.settlement_id, None, character.id)
+
     if profession == 'farmer':
-        Inventory(character.settlement_id, None, character.id).add_item('farm_land', 9)
+        inventory.add_item('farm_land', 9)
+        inventory.add_item('rye', 35)
 
     elif profession == 'miller':
-        Inventory(character.settlement_id, None, character.id).add_item('windmill', 1)
+        inventory.add_item('windmill', 1)
 
     elif profession == 'baker':
-        Inventory(character.settlement_id, None, character.id).add_item('bakery', 1)
+        inventory.add_item('bakery', 1)
 
     elif not Settlement.query.get(g.settlement_id).value_economy > 100:
         return make_response({"error" : "Invalid profession."}, 400)
 
     elif profession == 'merchant':
-        Inventory(character.settlement_id, None, character.id).add_item('merchant_stall', 1)
+        inventory.add_item('merchant_stall', 1)
 
     elif profession == 'weaver':
-        Inventory(character.settlement_id, None, character.id).add_item('weaver', 1)
+        inventory.add_item('weaver', 1)
 
     elif profession == 'goldsmith':
-        Inventory(character.settlement_id, None, character.id).add_item('goldsmith', 1)
+        inventory.add_item('goldsmith', 1)
 
     else:
         return make_response({"error" : "Invalid profession."}, 400)
