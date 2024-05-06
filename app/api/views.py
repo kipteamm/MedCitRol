@@ -111,7 +111,7 @@ def submit_task():
         return make_response({"error" : "Invalid answers."}, 400)
     
     correct, wrong = 0, 0
-    
+
     for answer in json:
         task_field = TaskField.query.get(answer['field_id'])
 
@@ -128,7 +128,7 @@ def submit_task():
 
         if task_field.field_type == "connect":
             for connection in answer['content']:
-                connection = connection.split("-")
+                connection = connection.split("%")
 
                 if TaskOption.query.filter_by(id=connection[0], connected=connection[1]).first():
                     correct += 1
