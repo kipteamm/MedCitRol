@@ -1,4 +1,4 @@
-from app.game.models import AccessKey, Tile, Merchant
+from app.game.models import AccessKey, Tile
 from app.extensions import db
 
 from datetime import datetime, timezone, timedelta
@@ -80,6 +80,12 @@ def generateRandomCoordinates(center_x: int, center_y: int, deviation: int, empt
 def get_merchandise(merchant_type: str) -> dict[str, int]:
     if merchant_type == "grain":
         return {"rye" : 2, "rye_flour" : 3, "bread" : 5} 
+    
+    if merchant_type == "miscellaneous":
+        return {"clothing" : 8, "jewelry" : 12}
+    
+    if merchant_type == "all":
+        return {"rye" : 2, "rye_flour" : 3, "bread" : 5, "clothing" : 8, "jewelry" : 12}
     
     if merchant_type == "buildable":
         return {"market_stall" : 10}

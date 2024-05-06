@@ -203,14 +203,11 @@ def set_profession():
     elif profession == 'baker':
         Inventory(character.settlement_id, None, character.id).add_item('bakery', 1)
 
+    elif not Settlement.query.get(g.settlement_id).value_economy > 100:
+        return make_response({"error" : "Invalid profession."}, 400)
+
     elif profession == 'merchant':
         Inventory(character.settlement_id, None, character.id).add_item('merchant_stall', 1)
-
-    elif profession == 'shoemaker':
-        Inventory(character.settlement_id, None, character.id).add_item('shoemaker', 1)
-    
-    elif profession == 'tanner':
-        Inventory(character.settlement_id, None, character.id).add_item('tanner', 1)
 
     elif profession == 'weaver':
         Inventory(character.settlement_id, None, character.id).add_item('weaver', 1)
@@ -408,7 +405,7 @@ def sleep():
     if character.start_sleep:
         hours_slept = (world.current_time - character.start_sleep).total_seconds() / 3600
 
-        if hours_slept >= 7:
+        if hours_slept >= 6:
             character.fatigue += 18
 
         else:
@@ -421,7 +418,7 @@ def sleep():
         if character.health < 18:
             character.health += 6
 
-    elif world.current_time.hour < 22 and world.current_time.hour > 5:
+    elif world.current_time.hour < 20 and world.current_time.hour > 5:
         return make_response({"error" : "You are not really feeling sleepy."}, 400)
     
     else:
@@ -524,7 +521,6 @@ def get_merchant_market():
         return make_response({"error" : "No merchant is currently in town."}, 400)
 
     market_data = merchant_serializer(merchant)
-
 
     return make_response(market_data, 200)
 

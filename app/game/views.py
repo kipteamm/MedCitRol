@@ -112,6 +112,7 @@ def settlement(id, settlement_id):
     return render_template('game/settlement.html', tiles=tiles, user_id=current_user.id, world=world_serializer(world), settlement=settlement_serializer(settlement), settlement_ruler=settlement_ruler_serializer(SettlementRuler.query.filter_by(settlement_id=settlement.id).first()))
 
 
+"""
 @game_blueprint.route('/ruler')
 @login_required
 def ruler():
@@ -125,3 +126,4 @@ def ruler():
         Ruler(ruler).work(current_time)
 
     return "<h1>yes</h1>"
+"""

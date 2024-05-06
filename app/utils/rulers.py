@@ -1,6 +1,7 @@
 from app.utils.serializers import settlement_ruler_serializer, properties_serializer, tile_serializer, settlement_serializer
 from app.utils.inventory import Inventory
-from app.game.models import Settlement, SettlementRuler, TraderouteRequest, Character, Tile, Warehouse, InventoryItem, MarketItem
+from app.utils.functions import get_merchandise
+from app.game.models import Settlement, SettlementRuler, TraderouteRequest, Character, Tile, Warehouse, InventoryItem, MarketItem, Merchant
 from app.extensions import db, socketio
 
 from sqlalchemy import func, or_
@@ -112,7 +113,7 @@ class Ruler:
 
         socketio.emit('update_ruler', settlement_ruler_serializer(ruler), room=settlement_id) # type: ignore
 
-    def evaluate_economy(self) -> int:
+    def _evaluate_economy(self, current_time) -> int:
         value = self._settlement.taxes
 
         healthy_characters = Character.query.filter(Character.health > 15).count()
@@ -145,11 +146,29 @@ class Ruler:
 
         db.session.commit()
 
-        if value > 100:
+        if value > 100 and (self._settlement.citizens == False or not self._settlement.citizens):
+            print('citizen status up')
+
             for character in Character.query.filter_by(settlement_id=self._settlement.id).all():
                 character.profession = None
 
-            socketio.emit('alert', {'type' : 'ruler', 'message' : "You have progressed in level."}, room=self._settlement.id) # type: ignore
+            merchant = Merchant.query.filter_by(settlement_id=character.settlement_id).first()
+
+            if not merchant:
+                merchant = Merchant(settlement_id=self._settlement.id, name="Ursula", surname="Thorne", merchant_type="miscellaneous", end_date=(current_time + timedelta(weeks=3)))
+
+                db.session.add(merchant)
+                db.session.commit()
+
+                socketio.emit('merchant_visit', room=self._settlement.id) # type: ignore
+
+            else:
+                merchant.merchant_type = "miscellaneous"
+                merchant.end_date = current_time + timedelta(weeks=3)
+
+            socketio.emit('alert', {'type' : 'ruler', 'message' : "You have received citizen status."}, room=self._settlement.id) # type: ignore
+
+            self._settlement.citizens = True
             
             db.session.commit()
 
@@ -634,16 +653,12 @@ class Ruler:
         return True
     
     def _get_value(self, item_type: str) -> int:
-        if item_type == "rye":
-            return 1
+        merchandise = get_merchandise("all")
+
+        if not item_type in merchandise:
+            return 0
         
-        if item_type == "rye_flour":
-            return 2
-        
-        if item_type == "bread":
-            return 4
-        
-        return 0
+        return merchandise[item_type]
     
     def _sell_globally(self) -> bool:
         if not json.loads(self._settlement.traderoutes):
@@ -713,6 +728,11 @@ class Ruler:
 
             return
         
+        if action == Action.COLLECT_TAXES and random.randint(1, 3 if self._characteristics['social'] > self._characteristics['tyranny'] else 4) != 2:
+            print("no taxes")
+
+            return
+        
         print(f"{self._ruler.name} {self._ruler.surname} started working on {action.name}")
         
         success = False
@@ -724,7 +744,7 @@ class Ruler:
             success = self._collect_taxes(current_time)
 
         if action == Action.EVALUATE_ECONOMY:
-            self.evaluate_economy()
+            self._evaluate_economy(current_time)
 
             success = True
 

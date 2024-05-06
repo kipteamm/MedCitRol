@@ -81,6 +81,7 @@ class Settlement(db.Model):
 
     taxes = db.Column(db.Integer, default=0)
     value_economy = db.Column(db.Integer, default=0)
+    citizens = db.Column(db.Boolean, default=False)
 
     traderoutes = db.Column(db.Text, default="[]")
 

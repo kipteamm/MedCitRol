@@ -1,7 +1,10 @@
 tile_index_map = {
     "claimed" : 1,
+    "merchant_stall" : 34,
     "warehouse" : 37,
     "market_stall" : 51,
+    "weaver" : 62,
+    "goldsmith" : 64,
     "windmill" : 66,
     "windmill-0" : 67,
     "windmill-7" : 68,

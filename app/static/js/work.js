@@ -2,6 +2,8 @@ const workContent = document.getElementById('work-content');
 const workPanel = document.getElementById('work-panel');
 const workPopup = document.getElementById('work-popup');
 
+const economyValue = 100;
+
 let activeTask = null;
 let activeTaskJson = null;
 
@@ -12,7 +14,7 @@ function work() {
     if (character.profession === "unemployed") {
         workPanel.classList.add("active");
 
-        if (settlement.value < 200) return chooseProfession(3);
+        if (settlement.value < economyValue) return chooseProfession(3);
 
         return chooseProfession(8);
     }
@@ -20,7 +22,7 @@ function work() {
     const shouldBuild = character.inventory.some(item => item.buildable === true && item.amount > 0);
 
     if (!shouldBuild) {
-        if (character.profession === 'farmer') return loadTask();
+        if (character.profession === 'farmer' || character.profession === 'goldsmith' || character.profession === 'merchant' || character.profession === 'weaver') return loadTask();
         if (character.profession === 'miller' && character.inventory.some(item => item.item_type === "rye" && item.amount > 3)) return loadTask();
         if (character.profession === 'baker' && character.inventory.some(item => item.item_type === "rye_flour" && item.amount > 12)) return loadTask();
     }
@@ -55,7 +57,7 @@ async function loadTask() {
 
     if (!response.ok) {
         if (json.error === "You have no profession.") {
-            if (settlement.value < 200) return chooseProfession(3);
+            if (settlement.value < economyValue) return chooseProfession(3);
 
             return chooseProfession(6);
         }
@@ -89,10 +91,10 @@ function stopWorking() {
 }
 
 // professions
-let professions = ["Farmer", "Miller", "Baker", "Merchant", "Weaver", "Goldsmith"]
+let professions = ["Baker", "Miller", "Farmer", "Merchant", "Weaver", "Goldsmith"]
 
 function chooseProfession(level) {
-    const availableProfessions = professions.slice(0, level);
+    const availableProfessions = professions.slice(0, level).reverse();
 
     workContent.classList.add("profession-selector")
     

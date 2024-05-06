@@ -129,12 +129,10 @@ def create_app():
                         if character.hunger <= 0 and character.health > 0:
                             character.health -= 1
 
-                        if character.start_sleep and world.current_time.hour >= 5 and world.current_time.hour < 22:
+                        if character.start_sleep and world.current_time.hour >= 5:
                             hours_slept = (world.current_time - character.start_sleep).total_seconds() / 3600
 
-                            print(hours_slept)
-
-                            if hours_slept >= 7:
+                            if hours_slept >= 6:
                                 character.fatigue += 18
 
                             else:
@@ -176,8 +174,8 @@ def create_app():
 
                         socketio.emit("merchant_leave", room=character.settlement_id) # type: ignore
 
-                    elif not merchant and random.randint(1, 24) == 13:
-                        add_merchant(character.settlement_id, world.current_time, random.randint(2, 6))
+                    elif not merchant and random.randint(1, 3) == 2:
+                        add_merchant(character.settlement_id, world.current_time, random.randint(1, 2), True)
 
                     settlement = Settlement.query.filter(Settlement.id == character.settlement_id, Settlement.revolution == True, Settlement.start_revolution + timedelta(days=1) <= world.current_time).first()
 

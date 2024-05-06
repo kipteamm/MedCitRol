@@ -152,10 +152,12 @@ class Profession:
         if not inventory_item:
             return
         
-        amount = min(warehouse.capacity + random.randint(1, 3), 100)
+        amount = min(warehouse.capacity + random.randint(2, 6), 100)
 
         inventory_item.amount += amount
         warehouse.capacity += amount
+        
+        self._character.pennies += 12
 
         db.session.commit()
 
@@ -173,7 +175,7 @@ class Profession:
 
         inventory = Inventory(self._character.settlement_id, None, self._character.id)
         
-        amount = random.randint(1, 3)
+        amount = random.randint(1, 4)
 
         inventory.add_item("clothing", amount)
 
@@ -191,7 +193,7 @@ class Profession:
 
         inventory = Inventory(self._character.settlement_id, None, self._character.id)
         
-        amount = random.randint(0, 1)
+        amount = random.randint(1, 2)
 
         if amount > 0:
             inventory.add_item("jewelry", amount)

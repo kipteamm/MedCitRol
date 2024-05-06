@@ -112,6 +112,8 @@ socket.on('merchant_visit', function() {
     document.getElementById("merchant-market-btn").style.display = "inline-block";
 
     sendAlert("success", "A merchant is in town.")
+
+    settlement.merchant = true;
 })
 
 socket.on('close_eyes', function(data) {

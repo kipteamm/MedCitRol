@@ -37,8 +37,13 @@ def _get_random_city_name():
     return random.choice(CITY_NAMES_DATA)
 
 
-def add_merchant(settlement_id: int, current_time: datetime, weeks: int) -> None:
-    merchant = Merchant(settlement_id=settlement_id, name=_get_random_name(), surname=_get_random_surname(), merchant_type="grain", end_date=(current_time + timedelta(weeks=weeks)))
+def add_merchant(settlement_id: int, current_time: datetime, weeks: int, allow_miscellaneous: bool=False) -> None:
+    merchant_type = "grain"
+    
+    if allow_miscellaneous and random.randint(1, 2) == 1:
+        merchant_type = "miscellaneous"
+
+    merchant = Merchant(settlement_id=settlement_id, name=_get_random_name(), surname=_get_random_surname(), merchant_type=merchant_type, end_date=(current_time + timedelta(weeks=weeks)))
 
     db.session.add(merchant)
     db.session.commit()
@@ -59,7 +64,7 @@ def _create_settlement(world: World, colour: str) -> Settlement:
     db.session.add(tile)
     db.session.commit()
 
-    add_merchant(settlement.id, world.current_time, 8)
+    add_merchant(settlement.id, world.current_time, 8, False)
 
     socketio.emit('new_settlement', small_settlement_serializer(settlement), room=world.id) # type: ignore
 

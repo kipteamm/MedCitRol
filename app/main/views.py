@@ -15,7 +15,7 @@ main_blueprint = Blueprint('main', __name__)
 @main_blueprint.route('/')
 def index():
     return redirect('/home')
-    return render_template('main/index.html')
+    #return render_template('main/index.html')
 
 
 @main_blueprint.route('/help')
@@ -23,6 +23,7 @@ def help():
     return render_template('main/help.html')
 
 
+"""
 @main_blueprint.route('/reset')
 def reset():
     Task.query.delete()
@@ -45,6 +46,7 @@ def reset():
     db.session.commit()
 
     return redirect('/')
+"""
 
 
 @main_blueprint.route('/media/tasks/<path:filename>')
