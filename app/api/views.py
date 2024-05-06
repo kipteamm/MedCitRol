@@ -408,18 +408,20 @@ def sleep():
     if character.start_sleep:
         hours_slept = (world.current_time - character.start_sleep).total_seconds() / 3600
 
-        if hours_slept > 8:
+        if hours_slept >= 7:
             character.fatigue += 18
 
         else:
-            character.fatigue += 12 - 8 + hours_slept
+            character.fatigue += hours_slept
+
+            socketio.emit("alert", {'id' : character.id, 'type' : "info", 'message' : f"You did not sleep enough ({int(7 - hours_slept)} hours too little)."})
 
         character.start_sleep = None
 
         if character.health < 18:
             character.health += 6
 
-    elif world.current_time.hour < 20 and world.current_time.hour > 6:
+    elif world.current_time.hour < 22 and world.current_time.hour > 5:
         return make_response({"error" : "You are not really feeling sleepy."}, 400)
     
     else:

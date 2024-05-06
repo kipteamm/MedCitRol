@@ -145,7 +145,7 @@ class Ruler:
 
         db.session.commit()
 
-        if value > 200:
+        if value > 100:
             for character in Character.query.filter_by(settlement_id=self._settlement.id).all():
                 character.profession = None
 
@@ -627,9 +627,7 @@ class Ruler:
             return False
         
         for character in needing:
-            amount = random.randint(1 if self._characteristics['tyranny'] + self._characteristics['military'] + self._characteristics['economy'] < self._characteristics['social'] + self._characteristics['religion'] else 2, 3) 
-
-            Inventory(self._settlement.id, None, character.id).add_item('bread', amount)
+            Inventory(self._settlement.id, None, character.id).add_item('bread', 1)
 
             socketio.emit("alert", {"id" : character.id, "type" : "ruler", "message" : "Your ruler came to give you some food."}, room=self._settlement.id) # type: ignore
 
@@ -648,7 +646,8 @@ class Ruler:
         return 0
     
     def _sell_globally(self) -> bool:
-        traderoutes = json.loads(self._settlement.traderoutes)
+        if not json.loads(self._settlement.traderoutes):
+            return False
         
         if random.randint(self._characteristics['tyranny'] - 1, 100) > random.randint(self._characteristics['social'] - 1, 100):
             inventory_items = InventoryItem.query.filter_by(settlement_id=self._settlement.id, character_id=None).all()
@@ -702,11 +701,6 @@ class Ruler:
         return True
 
     def work(self, current_time: datetime) -> None:
-        if random.randint(1, 4) != 2 and False:
-            print(f"not doing anything")
-
-            return None
-        
         if self._ruler.last_action_date and self._ruler.last_action_date + timedelta(days=1) < current_time:
             print("inactivity taxes save")
 

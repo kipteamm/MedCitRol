@@ -42,6 +42,8 @@ async function sleep() {
 
         return;
     }
+
+    return updateSleepTimer();
 }
 
 async function payTaxes() {
