@@ -24,11 +24,10 @@ with open('app/static/data/city_names.json') as city_names_file:
     CITY_NAMES_DATA = json.load(city_names_file)
 
 
-# Function to get a random name
 def _get_random_name():
     return random.choice(NAMES_DATA)
 
-# Function to get a random surname
+
 def _get_random_surname():
     return random.choice(SURNAMES_DATA)
 

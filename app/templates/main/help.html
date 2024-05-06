@@ -1,5 +1,62 @@
-{% extends "/teacher/teacher_base.html" %}
+{% extends "/main/main_base.html" %}
 
 {% block content %}
-    Coming soon
+
+<h3>Goed om weten…</h3>
+<p>De computer bepaalt je dag en nacht. Als je scherm zichtbaar is, is het dag. Als het scherm zwart is, is het nacht.</p>
+<p>Bovenaan links zie je:</p>
+<ul>
+  <li>Hoe hongerig je bent (je moet op tijd brood kopen en eten want anders gaat je fitheid omlaag) – druk op ‘eat’</li>
+  <li>Hoe moe je je voelt (je moet op tijd gaan slapen) – druk op ‘sleep’</li>
+  <li>Hoe fit (gezond) je bent</li>
+  <li>Hoe gelukkig je bent (als je bijvoorbeeld in de gevangenis zit dan ben je minder gelukkig)</li>
+  <li>Hoeveel geld je hebt in penningen (dit heb je bijvoorbeeld nodig om je grondstoffen te kopen en belastingen te betalen)</li>
+</ul>
+<p>De knoppen ‘eat’, ‘sleep’, ‘work’</p>
+<p>Je kan op elk moment eten, slapen of werken. Je kan bijvoorbeeld ook ’s nachts werken maar dan ga je vermoeider en minder fit zijn overdag.</p>
+<p>Druk op ‘eat’ als je bijvoorbeeld ‘hungry’, ‘very hungry’ of ‘starving’ bent (bovenaan links)</p>
+<p>Druk op ‘sleep’ als je bijvoorbeeld ‘tired’ of ‘sleep deprived’ bent (bovenaan links)</p>
+<p>Druk op ‘work’ als je taken wil maken om opbrengsten te krijgen uit je beroep</p>
+
+<h3>Kies je beroep en start</h3>
+<p><strong>Farmer (Landbouwer):</strong> je maakt ‘rye’ (graan)</p>
+<p><strong>Miller (Molenaar):</strong> van de ‘rye’ maak je ‘rye_flour’ (bloem)</p>
+<p><strong>Baker (Bakker):</strong> van de ‘rye_flour’ maak je ‘bread’ (brood)</p>
+
+<h4>Farmer</h4>
+<p>Eerst leg je je velden, dan zal er vanzelf graan op beginnen groeien. Het graan heeft meerdere dagen nodig om te groeien. In die periode heb je geen opbrengsten. Je zal daarna wel een grote hoeveelheid in één keer kunnen oogsten.</p>
+<ul>
+  <li>Druk op ‘Build’ onderaan het scherm om je velden te ‘bouwen’ en selecteer ‘Farmland’</li>
+  <li>Ga naar een plekje op het scherm dat je leuk vindt en leg je 9 velden aan door met de muis te klikken</li>
+  <li>Ga terug naar het kadertje van ‘Build’ en doe ‘confirm build’</li>
+  <li>Elke keer je een taak maakt, gaat je ‘rye’ groeien</li>
+</ul>
+
+<h4>Miller</h4>
+<p>Je hebt snel opbrengsten, maar je gaat eerst je molen moeten bouwen. Je meel zal gebruikt worden door de bakker die brood gaat maken om mensen levend te houden.</p>
+<ul>
+  <li>Druk op ‘Build’ onderaan het scherm en kies de molen</li>
+  <li>Ga naar een leuk plekje op je scherm, klik op de muis en bouw daar je molen</li>
+  <li>Ga naar ‘Market’</li>
+  <li>Op de ‘Local Market’ (jullie klasgroepje) is nog geen ‘rye’, want jullie Farmer is die nog aan het verbouwen</li>
+  <li>Koop voorlopig je graan bij de ‘Merchant’ (die mogelijk een hogere prijs zal hebben in de toekomst dan je eigen farmer)</li>
+  <li>Als je een taak uitvoert, produceer je ‘rye_flour’ uit de ‘rye’ die je net gekocht hebt</li>
+  <li>Deze ‘rye flour’ kan je op de ‘Local Market’ verkopen tegen een prijs die je zelf bepaalt. De bakker gaat je bloem nodig hebben om zijn brood te bakken…</li>
+</ul>
+
+<h4>Baker</h4>
+<p>Je hebt snel opbrengsten maar je gaat eerst je bakkerij moeten bouwen. Iedereen moet je brood eten of hun gezondheid zal achteruit gaan…</p>
+<ul>
+  <li>Druk op ‘Build’ onderaan het scherm en kies de bakkerij</li>
+  <li>Ga naar een leuk plekje op je scherm, klik op de muis en bouw daar je bakkerij</li>
+  <li>Ga naar ‘Market’</li>
+  <li>Op de ‘Local Market’ (jullie klasgroepje) is in het begin nog geen ‘rye_flour’, die jij nodig hebt om het brood te maken, want de Miller moet eerst ‘rye_flour’ produceren</li>
+  <li>Je kan je bloem eerst kopen bij de ‘Merchant’ (die mogelijk een hogere prijs zal hebben in de toekomst dan je eigen Miller)</li>
+  <li>Als je een taak uitvoert, bak je uit de ‘rye_flour’ die je net gekocht hebt een brood</li>
+  <li>Dit ‘bread’ kan je op de ‘Local Market’ verkopen tegen een prijs die je zelf bepaalt.</li>
+</ul>
+
+<h3>Doel</h3>
+<p>Probeer een lokale economie op te starten zodat je groeit van een dorp naar een Middeleeuwse stad.</p>
+<p>Je Heerser kan de persoonlijkheid hebben van een vredelievende heerser tot die van een tiran. Je zal je aan deze persoonlijkheid moeten aanpassen. Afhankelijk van zijn persoonlijkheid zal je Heerser veel belastingen ophalen voor prestigieuze gebouwen zoals een kasteel, of is je Heerser net heel zuinig met het geld. Hij kan je snel naar de gevangenis laten gaan, of toleranter zijn. Als jullie vaak in de gevangenis terecht komen, broeit er misschien revolutie…</p>
 {% endblock %}

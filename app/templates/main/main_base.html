@@ -6,6 +6,7 @@
 
     <title>Home</title>
 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/basics.css') }}">
 
     <script src="{{ url_for('static', filename='js/basics.js') }}"></script>
@@ -23,6 +24,8 @@
 
     <div class="alert" id="alert"></div>
 
-    {% block content %}{% endblock %}
+    <div class="main-wrapper">
+        {% block content %}{% endblock %}
+    </div>
 </body>
 </html>
