@@ -79,7 +79,14 @@ def task():
     task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
     
     if not task:
-        return make_response({"error": "No task found."}, 404)
+        character.task_index = 0
+
+        db.session.commit()
+
+        task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
+
+        if not task:
+            return make_response({"error": "No task found."}, 404)
 
     return make_response(task_serializer(task), 200)
 

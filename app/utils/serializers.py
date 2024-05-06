@@ -4,6 +4,7 @@ from app.utils.functions import get_merchandise
 from app.utils.tiles import get_tile_index
 from app.game.models import World, Settlement, SettlementRuler, Character, Tile, InventoryItem, MarketItem, Merchant
 from app.auth.models import User, UserWorlds
+from app.extensions import db
 
 import json
 
@@ -182,6 +183,10 @@ def task_serializer(task: Task, include_answers: bool=False) -> dict:
 
     else:
         name = "Unnamed"
+
+    finished_users_count = db.session.query(db.func.count(db.func.distinct(TaskUser.user_id))) \
+        .filter(TaskUser.task_id == task.id, TaskUser.percentage >= 80) \
+        .scalar()
     
     return {
         'id' : task.id,
@@ -189,7 +194,7 @@ def task_serializer(task: Task, include_answers: bool=False) -> dict:
         'index' : task.index,
         'field_index' : task.field_index,
         'name' : name,
-        'finished' : TaskUser.query.filter(TaskUser.task_id == task.id, TaskUser.percentage >= 80).count(),
+        'finished' : finished_users_count,
         'fields' : [task_field_serializer(task_field, include_answers) for task_field in TaskField.query.filter_by(task_id=task.id).order_by(TaskField.field_index)]
     }
 
