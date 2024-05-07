@@ -1,8 +1,9 @@
 const buildPanel = document.getElementById('build-panel');
 
 function openBuildMenu(overWriteClose=false) {
-    closeMarket()
-    closeWorkPopup()
+    closeMarket();
+    closeWorkPopup();
+    toggleMap(true);
 
     if (!overWriteClose && buildPanel.classList.contains("active")) return cancelBuild();
 

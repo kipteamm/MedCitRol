@@ -24,6 +24,7 @@ function switchMarket(marketType) {
 async function openMarket() {
     cancelBuild();
     closeWorkPopup();
+    toggleMap(true);
 
     if (market === "settlement" || (market === "world" && tiles.some(tile => tile.tile_type === "market_stall" && tile.character_id === character.id))) {
         marketSell.style.display = "block";

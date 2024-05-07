@@ -1,6 +1,15 @@
 const globalMap = document.getElementById('global-map');
 
-function toggleMap() {
+function toggleMap(forceRemove=false) {
+    cancelBuild();
+    closeWorkPopup();
+
+    if (forceRemove) {
+        globalMap.classList.remove('active');
+
+        return;
+    }
+
     globalMap.classList.toggle('active');
 }
 

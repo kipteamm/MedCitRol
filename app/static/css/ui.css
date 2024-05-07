@@ -409,6 +409,7 @@ canvas#map {
     transition: right 0.3s ease;
     color: var(--primary-font-clr);
     padding: 12.5px;
+    border-radius: 12.5px 0px 0px 12.5px;
 }
 .build-panel.active {
     right: 0;
@@ -433,6 +434,7 @@ canvas#map {
     background-color: var(--game-tertiary-bg);
     color: var(--primary-font-clr);
     padding: 12.5px;
+    border-radius: 12.5px 0px 0px 12.5px;
 }
 
 .information.active {
