@@ -123,7 +123,25 @@ def _update_character(character: Character, world: World):
 
     else:
         return
+    
+    if character.start_sleep and world.current_time.hour >= 5 and world.current_time.hour < 20:
+        hours_slept = min((world.current_time - character.start_sleep).total_seconds() / 3600, 9)
 
+        if hours_slept >= 6:
+            character.fatigue += 18
+
+        else:
+            character.fatigue += hours_slept
+
+            socketio.emit("alert", {'id' : character.id, 'type' : "info", 'message' : f"You did not sleep enough ({int(7 - hours_slept)} hours too little)."})
+
+        character.start_sleep = None
+
+        if character.health < 18:
+            character.health += 6
+
+        hours_passed -= hours_slept
+            
     if character.hunger > 0:
         character.hunger -= min(hours_passed, 16)
 
