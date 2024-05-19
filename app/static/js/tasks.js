@@ -61,6 +61,9 @@ function selectOption(fieldId, optionId) {
 
     if (isMultipleChoice && answer.content.length > 0) {
         const previousOptionId = answer.content[0];
+
+        if (previousOptionId === optionId) return;
+
         answer.content = [optionId];
 
         const previousOption = document.getElementById(`id-${previousOptionId}`)

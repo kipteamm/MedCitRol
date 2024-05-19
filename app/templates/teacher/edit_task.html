@@ -35,6 +35,10 @@
         <h2>Answers</h2>
             
         <button onclick="updateAnswers('{{ task.id }}')">Update answers</button>
+
+        <h2>Preview</h2>
+
+        <button onclick="window.open('/task/{{ task.id }}')">Preview</button>
     </div>
 
     <script>
