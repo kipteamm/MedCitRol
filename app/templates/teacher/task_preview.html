@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Teacher</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tasks.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/basics.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css') }}">
+
+    <script src="{{ url_for('static', filename='js/tasks.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/basics.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components.js') }}"></script>
+
+    <!-- Not custom JS-->
+    <script src="https://kit.fontawesome.com/6996113341.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='/teacher/{{ world.id }}/task/{{ task.id }}/edit'">Back</button>
+
+    <div class="work-content">
+        <div class="task" id="task"></div>
+
+        <button>Submit</button>
+    </div>
+
+    <script>
+        const task = document.getElementById("task");
+        let activeTaskJson = {{ task|tojson }};
+
+        activeTaskJson.fields.forEach(field => {
+            const taskField = taskFieldComponent(field);
+            
+            task.appendChild(taskField);    
+        });
+    </script>
+</body>
+</html>

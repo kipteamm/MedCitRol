@@ -5,6 +5,8 @@ nav {
     width: 100vw;
     padding: 25px;
     font-size: 20px;
+    background-color: white;
+    box-shadow: 0 0px 10px 0 #e3e3e3;
 }
 
 nav .nav-content {
@@ -52,4 +54,21 @@ nav a {
 
 .task-user.active .other {
     display: block;
+}
+
+.work-content {
+    height: 100%;
+    max-width: 1200px;
+    margin: 0px auto;
+    overflow-y: scroll;
+}
+
+.work-content button {
+    margin: 25px 0px 75px 0px;
+}
+
+.back-btn {
+    position: fixed;
+    top: 25px;
+    left: 25px;
 }

@@ -100,6 +100,22 @@ def edit_task(world_id, task_id):
     return response
 
 
+@teacher_blueprint.route('/<world_id>/task/<task_id>/preview')
+@login_required
+def preview_task(world_id, task_id):
+    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
+
+    if not world:
+        return redirect(url_for('game.home'))
+    
+    task = Task.query.get(task_id)
+
+    if not task:
+        return redirect(f'/teacher/{world_id}/tasks')
+
+    return render_template('teacher/task_preview.html', world=world, task=task_serializer(task))
+
+
 @teacher_blueprint.route('/<world_id>/task/<task_id>/info')
 @login_required
 def task_info(world_id, task_id):

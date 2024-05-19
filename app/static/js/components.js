@@ -21,13 +21,13 @@ function taskComponent(task) {
     wrapper.classList.add("task");
     
     task.fields.forEach(field => {
-        wrapper.appendChild(taskFieldcomponent(field));
+        wrapper.appendChild(taskFieldComponent(field));
     })
 
     return wrapper;
 }
 
-function taskFieldcomponent(taskField) {
+function taskFieldComponent(taskField) {
     const wrapper = document.createElement("div");
 
     wrapper.id = `id-${taskField.id}`;
