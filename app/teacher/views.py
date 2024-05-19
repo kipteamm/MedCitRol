@@ -2,7 +2,7 @@ from flask_login import current_user, login_required
 
 from flask import Blueprint, redirect, url_for, render_template, make_response, request
 
-from app.utils.serializers import task_serializer, user_serializer, game_serializer, task_user_serializer
+from app.utils.serializers import task_serializer, task_preview_serializer, user_serializer, game_serializer, task_user_serializer
 from app.utils.functions import get_key
 from app.auth.models import UserWorlds, User
 from app.game.models import World
@@ -58,7 +58,7 @@ def tasks(world_id):
     
     tasks = Task.query.filter_by(world_id=world.id).all()
 
-    return render_template('teacher/tasks.html', world=game_serializer(world), tasks=[task_serializer(task) for task in tasks])
+    return render_template('teacher/tasks.html', world=game_serializer(world), tasks=[task_preview_serializer(task) for task in tasks])
 
 
 @teacher_blueprint.route('/<world_id>/task/create')

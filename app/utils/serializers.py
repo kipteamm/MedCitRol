@@ -198,6 +198,29 @@ def task_serializer(task: Task, include_answers: bool=False) -> dict:
     }
 
 
+def task_preview_serializer(task: Task) -> dict:
+    name = TaskField.query.filter_by(task_id=task.id, field_type="header").first()
+
+    if name:
+        name = name.content
+
+    else:
+        name = "Unnamed"
+
+    finished_users_count = db.session.query(db.func.count(db.func.distinct(TaskUser.user_id))) \
+        .filter(TaskUser.task_id == task.id, TaskUser.percentage >= 80) \
+        .scalar()
+
+    return {
+        'id' : task.id,
+        'world_id' : task.world_id,
+        'index' : task.index,
+        'field_index' : task.field_index,
+        'name' : name,
+        'finished' : finished_users_count,
+    }
+
+
 def task_field_serializer(task_field: TaskField, include_answers: bool=False) -> dict:
     options = []
     content = task_field.content

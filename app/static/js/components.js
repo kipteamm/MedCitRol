@@ -70,7 +70,7 @@ function taskFieldComponent(taskField) {
             }
 
             content.innerHTML += `
-                <div class="choice ${counter % 2 === 0? "even": "odd"}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', '${option.id}')" id="id-${option.id}"` : ` id="id-${taskField.id}-${indicator}" option-id="id-${option.id}"`}>
+                <div class="choice ${counter % 2 === 0? "even": "odd"}"${taskField.field_type !== "connect"? ` onclick="selectOption('${taskField.id}', '${option.id}', false)" id="id-${option.id}"` : ` id="id-${taskField.id}-${indicator}" option-id="id-${option.id}"`}>
                     ${taskField.field_type === "connect"? counter % 2 === 0? indicator : '' : '<div class="indicator"></div>'}
                     <div class="content">${option.content? option.content : ''}</div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? indicator : ''}
@@ -79,7 +79,7 @@ function taskFieldComponent(taskField) {
         })
 
         if (taskField.field_type === "connect") {
-            wrapper.appendChild(connectAswerComponent(taskField.options, taskField.id))
+            wrapper.appendChild(connectAswerComponent(taskField.options, taskField.id, false))
         }
     } else if (taskField.field_type === "order") {
         wrapper.classList.add(taskField.field_type)
@@ -87,7 +87,7 @@ function taskFieldComponent(taskField) {
 
         shuffle(taskField.options).forEach(option => {
             wrapper.innerHTML += `
-                <div class="option" id="id-${option.id}" draggable="true" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" task-id="id-${taskField.id}">
+                <div class="option" id="id-${option.id}" draggable="true" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event, false)" task-id="id-${taskField.id}">
                     <div>${option.content? option.content : ''}</div>
                 </div>
             `
@@ -146,14 +146,14 @@ function editableTaskFieldComponent(taskField) {
 
             content.innerHTML += `
                 <div class="choice${option.answer? " active" : ""}"${taskField.field_type !== "connect"? ` id="id-${option.id}"` : ` id="id-${taskField.id}-${indicator}" option-id="id-${option.id}"`}>
-                    ${taskField.field_type === "connect"? counter % 2 === 0? indicator : '' : `<div class="indicator"${taskField.field_type !== "connect"? `onclick="selectOption('${taskField.id}', '${option.id}')"` : ''}></div>`}
+                    ${taskField.field_type === "connect"? counter % 2 === 0? indicator : '' : `<div class="indicator"${taskField.field_type !== "connect"? `onclick="selectOption('${taskField.id}', '${option.id}', true)"` : ''}></div>`}
                     <div class="content"><input type="text" onchange="editOption('${option.id}', this.value)" value="${option.content? option.content : ''}" placeholder="Option"/></div>
                     ${taskField.field_type === "connect" && counter % 2 !== 0? indicator : ''}
                 </div>
             `
 
             if (option.answer) {
-                selectOption(taskField.id, option.id)
+                selectOption(taskField.id, option.id, false)
             }
         })
 
@@ -162,13 +162,27 @@ function editableTaskFieldComponent(taskField) {
         `
 
         if (taskField.field_type === "connect") {
-            wrapper.appendChild(connectAswerComponent(taskField.options, taskField.id))
+            wrapper.appendChild(connectAswerComponent(taskField.options, taskField.id, true))
         }
     } else if (taskField.field_type === "order") {
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
 
-        taskField.options.forEach(option => {
+        const map = new Map(taskField.options.map(item => [item.id, item]));
+        const sorted = [];
+
+        let currentItem = taskField.options.find(item => item.connected === null);
+
+        while (currentItem) {
+            sorted.push(currentItem);
+            currentItem = map.get(currentItem.id);
+
+            if (currentItem) {
+                currentItem = taskField.options.find(item => item.connected === currentItem.id);
+            }
+        }
+
+        sorted.forEach(option => {
             const previous = wrapper.querySelector(`#id-${option.connected}`);
 
             if (previous) {
@@ -194,7 +208,7 @@ function orderOption(option, taskFieldId) {
     wrapper.draggable = true;
     wrapper.setAttribute("ondragstart", "handleDragStart(event)");
     wrapper.setAttribute("ondragover", "handleDragOver(event)");
-    wrapper.setAttribute("ondrop", "handleDrop(event)");
+    wrapper.setAttribute("ondrop", "handleDrop(event, true)");
     wrapper.setAttribute("task-id", `id-${taskFieldId}`);
 
     wrapper.innerHTML += `<input type="text" onchange="editOption('${option.id}', this.value)" value="${option.content? option.content : ''}" placeholder="Option"/>`;
@@ -217,7 +231,7 @@ function imageComponent(imageUrl) {
     return wrapper
 }
 
-function connectAswerComponent(options, fieldId) {
+function connectAswerComponent(options, fieldId, update) {
     const wrapper = document.createElement("div");
 
     wrapper.classList.add("connect-answer");
@@ -247,7 +261,7 @@ function connectAswerComponent(options, fieldId) {
         } else {
             const letter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'][columnIndex];
 
-            row.innerHTML = `<input type="text" class="connect-answer" oninput="connectAnswer('${fieldId}', this)" placeholder="${letter}" index="${columnIndex + 1}" ${option.connected? `value="${correctConnectAnswers[options.find(_option => _option.id === correctConnectAnswers[`c-${columnIndex + 1}`]).connected]}` : ''}"/>`;
+            row.innerHTML = `<input type="text" class="connect-answer" oninput="connectAnswer('${fieldId}', this, ${update})" placeholder="${letter}" index="${columnIndex + 1}" ${option.connected? `value="${correctConnectAnswers[options.find(_option => _option.id === correctConnectAnswers[`c-${columnIndex + 1}`]).connected]}` : ''}"/>`;
 
             columnIndex++;
 

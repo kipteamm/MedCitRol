@@ -620,7 +620,7 @@ def add_field():
     db.session.add(task_field)
     db.session.commit()
 
-    return make_response(task_field_serializer(task_field), 200)
+    return make_response(task_field_serializer(task_field, True), 200)
 
 
 @api_blueprint.route('/task/field/edit', methods=["PATCH"])
@@ -640,7 +640,7 @@ def edit_field():
 
     db.session.commit()
 
-    return make_response(task_field_serializer(task_field), 200)
+    return make_response(task_field_serializer(task_field, True), 200)
 
 
 @api_blueprint.route('/task/field/move', methods=["PATCH"])
@@ -678,7 +678,7 @@ def move_field():
 
     db.session.commit()
 
-    return make_response(task_field_serializer(task_field), 200)
+    return make_response(task_field_serializer(task_field, True), 200)
 
 
 @api_blueprint.route('/task/field/<field_id>/duplicate', methods=["POST"])
@@ -699,7 +699,7 @@ def duplicate_field(field_id):
     db.session.commit()
 
     if task_field.field_type in ["header", "text", "image"]:
-        return make_response(task_field_serializer(task_field), 200)
+        return make_response(task_field_serializer(task_field, True), 200)
     
     for original_option in TaskOption.query.filter_by(task_field_id=original_task_field.id).all():
         option = TaskOption(task_field_id=task_field.id, field_type=original_option.field_type, content=original_option.content)
@@ -708,7 +708,7 @@ def duplicate_field(field_id):
     
     db.session.commit()
 
-    return make_response(task_field_serializer(task_field), 200)
+    return make_response(task_field_serializer(task_field, True), 200)
 
 
 @api_blueprint.route('/task/field/<field_id>/delete', methods=["DELETE"])
@@ -724,13 +724,12 @@ def delete_field(field_id):
     if not task:
         return make_response({"error" : "task not found"}, 400)
     
-    for i in range(task.field_index):
-        if i <= task_field.field_index:
-            continue
+    fields_to_update = TaskField.query.filter(TaskField.task_id == task_field.task_id, TaskField.field_index > task_field.field_index).all()
 
-        TaskField.query.filter_by(task_id=task_field.task_id, field_index=i).first().field_index -= 1
+    for field in fields_to_update:
+        field.field_index -= 1
 
-        db.session.commit()
+    db.session.commit()
 
     if task_field.field_type == "image" and not TaskField.query.filter(TaskField.id != task_field.id, TaskField.content==task_field.content).first():
         path = os.path.join(os.getcwd(), 'media', 'tasks', task_field.content)
@@ -745,7 +744,7 @@ def delete_field(field_id):
     db.session.delete(task_field)
     db.session.commit()
 
-    return make_response(task_field_serializer(task_field), 200)
+    return make_response(task_field_serializer(task_field, True), 200)
 
 
 @api_blueprint.route('/task/image/add', methods=["POST"])
@@ -781,7 +780,7 @@ def upload_file():
     file_path = os.path.join(tasks_dir, name)
     file.save(file_path)
 
-    return make_response(task_field_serializer(task_field), 200)
+    return make_response(task_field_serializer(task_field, True), 200)
 
 
 @api_blueprint.route('/task/option/add', methods=["POST"])
@@ -814,7 +813,7 @@ def add_option():
     db.session.add(task_option)
     db.session.commit()
 
-    return make_response(task_field_serializer(task_field), 200)
+    return make_response(task_field_serializer(task_field, True), 200)
 
 
 @api_blueprint.route('/task/option/edit', methods=["PATCH"])
@@ -835,70 +834,61 @@ def edit_option():
 
     db.session.commit()
 
-    return make_response(task_field_serializer(TaskField.query.get(task_option.task_field_id)), 200)
+    return make_response(task_field_serializer(TaskField.query.get(task_option.task_field_id), True), 200)
 
 
-@api_blueprint.route('/task/answers', methods=["PATCH"])
+@api_blueprint.route('/task/answer', methods=["PATCH"])
 @authorized
-def update_answers():
+def update_answer():
     json = request.json
 
-    if not json or not "answers" in json or not "task_id" in json:
+    if not json or not "field_id" in json or not "answer" in json:
         return make_response({"error" : "invalid json"}, 400)
 
-    task = Task.query.get(json["task_id"])
+    task_field = TaskField.query.get(json["field_id"])
 
-    if not task:
-        return make_response({"error" : "No task found."}, 400)
-    
-    for answer in json['answers']:
-        task_field = TaskField.query.get(answer['field_id'])
+    if not Task.query.filter_by(id=task_field.task_id, world_id=g.access_key.world_id).first():
+        return make_response({"error" : "Invalid task field not found."}, 400)
 
-        if not task_field:
-            return make_response({"error" : f"no field with id {answer['field_id']} found"}, 400)
+    if task_field.field_type == "multiplechoice":
+        TaskOption.query.filter_by(task_field_id=task_field.id, answer=True).update({"answer" : False})
+        TaskOption.query.get(json["answer"]).answer = True
+
+    elif task_field.field_type == "checkboxes":
+        task_option = TaskOption.query.get(json["answer"])
+
+        task_option.answer = not task_option.answer
+
+    elif task_field.field_type == "connect":
+        answer = json["answer"].split("%")
         
-        if task_field.field_type == "multiplechoice" or task_field.field_type == "checkboxes":
-            for option in TaskOption.query.filter_by(task_field_id=task_field.id).all():
-                if option.id in answer['content']:
-                    option.answer = True
+        TaskOption.query.get(answer[0]).connected = answer[1]
+        TaskOption.query.get(answer[1]).connected = answer[0]
 
-                else:
-                    option.answer = False
-
-            db.session.commit()
-
-        elif task_field.field_type == "connect":
-            for connection in answer['content']:
-                connection = connection.split("%")
-
-                TaskOption.query.get(connection[0]).connected = connection[1]
-                TaskOption.query.get(connection[1]).connected = connection[0]
-
-            db.session.commit()
-
-        elif task_field.field_type == "order":
-            last_id = None
+    elif task_field.field_type == "order":
+        answer = json['answer']
+        last_id = None
             
-            for i in range(len(answer['content'])):
-                option = TaskOption.query.get(answer['content'][i])
+        for i in range(len(answer)):
+            option = TaskOption.query.get(answer[i])
+
+            if i == 0:
+                option.connected = None
+
+            else:
+                option.connected = last_id
+
+            if i < len(answer) - 1:
+                option.answer = True
                 
-                if i == 0:
-                    option.connected = None
+            else:
+                option.answer = False
 
-                else:
-                    option.connected = last_id
+            last_id = option.id
 
-                if i < len(answer['content']) - 1:
-                    option.answer = True
-                
-                else:
-                    option.answer = False
+    db.session.commit()
 
-                last_id = option.id
-
-            db.session.commit()
-
-    return make_response({"success" : True}, 204)
+    return make_response(task_field_serializer(task_field, True), 200)
 
 
 @api_blueprint.route("/warehouse/<warehouse_id>", methods=["GET"])

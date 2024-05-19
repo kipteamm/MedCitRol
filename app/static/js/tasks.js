@@ -8,7 +8,7 @@ function handleDragOver(event) {
     event.preventDefault();
 }
 
-function handleDrop(event) {
+function handleDrop(event, update) {
     event.preventDefault();
 
     const draggedId = event.dataTransfer.getData("text/plain");
@@ -44,9 +44,11 @@ function handleDrop(event) {
         answer = { field_id: task.id.slice(3), content: content };
         answers.push(answer);
     }
+
+    if (update) return updateAnswer(draggedElement.parentElement.id.slice(3), content);
 }
 
-function selectOption(fieldId, optionId) {
+function selectOption(fieldId, optionId, update=false) {
     const option = document.getElementById(`id-${optionId}`);
 
     let answer = answers.find(field => field.field_id === fieldId);
@@ -80,9 +82,11 @@ function selectOption(fieldId, optionId) {
     if (!option) return;
 
     option.classList.toggle("active", !isSelected);
+
+    if (update) return updateAnswer(fieldId, optionId);
 }
 
-function connectAnswer(fieldId, _input=null) {
+function connectAnswer(fieldId, _input=null, update=false) {
     if (_input) {
         if (/[^a-zA-Z]/.test(_input.value)) return _input.value = '';
         if (_input.value.length > 1) return _input.value = _input.value[0];
@@ -120,11 +124,21 @@ function connectAnswer(fieldId, _input=null) {
 
                         if (!answer.content.includes(answerValue)) {
                             answer.content.push(answerValue);
+
+                            if (update) {
+                                updateAnswer(fieldId, answerValue);
+                            }
                         }
                     }
                 });
             } else {
-                answer.content.push(`${indexOption.getAttribute("option-id").slice(3)}%${letterOption.getAttribute("option-id").slice(3)}`);
+                const answerValue = `${indexOption.getAttribute("option-id").slice(3)}%${letterOption.getAttribute("option-id").slice(3)}`;
+
+                answer.content.push(answerValue);
+
+                if (update) {
+                    updateAnswer(fieldId, answerValue);
+                }
             }
         }
     });
