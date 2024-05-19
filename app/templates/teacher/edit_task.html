@@ -18,25 +18,28 @@
     <div class="task edit" id="task"></div>
 
     <div>
-        <h2>Add</h2>
+        <h2>Options</h2>
     
-        <div>
+        <h3>Add text</h3>
+        <div class="options">
             <button onclick="addField('header')">Header</button>
             <button onclick="addField('text')">Text</button>
             <input type="file" accept="image/*" name="images" id="images" onchange="handleImage(event)">
         </div>
-        <div>
+
+        <h3>Add question</h3>
+        <div class="options">
             <button onclick="addField('multiplechoice')">multiplechoice</button>
             <button onclick="addField('checkboxes')">checkboxes</button>
             <button onclick="addField('connect')">connect</button>
             <button onclick="addField('order')">order</button>
         </div>
 
-        <h2>Answers</h2>
+        <h3>Answers</h3>
             
         <button onclick="updateAnswers('{{ task.id }}')">Update answers</button>
 
-        <h2>Preview</h2>
+        <h3>Preview</h3>
 
         <button onclick="window.location.href='/teacher/{{ world.id }}/task/{{ task.id }}/preview'">Preview</button>
     </div>
