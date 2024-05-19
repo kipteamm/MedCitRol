@@ -880,7 +880,7 @@ def update_answer():
     task_field = TaskField.query.get(json["field_id"])
 
     if not Task.query.filter_by(id=task_field.task_id, world_id=g.access_key.world_id).first():
-        return make_response({"error" : "Invalid task field not found."}, 400)
+        return make_response({"error" : "Task field not found."}, 400)
 
     if task_field.field_type == "multiplechoice":
         TaskOption.query.filter_by(task_field_id=task_field.id, answer=True).update({"answer" : False})

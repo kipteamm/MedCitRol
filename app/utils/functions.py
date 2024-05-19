@@ -9,8 +9,8 @@ import secrets
 import random
 
 
-def get_key(user_id: int, world_id: Optional[int]=None, settlement_id: Optional[int]=None, character_id: Optional[int]=None) -> str:
-    access_key = AccessKey.query.filter_by(user_id=user_id).first()
+def get_key(user_id: int, world_id: int, settlement_id: Optional[int]=None, character_id: Optional[int]=None) -> str:
+    access_key = AccessKey.query.filter_by(user_id=user_id, world_id=world_id).first()
 
     now = datetime.now(timezone.utc)
 
