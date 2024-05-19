@@ -143,3 +143,24 @@ function connectAnswer(fieldId, _input=null, update=false) {
         }
     });
 }
+
+async function submitTaskPreview(taskId) {
+    const response = await fetch('/api/task/submit/preview', {
+        method: "POST",
+        body: JSON.stringify({task_id: taskId, answers: answers}),
+        headers: {
+            "Content-Type" : "application/json",
+            "Authorization" : getCookie("psk")
+        }
+    });
+
+    const json = await response.json();
+
+    if (!response.ok) {
+        alert(json.error);
+
+        return;
+    }
+
+    alert(json.status);
+}

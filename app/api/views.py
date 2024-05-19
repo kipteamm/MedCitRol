@@ -91,32 +91,14 @@ def task():
     return make_response(task_serializer(task), 200)
 
 
-@api_blueprint.route("/task/submit", methods=["POST"])
-@character_auhtorized
-def submit_task():
-    access_key = g.access_key
-    character = g.character
-
-    if not character.profession:
-        return make_response({"error" : "You have no profession."}, 400)
-    
-    task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
-    
-    if not task:
-        return make_response({"error": "No task found."}, 404)
-    
-    json = request.json
-
-    if not json:
-        return make_response({"error" : "Invalid answers."}, 400)
-    
+def _correct_task(answers) -> int:
     correct, wrong = 0, 0
 
-    for answer in json:
+    for answer in answers:
         task_field = TaskField.query.get(answer['field_id'])
 
         if not task_field:
-            return make_response({"error" : f"no field with id {answer['field_id']} found"}, 400)
+            raise Exception("Task field not found.")
         
         if task_field.field_type == "multiplechoice" or task_field.field_type == "checkboxes":
             for _answer in answer['content']:
@@ -149,7 +131,33 @@ def submit_task():
 
                 last_id = answer['content'][i]
 
-    percentage = round(correct / (correct + wrong) * 100)
+    return round(correct / (correct + wrong) * 100)
+
+
+@api_blueprint.route("/task/submit", methods=["POST"])
+@character_auhtorized
+def submit_task():
+    access_key = g.access_key
+    character = g.character
+
+    if not character.profession:
+        return make_response({"error" : "You have no profession."}, 400)
+    
+    task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
+    
+    if not task:
+        return make_response({"error": "No task found."}, 404)
+    
+    json = request.json
+
+    if not json:
+        return make_response({"error" : "Invalid answers."}, 400)
+    
+    try:
+        percentage = _correct_task(json)
+
+    except:
+        return make_response({"error", "Invalid task field id."})
 
     task_user = TaskUser(task_id=task.id, user_id=g.access_key.user_id, percentage=percentage)
 
@@ -174,7 +182,31 @@ def submit_task():
     socketio.emit('update_character', character_serializer(character), room=character.settlement_id) # type: ignore
 
     return make_response({"status" : f"You scored {percentage}%. Great job!"}, 200)
+
+
+@api_blueprint.route("/task/submit/preview", methods=["POST"])
+@character_auhtorized
+def submit_task_preview():
+    access_key = g.access_key
+    json = request.json
+
+    if not json:
+        return make_response({"error" : "Invalid answers."}, 400)
     
+    task = Task.query.filter_by(world_id=access_key.world_id, id=json['task_id']).first()
+    
+    if not task:
+        return make_response({"error": "No task found."}, 404)
+    
+    try:
+        percentage = _correct_task(json['answers'])
+
+    except Exception as e:
+        print(e)
+
+        return make_response({"error": "Invalid task field id."})
+    
+    return make_response({"status" : f"You scored {percentage}%."}, 200)
 
 
 @api_blueprint.route("/profession/set", methods=["PUT"])
