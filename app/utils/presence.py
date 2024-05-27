@@ -147,7 +147,7 @@ def update_character(character: Character, world: World, hours_passed: int=0):
         hours_passed = round((world.current_time - character.last_update).total_seconds() / 3600)
 
     if character.start_sleep:
-        if world.current_time.hour < 5 and world.current_time.hour >= 20:
+        if world.current_time.hour < 5 or world.current_time.hour >= 20:
             return
         
         hours_slept = min((world.current_time - character.start_sleep).total_seconds() / 3600, 9)

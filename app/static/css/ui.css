@@ -519,13 +519,3 @@ canvas#map {
     top: 67%;
     left: 9%;
 }
-
-.settlement-info {
-    display: none;
-    background-color: var(--game-primary-bg);
-    position: absolute;
-}
-
-.settlement-info.active {
-    display: block;
-}

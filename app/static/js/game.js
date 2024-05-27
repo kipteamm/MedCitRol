@@ -8,10 +8,13 @@ function updateClock(timestamp) {
     
     clockElement.innerText = `${String(hours).padStart(2, '0')}:00`;
 
-    if (hours == 22) {
+    // 05:00 to 21:00 === daylight
+    // you can sleep from 20:00 to 05:00
+
+    if (hours === 21) {
         night.classList.remove("no-delay");
         night.classList.add("active");
-    } else if (hours > 21 || hours < 5) {
+    } else if (hours > 22 || hours < 5) {
         night.classList.add("no-delay");
         night.classList.add("active");
     } else {
