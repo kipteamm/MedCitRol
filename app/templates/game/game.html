@@ -175,7 +175,7 @@
         <div class="global-map-container">
             <button class="primary-btn" onclick="toggleMap()">&times;</button>
             {% for _settlement in world.settlements %}
-                <div onclick="{% if _settlement.id == settlement.id %}toggleMap(){% else %}window.location.href='/game/{{ world.id }}/{{ _settlement.id }}'{% endif %}" class="settlement-indicator {{ _settlement.colour }}" onmouseover="showSettlement(event, 'id-{{ _settlement.id }}')" onmouseout="hideSettlement('id-{{ _settlement.id }}')"></div>
+                <div onclick="{% if _settlement.id == settlement.id %}toggleMap(){% else %}window.location.href='/game/{{ world.id }}/{{ _settlement.id }}'{% endif %}" class="settlement-indicator {{ _settlement.colour }}"></div>
                 <div class="settlement-info" id="id-{{ _settlement.id }}">
                     <b>{{ _settlement.name }}</b>
                     <p>

@@ -11,6 +11,12 @@ function work() {
     cancelBuild();
     closeMarket();
 
+    if (workPopup.classList.contains("active")) {
+        closeWorkPopup();
+
+        return;
+    }
+
     if (character.profession === "unemployed") {
         workPanel.classList.add("active");
 
