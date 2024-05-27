@@ -178,8 +178,10 @@ def duplicate_task(world_id, task_id):
 
     if not world:
         return redirect(url_for('game.home'))
+    
+    original_task = Task.query.get(task_id)
 
-    task = Task(world_id=world.id, index=world.question_index)
+    task = Task(world_id=world.id, index=world.question_index, field_index=original_task.field_index)
 
     db.session.add(task)
     db.session.commit()
