@@ -162,6 +162,8 @@ def update_character(character: Character, world: World, hours_passed: int=0):
 
         character.start_sleep = None
 
+        print('wake up 1')
+
         if character.health < 18:
             character.health += 6
 

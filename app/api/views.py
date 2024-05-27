@@ -72,7 +72,7 @@ def task():
     if not character.profession:
         return make_response({"error" : "You have no profession."}, 400)
     
-    if character.health < 15:
+    if character.health < 12:
         return make_response({"error": "You're too ill to work."}, 400)
     
     task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
@@ -92,6 +92,8 @@ def task():
 
 def _correct_task(answers) -> int:
     correct, wrong = 0, 0
+
+    print(answers)
 
     for answer in answers:
         task_field = TaskField.query.get(answer['field_id'])
@@ -156,7 +158,7 @@ def submit_task():
         percentage = _correct_task(json)
 
     except:
-        return make_response({"error", "Invalid task field id."})
+        return make_response({"error": "Invalid task field id."})
 
     task_user = TaskUser(task_id=task.id, user_id=g.access_key.user_id, percentage=percentage)
 
@@ -200,9 +202,7 @@ def submit_task_preview():
     try:
         percentage = _correct_task(json['answers'])
 
-    except Exception as e:
-        print(e)
-
+    except:
         return make_response({"error": "Invalid task field id."})
     
     return make_response({"status" : f"You scored {percentage}%."}, 200)
@@ -302,7 +302,7 @@ def sell_item(market_type):
     character = g.character
 
     if market_type == "world" and not Tile.query.filter_by(settlement_id=character.settlement_id, character_id=character.id, tile_type="market_stall").first():
-        return make_response({"error", "You don't own a market stall."})
+        return make_response({"error" : "You don't own a market stall."})
     
     inventory = Inventory(character.settlement_id, None, character.id)
 
@@ -451,6 +451,8 @@ def sleep():
             socketio.emit("alert", {'id' : character.id, 'type' : "info", 'message' : f"You did not sleep enough ({int(7 - hours_slept)} hours too little)."})
 
         character.start_sleep = None
+
+        print('wakeup 2')
 
         if character.health < 18:
             character.health += 6
@@ -665,7 +667,7 @@ def edit_field():
     task_field = TaskField.query.get(json["field_id"])
 
     if task_field.field_type in ["header", "text"] and not "content" in json:
-        return make_response({"error", "missing content"})
+        return make_response({"error" : "missing content"})
 
     task_field.content = json["content"] if json["content"] else None
 
@@ -683,7 +685,7 @@ def move_field():
         return make_response({"error" : "invalid json"}, 400)
     
     if not json["direction"] in ["up", "down"]:
-        return make_response({"error", "invalid direction"}, 400)
+        return make_response({"error" : "invalid direction"}, 400)
     
     task_field = TaskField.query.get(json["field_id"])
 
@@ -825,7 +827,7 @@ def add_option():
     task_field = TaskField.query.get(json["field_id"])
 
     if task_field.field_type not in ["multiplechoice", "checkboxes", "connect", "order"]:
-        return make_response({"error", "you cannot add an option to this field"}, 400)
+        return make_response({"error" : "you cannot add an option to this field"}, 400)
 
     if TaskOption.query.filter_by(task_field_id=json["field_id"], content=None).first():
         return make_response({"error" : "already have an empty option"}, 400)

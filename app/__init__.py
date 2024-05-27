@@ -90,7 +90,7 @@ def create_app():
                 settlements = []
                 user_ids = []
 
-                for sid, user in active_connections.items():
+                for sid, user in list(active_connections.items()):
                     world = World.query.get(user['active_world'])
 
                     if not world:
