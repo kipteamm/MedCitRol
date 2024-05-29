@@ -3,8 +3,7 @@ from flask_login import UserMixin
 
 from app.extensions import db
 
-from datetime import datetime, timezone
-
+import secrets
 import uuid
 
 
@@ -19,6 +18,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.String(128), primary_key=True, default=get_uuid)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    token = db.Column(db.String(128), nullable=True)
 
     worlds = db.relationship('World', secondary='user_worlds', backref=db.backref('users', lazy='dynamic'))
     active_world = db.Column(db.Integer)
@@ -26,6 +26,7 @@ class User(UserMixin, db.Model):
     def __init__(self, email, password):
         self.email = email
         self.set_password(password)
+        self.token = secrets.token_hex(nbytes=128)
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

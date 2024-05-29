@@ -16,6 +16,144 @@ import os
 teacher_blueprint = Blueprint('teacher', __name__, url_prefix="/teacher")
 
 
+@teacher_blueprint.route('/tasks')
+@login_required
+def teacher_tasks():
+    return render_template('teacher/tasks.html', tasks=[task_serializer(task) for task in Task.query.filter_by(user_id=current_user.id).all()], world=None)
+
+
+@teacher_blueprint.route('/task/create')
+@login_required
+def create_task():
+    task = Task(user_id=current_user.id)
+
+    db.session.add(task)
+    db.session.commit()
+
+    world_query = request.args.get('world')
+
+    world = World.query.get(world_query)
+
+    if world:
+        world_task = WorldTask(world_id=world.id, task_id=task.id, index=world.task_index)
+
+        world.task_inde += 1
+
+        db.session.add(world_task)
+        db.session.commit()
+
+        world_query = f'?world={world.id}'
+
+    return redirect(f'/teacher/task/{task.id}/edit{world_query}')
+
+
+@teacher_blueprint.route('/task/<task_id>/edit')
+@login_required
+def edit_task(task_id):
+    task = Task.query.get(task_id)
+
+    world_query = request.args.get('world')
+
+    if not task or task.user_id != current_user.id:
+        return redirect(f'/teacher/tasks?{world_query}')
+
+    response = make_response(render_template('teacher/edit_task.html', task=task_serializer(task, True)))
+
+    response.set_cookie('token', current_user.token)
+    response.set_cookie('task', task.id)
+
+    return response
+
+
+@teacher_blueprint.route('/<world_id>/task/<task_id>/preview')
+@login_required
+def preview_task(world_id, task_id):
+    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
+
+    if not world:
+        return redirect(url_for('game.home'))
+    
+    task = Task.query.get(task_id)
+
+    if not task:
+        return redirect(f'/teacher/{world_id}/tasks')
+
+    return render_template('teacher/task_preview.html', world=world, task=task_serializer(task))
+
+
+@teacher_blueprint.route('/<world_id>/task/<task_id>/delete')
+@login_required
+def delete_task(world_id, task_id):
+    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
+
+    if not world:
+        return redirect(url_for('game.home'))
+    
+    world.task_index -= 1
+    
+    task = Task.query.get(task_id)
+
+    for field in TaskField.query.filter_by(task_id=task.id).all():
+        if field.field_type == "image":
+            if TaskField.query.filter(TaskField.id != field.id, TaskField.content==field.content).first():
+                db.session.delete(field)
+
+                continue
+
+            path = os.path.join(os.getcwd(), 'media', 'tasks', field.content)
+
+            if os.path.exists(path):
+                os.remove(path)
+
+            db.session.delete(field)
+
+            continue
+
+        for option in TaskOption.query.filter_by(task_field_id=field.id).all():
+            db.session.delete(option)
+
+        db.session.delete(field)
+
+    db.session.delete(task)
+    db.session.commit()
+
+    return redirect(f"/teacher/{world_id}/tasks")
+
+
+@teacher_blueprint.route('/<world_id>/task/<task_id>/duplicate')
+@login_required
+def duplicate_task(world_id, task_id):
+    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
+
+    if not world:
+        return redirect(url_for('game.home'))
+    
+    original_task = Task.query.get(task_id)
+
+    task = Task(world_id=world.id, field_index=original_task.field_index)
+
+    db.session.add(task)
+    db.session.commit()
+
+    for old_field in TaskField.query.filter_by(task_id=task_id).all():
+        task_field = TaskField(task_id=task.id, field_index=old_field.field_index, field_type=old_field.field_type, content=old_field.content)
+
+        db.session.add(task_field)
+        db.session.commit()
+
+        for old_option in TaskOption.query.filter_by(task_field_id=old_field.id).all():
+            task_option = TaskOption(task_field_id=task_field.id, field_type=old_option.field_type, content=old_option.content)
+
+            db.session.add(task_option)
+            db.session.commit()
+
+    world.task_index += 1
+
+    db.session.commit()
+
+    return redirect(f"/teacher/{world_id}/task/{task.id}/edit")
+
+
 @teacher_blueprint.route('/<world_id>', methods=["GET", "POST"])
 @login_required
 def game(world_id):
@@ -75,61 +213,6 @@ def tasks(world_id):
     return render_template('teacher/tasks.html', world=game_serializer(world), tasks=[task_preview_serializer(task) for task in tasks])
 
 
-@teacher_blueprint.route('/<world_id>/task/create')
-@login_required
-def create_task(world_id):
-    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
-
-    if not world:
-        return redirect(url_for('game.home'))
-    
-    task = Task(world_id=world.id)
-
-    world.question_index += 1
-
-    db.session.add(task)
-    db.session.commit()
-
-    return redirect(f'/teacher/{world_id}/task/{task.id}/edit')
-
-
-@teacher_blueprint.route('/<world_id>/task/<task_id>/edit')
-@login_required
-def edit_task(world_id, task_id):
-    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
-
-    if not world:
-        return redirect(url_for('game.home'))
-    
-    task = Task.query.get(task_id)
-
-    if not task:
-        return redirect(f'/teacher/{world_id}/tasks')
-
-    response = make_response(render_template('teacher/edit_task.html', world=world, task=task_serializer(task, True)))
-
-    response.set_cookie('psk', get_key(current_user.id, world.id))
-    response.set_cookie('task', str(task.id))
-
-    return response
-
-
-@teacher_blueprint.route('/<world_id>/task/<task_id>/preview')
-@login_required
-def preview_task(world_id, task_id):
-    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
-
-    if not world:
-        return redirect(url_for('game.home'))
-    
-    task = Task.query.get(task_id)
-
-    if not task:
-        return redirect(f'/teacher/{world_id}/tasks')
-
-    return render_template('teacher/task_preview.html', world=world, task=task_serializer(task))
-
-
 @teacher_blueprint.route('/<world_id>/task/<task_id>/info')
 @login_required
 def task_info(world_id, task_id):
@@ -144,76 +227,3 @@ def task_info(world_id, task_id):
         return redirect(f'/teacher/{world_id}/tasks')
     
     return render_template('teacher/task_info.html', world=game_serializer(world), task=task_serializer(task), task_info=[task_user_serializer(task_user) for task_user in TaskUser.query.filter_by(task_id=task_id).order_by(TaskUser.user_id, TaskUser.percentage.desc()).all()])
-
-
-@teacher_blueprint.route('/<world_id>/task/<task_id>/delete')
-@login_required
-def delete_task(world_id, task_id):
-    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
-
-    if not world:
-        return redirect(url_for('game.home'))
-    
-    world.question_index -= 1
-    
-    task = Task.query.get(task_id)
-
-    for field in TaskField.query.filter_by(task_id=task.id).all():
-        if field.field_type == "image":
-            if TaskField.query.filter(TaskField.id != field.id, TaskField.content==field.content).first():
-                db.session.delete(field)
-
-                continue
-
-            path = os.path.join(os.getcwd(), 'media', 'tasks', field.content)
-
-            if os.path.exists(path):
-                os.remove(path)
-
-            db.session.delete(field)
-
-            continue
-
-        for option in TaskOption.query.filter_by(task_field_id=field.id).all():
-            db.session.delete(option)
-
-        db.session.delete(field)
-
-    db.session.delete(task)
-    db.session.commit()
-
-    return redirect(f"/teacher/{world_id}/tasks")
-
-
-@teacher_blueprint.route('/<world_id>/task/<task_id>/duplicate')
-@login_required
-def duplicate_task(world_id, task_id):
-    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
-
-    if not world:
-        return redirect(url_for('game.home'))
-    
-    original_task = Task.query.get(task_id)
-
-    task = Task(world_id=world.id, field_index=original_task.field_index)
-
-    db.session.add(task)
-    db.session.commit()
-
-    for old_field in TaskField.query.filter_by(task_id=task_id).all():
-        task_field = TaskField(task_id=task.id, field_index=old_field.field_index, field_type=old_field.field_type, content=old_field.content)
-
-        db.session.add(task_field)
-        db.session.commit()
-
-        for old_option in TaskOption.query.filter_by(task_field_id=old_field.id).all():
-            task_option = TaskOption(task_field_id=task_field.id, field_type=old_option.field_type, content=old_option.content)
-
-            db.session.add(task_option)
-            db.session.commit()
-
-    world.question_index += 1
-
-    db.session.commit()
-
-    return redirect(f"/teacher/{world_id}/task/{task.id}/edit")

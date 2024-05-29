@@ -8,6 +8,8 @@ from app.auth.models import User
 from app.game.models import AccessKey
 from app.extensions import db
 
+import secrets
+
 
 auth_blueprint = Blueprint('auth', __name__)
 
@@ -54,13 +56,18 @@ def login():
         
         if user:
             login_user(user)
+
+            if not user.token:
+                user.token = secrets.token_hex(nbytes=128)
+
+                db.session.commit()
             
             flash('Login successful. Welcome back!', 'success')
             
             return redirect(url_for('game.home'))
-        else:
-            flash('Invalid email or password', 'error')
-            return render_template('auth/login.html')
+
+        flash('Invalid email or password', 'error')
+        return render_template('auth/login.html')
 
     return render_template('auth/login.html')
 

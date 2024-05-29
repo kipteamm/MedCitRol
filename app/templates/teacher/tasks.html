@@ -1,16 +1,26 @@
 {% extends "/teacher/teacher_base.html" %}
 
 {% block content %}
-    <button onclick="window.location.href='/teacher/{{ world.id }}/task/create'">Create task</button>
+    {% if world%}
+        <button onclick="window.location.href='/teacher/task/create?world={{ world.id }}'">Create task</button>
+    {% else %}
+        <button onclick="window.location.href='/teacher/task/create'">Create task</button>
+    {% endif %}
     
     {% for task in tasks %}
         <div class="task">
             <h3>{{ task.name }} ({{ task.finished }}/{{ world.players }})</h3>
 
-            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/edit">Edit task</a>
-            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/info">Info about task</a>
-            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/duplicate">Duplicate task</a>
-            <a href="/teacher/{{ world.id }}/task/{{ task.id }}/delete">Delete task</a>
+            {% if world %}
+                <button onclick="window.location.href='/teacher/task/{{ task.id }}/edit?world={{ world.id }}'">Edit task</button>
+                <button onclick="window.location.href='/teacher/task/{{ task.id }}/info?world={{ world.id }}'">Info about task</button>
+                <button onclick="duplicateTask('{{ task.id }}', '{{ world.id }}')">Duplicate task</button>
+                <button onclick="deleteTask('{{ task.id }}', '{{ world.id }}')">Delete task</button>
+            {% else %}
+                <button onclick="window.location.href='/teacher/task/{{ task.id }}/edit'">Edit task</button>
+                <button onclick="duplicateTask('{{ task.id }}', null)">Duplicate task</button>
+                <button onclick="deleteTask('{{ task.id }}', null)">Delete task</button>
+            {% endif %}
         </div>
     {% endfor %}
 {% endblock %}

@@ -25,7 +25,7 @@ class World(db.Model):
     name = db.Column(db.String(50), default="Unnamed")
     code = db.Column(db.String(10), nullable=False)
 
-    question_index = db.Column(db.Integer, default=0)
+    task_index = db.Column(db.Integer, default=0)
 
     current_time = db.Column(db.DateTime, default=initial_current_time, nullable=False)
     last_time_update = db.Column(DateTime(timezone=True), default=func.now())
