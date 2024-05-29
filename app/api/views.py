@@ -625,6 +625,24 @@ def purchase_buildable():
     return make_response({"success" : True}, 204)
 
 
+@api_blueprint.route("/warehouse/<warehouse_id>", methods=["GET"])
+@character_auhtorized
+def get_warehouse(warehouse_id): 
+    access_key = g.access_key
+
+    warehouse = Warehouse.query.filter_by(settlement_id=access_key.settlement_id, tile_id=warehouse_id).first()
+
+    if not warehouse:
+        return make_response({"error" : "No warehouse found."}, 400)
+
+    items = []
+
+    for item in InventoryItem.query.filter_by(warehouse_id=warehouse.id).all():
+        items.append(inventory_item_serializer(item))
+
+    return make_response(items, 200)
+
+
 @api_blueprint.route('/task/field/add', methods=["POST"])
 @authorized
 def add_field():
@@ -878,6 +896,79 @@ def edit_option():
     return make_response(task_field_serializer(TaskField.query.get(task_option.task_field_id), True), 200)
 
 
+@api_blueprint.route('/task/duplicate')
+@authorized
+def duplicate_task(world_id, task_id):
+    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
+
+    if not world:
+        return redirect(url_for('game.home'))
+    
+    original_task = Task.query.get(task_id)
+
+    task = Task(world_id=world.id, field_index=original_task.field_index)
+
+    db.session.add(task)
+    db.session.commit()
+
+    for old_field in TaskField.query.filter_by(task_id=task_id).all():
+        task_field = TaskField(task_id=task.id, field_index=old_field.field_index, field_type=old_field.field_type, content=old_field.content)
+
+        db.session.add(task_field)
+        db.session.commit()
+
+        for old_option in TaskOption.query.filter_by(task_field_id=old_field.id).all():
+            task_option = TaskOption(task_field_id=task_field.id, field_type=old_option.field_type, content=old_option.content)
+
+            db.session.add(task_option)
+            db.session.commit()
+
+    world.task_index += 1
+
+    db.session.commit()
+
+    return redirect(f"/teacher/{world_id}/task/{task.id}/edit")
+
+
+@api_blueprint.route('/task/<task_id>/delete')
+@authorized
+def delete_task(world_id, task_id):
+    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
+
+    if not world:
+        return redirect(url_for('game.home'))
+    
+    world.task_index -= 1
+    
+    task = Task.query.get(task_id)
+
+    for field in TaskField.query.filter_by(task_id=task.id).all():
+        if field.field_type == "image":
+            if TaskField.query.filter(TaskField.id != field.id, TaskField.content==field.content).first():
+                db.session.delete(field)
+
+                continue
+
+            path = os.path.join(os.getcwd(), 'media', 'tasks', field.content)
+
+            if os.path.exists(path):
+                os.remove(path)
+
+            db.session.delete(field)
+
+            continue
+
+        for option in TaskOption.query.filter_by(task_field_id=field.id).all():
+            db.session.delete(option)
+
+        db.session.delete(field)
+
+    db.session.delete(task)
+    db.session.commit()
+
+    return redirect(f"/teacher/{world_id}/tasks")
+
+
 @api_blueprint.route('/task/answer', methods=["PATCH"])
 @authorized
 def update_answer():
@@ -930,21 +1021,3 @@ def update_answer():
     db.session.commit()
 
     return make_response(task_field_serializer(task_field, True), 200)
-
-
-@api_blueprint.route("/warehouse/<warehouse_id>", methods=["GET"])
-@character_auhtorized
-def get_warehouse(warehouse_id): 
-    access_key = g.access_key
-
-    warehouse = Warehouse.query.filter_by(settlement_id=access_key.settlement_id, tile_id=warehouse_id).first()
-
-    if not warehouse:
-        return make_response({"error" : "No warehouse found."}, 400)
-
-    items = []
-
-    for item in InventoryItem.query.filter_by(warehouse_id=warehouse.id).all():
-        items.append(inventory_item_serializer(item))
-
-    return make_response(items, 200)

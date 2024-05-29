@@ -1,6 +1,8 @@
 {% extends "/teacher/teacher_base.html" %}
 
 {% block content %}
+    <script src="{{ url_for('static', filename='js/taskManagement.js') }}"></script>
+
     {% if world%}
         <button onclick="window.location.href='/teacher/task/create?world={{ world.id }}'">Create task</button>
     {% else %}
@@ -8,7 +10,7 @@
     {% endif %}
     
     {% for task in tasks %}
-        <div class="task">
+        <div class="task" id="task-{{ task.id }}">
             <h3>{{ task.name }} ({{ task.finished }}/{{ world.players }})</h3>
 
             {% if world %}

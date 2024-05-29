@@ -2,6 +2,7 @@ from functools import wraps
 from flask import request, make_response, g
 
 from app.game.models import AccessKey, Character
+from app.auth.models import User
 
 def character_auhtorized(f):
     @wraps(f)
@@ -38,15 +39,12 @@ def authorized(f):
     def _decorated_function(*args, **kwargs):
         authorization = request.headers.get('Authorization')
 
-        access_key = None
+        user = User.query.filter_by(token=authorization).first()
 
-        if authorization:
-            access_key = AccessKey.query.filter_by(key=authorization).first()
-
-        if not access_key:
+        if user:
             return make_response({"error" : "Invalid authentication."}, 401)
         
-        g.access_key = access_key
+        g.user = user
 
         return f(*args, **kwargs)
     
