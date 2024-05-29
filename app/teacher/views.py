@@ -8,7 +8,7 @@ from app.auth.models import UserWorlds, User
 from app.game.models import World
 from app.extensions import db
 
-from .models import Task, TaskField, TaskOption, TaskUser
+from .models import Task, WorldTask, TaskField, TaskOption, TaskUser
 
 import os
 
@@ -58,6 +58,20 @@ def tasks(world_id):
     
     tasks = Task.query.filter_by(world_id=world.id).all()
 
+    if tasks:
+        for task in tasks:
+            if task.user_id != None:
+                continue
+
+            task.user_id = current_user.id
+            task.world_id = None
+            task.index = None
+            
+            world_task = WorldTask(task_id=task.id, world_id=world.id, index=task.index)
+
+            db.session.add(world_task)
+            db.session.commit()
+
     return render_template('teacher/tasks.html', world=game_serializer(world), tasks=[task_preview_serializer(task) for task in tasks])
 
 
@@ -69,7 +83,7 @@ def create_task(world_id):
     if not world:
         return redirect(url_for('game.home'))
     
-    task = Task(world_id=world.id, index=world.question_index)
+    task = Task(world_id=world.id)
 
     world.question_index += 1
 
@@ -181,7 +195,7 @@ def duplicate_task(world_id, task_id):
     
     original_task = Task.query.get(task_id)
 
-    task = Task(world_id=world.id, index=world.question_index, field_index=original_task.field_index)
+    task = Task(world_id=world.id, field_index=original_task.field_index)
 
     db.session.add(task)
     db.session.commit()

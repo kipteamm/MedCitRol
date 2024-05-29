@@ -161,9 +161,7 @@ def update_character(character: Character, world: World, hours_passed: int=0):
             socketio.emit("alert", {'id' : character.id, 'type' : "info", 'message' : f"You did not sleep enough ({int(7 - hours_slept)} hours too little)."})
 
         character.start_sleep = None
-
-        print('wake up 1')
-
+        
         if character.health < 18:
             character.health += 6
 

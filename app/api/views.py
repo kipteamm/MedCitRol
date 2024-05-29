@@ -3,10 +3,9 @@ from flask import Blueprint, request, make_response, g
 from app.utils.serializers import market_item_serializer, task_serializer, properties_serializer, merchant_serializer, task_field_serializer, inventory_item_serializer, settlement_serializer, tile_serializer, character_serializer
 from app.utils.decorators import character_auhtorized, authorized
 from app.utils.professions import Profession
-from app.utils.properties import Properties
 from app.utils.inventory import Inventory
 from app.utils.functions import get_merchandise
-from app.teacher.models import Task, TaskField, TaskOption, TaskUser
+from app.teacher.models import Task, WorldTask, TaskField, TaskOption, TaskUser
 from app.game.models import Settlement, Character, MarketItem, World, Merchant, Tile, InventoryItem, Warehouse
 
 from app.extensions import db, socketio
@@ -75,25 +74,23 @@ def task():
     if character.health < 12:
         return make_response({"error": "You're too ill to work."}, 400)
     
-    task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
+    task = WorldTask.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
     
     if not task:
+        task = WorldTask.query.filter_by(world_id=access_key.world_id, index=0).first()
+
+        if not task:
+            return make_response({"error": "No task found."}, 404)
+        
         character.task_index = 0
 
         db.session.commit()
 
-        task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
-
-        if not task:
-            return make_response({"error": "No task found."}, 404)
-
-    return make_response(task_serializer(task), 200)
+    return make_response(task_serializer(Task.query.get(task.task_id)), 200)
 
 
 def _correct_task(answers) -> int:
     correct, wrong = 0, 0
-
-    print(answers)
 
     for answer in answers:
         task_field = TaskField.query.get(answer['field_id'])
@@ -144,7 +141,7 @@ def submit_task():
     if not character.profession:
         return make_response({"error" : "You have no profession."}, 400)
     
-    task = Task.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
+    task = WorldTask.query.filter_by(world_id=access_key.world_id, index=character.task_index).first()
     
     if not task:
         return make_response({"error": "No task found."}, 404)
@@ -160,7 +157,7 @@ def submit_task():
     except:
         return make_response({"error": "Invalid task field id."})
 
-    task_user = TaskUser(task_id=task.id, user_id=g.access_key.user_id, percentage=percentage)
+    task_user = TaskUser(task_id=task.task_id, user_id=g.access_key.user_id, percentage=percentage)
 
     db.session.add(task_user)
     db.session.commit()
@@ -186,17 +183,16 @@ def submit_task():
 
 
 @api_blueprint.route("/task/submit/preview", methods=["POST"])
-@character_auhtorized
+@authorized
 def submit_task_preview():
-    access_key = g.access_key
     json = request.json
 
     if not json:
         return make_response({"error" : "Invalid answers."}, 400)
     
-    task = Task.query.filter_by(world_id=access_key.world_id, id=json['task_id']).first()
+    task = Task.query.get(id=json['task_id'])
     
-    if not task:
+    if not task or task.user_id != g.access_key.user_id:
         return make_response({"error": "No task found."}, 404)
     
     try:
@@ -452,8 +448,6 @@ def sleep():
 
         character.start_sleep = None
 
-        print('wakeup 2')
-
         if character.health < 18:
             character.health += 6
 
@@ -641,6 +635,9 @@ def add_field():
 
     task = Task.query.get(json["task_id"])
 
+    if task.user_id != g.access_key.user_id:
+        return make_response({"error" : "You don't own this task."}, 400)
+
     field_type = json["field_type"]
 
     if not field_type in ["header", "text", "image", "multiplechoice", "checkboxes", "connect", "order"]:
@@ -686,8 +683,16 @@ def move_field():
     
     if not json["direction"] in ["up", "down"]:
         return make_response({"error" : "invalid direction"}, 400)
-    
+
     task_field = TaskField.query.get(json["field_id"])
+
+    task = Task.query.get(id=task_field.task_id)
+
+    if task.user_id != g.access_key.user_id:
+        return make_response({"error" : "You don't own this task."}, 400)
+
+    if not task:
+        return make_response({"error" : "invalid task"}, 400)
 
     if json["direction"] == "up":
         if task_field.field_index == 0:
@@ -696,7 +701,7 @@ def move_field():
         other_field = TaskField.query.filter_by(task_id=task_field.task_id, field_index=task_field.field_index - 1).first()
     
     if json["direction"] == "down":
-        if task_field.field_index == Task.query.get(task_field.task_id).field_index - 1:
+        if task_field.field_index == task.field_index - 1:
             return make_response({"error" : "cannot be moved down"}, 400)
         
         other_field = TaskField.query.filter_by(task_id=task_field.task_id, field_index=task_field.field_index + 1).first()
@@ -719,7 +724,7 @@ def move_field():
 def duplicate_field(field_id):
     original_task_field = TaskField.query.get(field_id)
 
-    task = Task.query.filter_by(id=original_task_field.task_id, world_id=g.access_key.world_id).first()
+    task = Task.query.filter_by(id=original_task_field.task_id, user_id=g.access_key.user_id).first()
 
     if not task:
         return make_response({"error" : "field not found"}, 400)
@@ -752,7 +757,7 @@ def delete_field(field_id):
     if not task_field:
         return make_response({"error" : "field not found"}, 400)
 
-    task = Task.query.filter_by(id=task_field.task_id, world_id=g.access_key.world_id).first()
+    task = Task.query.filter_by(id=task_field.task_id, user_id=g.access_key.user_id).first()
 
     if not task:
         return make_response({"error" : "task not found"}, 400)
@@ -790,8 +795,11 @@ def upload_file():
 
     if not file.filename:
         return make_response({"error" : "no image 2"}, 400)
-
+    
     task = Task.query.get(request.form.get('task_id'))
+
+    if not task.user_id == g.access_key.user_id:
+        return make_response({"error" : "You don't own this task."}, 400)
 
     while True:
         name = f"{''.join(random.choices(string.ascii_letters, k=16))}.{file.filename.split('.')[1]}"
@@ -880,7 +888,7 @@ def update_answer():
 
     task_field = TaskField.query.get(json["field_id"])
 
-    if not Task.query.filter_by(id=task_field.task_id, world_id=g.access_key.world_id).first():
+    if not Task.query.filter_by(id=task_field.task_id, user_id=g.access_key.user_id).first():
         return make_response({"error" : "Task field not found."}, 400)
 
     if task_field.field_type == "multiplechoice":
