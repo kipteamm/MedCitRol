@@ -41,9 +41,9 @@ def authorized(f):
 
         user = User.query.filter_by(token=authorization).first()
 
-        if user:
+        if not user:
             return make_response({"error" : "Invalid authentication."}, 401)
-        
+
         g.user = user
 
         return f(*args, **kwargs)

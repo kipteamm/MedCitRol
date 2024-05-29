@@ -18,7 +18,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.String(128), primary_key=True, default=get_uuid)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    token = db.Column(db.String(128), nullable=True)
+    token = db.Column(db.String(128), nullable=False)
 
     worlds = db.relationship('World', secondary='user_worlds', backref=db.backref('users', lazy='dynamic'))
     active_world = db.Column(db.Integer)

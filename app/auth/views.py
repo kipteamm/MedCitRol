@@ -64,7 +64,11 @@ def login():
             
             flash('Login successful. Welcome back!', 'success')
             
-            return redirect(url_for('game.home'))
+            response = redirect(url_for('game.home'))
+
+            response.set_cookie('token', user.token)
+
+            return response
 
         flash('Invalid email or password', 'error')
         return render_template('auth/login.html')

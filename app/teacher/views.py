@@ -57,7 +57,6 @@ def edit_task(task_id):
 
     response = make_response(render_template('teacher/edit_task.html', task=task_serializer(task, True)))
 
-    response.set_cookie('token', current_user.token)
     response.set_cookie('task', task.id)
 
     return response

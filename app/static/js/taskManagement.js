@@ -1,4 +1,4 @@
-async function duplciateTask(taskId, worldId) {
+async function duplicateTask(taskId, worldId) {
     const response = await fetch(`/api/task/duplicate`, {
         method: "POST",
         body: JSON.stringify({task_id : taskId, world_id : worldId}),

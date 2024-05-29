@@ -896,22 +896,25 @@ def edit_option():
     return make_response(task_field_serializer(TaskField.query.get(task_option.task_field_id), True), 200)
 
 
-@api_blueprint.route('/task/duplicate')
+@api_blueprint.route('/task/duplicate', methods=["POST"])
 @authorized
-def duplicate_task(world_id, task_id):
-    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
+def duplicate_task():
+    json = request.json
 
-    if not world:
-        return redirect(url_for('game.home'))
+    if not json or not "task_id" in json or not "world_id" in json:
+        return make_response({"error" : "invalid json"}, 400)
     
-    original_task = Task.query.get(task_id)
+    original_task = Task.query.get(json["task_id"])
 
-    task = Task(world_id=world.id, field_index=original_task.field_index)
+    if not original_task or original_task.user_id != g.user.id:
+        return make_response({"error" : "you cannot duplicate this task"}, 400)
+
+    task = Task(user_id=g.user.id, field_index=original_task.field_index)
 
     db.session.add(task)
     db.session.commit()
 
-    for old_field in TaskField.query.filter_by(task_id=task_id).all():
+    for old_field in TaskField.query.filter_by(task_id=original_task.id).all():
         task_field = TaskField(task_id=task.id, field_index=old_field.field_index, field_type=old_field.field_type, content=old_field.content)
 
         db.session.add(task_field)
@@ -923,24 +926,43 @@ def duplicate_task(world_id, task_id):
             db.session.add(task_option)
             db.session.commit()
 
-    world.task_index += 1
+    if json["world_id"]:
+        world = World.query.get(json["world_id"])
+        world_task = WorldTask(world_id=world.id, task_id=task.id, index=world.task_index)
+
+        world.task_index += 1
+
+        db.session.add(world_task)
+        db.session.commit()
 
     db.session.commit()
 
-    return redirect(f"/teacher/{world_id}/task/{task.id}/edit")
+    return make_response({"task_id" : task.id}, 200)
 
 
-@api_blueprint.route('/task/<task_id>/delete')
+@api_blueprint.route('/task/<task_id>/delete', methods=["DELETE"])
 @authorized
-def delete_task(world_id, task_id):
-    world = World.query.filter_by(id=world_id, user_id=current_user.id).first()
-
-    if not world:
-        return redirect(url_for('game.home'))
-    
-    world.task_index -= 1
-    
+def delete_task(task_id):
     task = Task.query.get(task_id)
+
+    if not task or task.user_id != g.user.id:
+        return make_response({"error" : "you cannot delete this task"}, 400)
+    
+    world_query = request.args.get("world")
+
+    if world_query:
+        world_task = WorldTask.query.filter_by(task_id=task.id, world_id=world_query).first()
+        world = World.query.get(world_query)
+
+        if not world_task:
+            return make_response({"error" : "you cannot delete this task"}, 400)
+        
+        world.task_index -= 1
+
+        db.session.delete(world_task)
+        db.session.commit()
+
+        return make_response({"success" : True}, 204)
 
     for field in TaskField.query.filter_by(task_id=task.id).all():
         if field.field_type == "image":
@@ -966,7 +988,7 @@ def delete_task(world_id, task_id):
     db.session.delete(task)
     db.session.commit()
 
-    return redirect(f"/teacher/{world_id}/tasks")
+    return make_response({"success" : True}, 204)
 
 
 @api_blueprint.route('/task/answer', methods=["PATCH"])

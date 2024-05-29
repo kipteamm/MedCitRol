@@ -11,9 +11,7 @@ class Task(db.Model):
     __tablename__ = 'task'
 
     id = db.Column(db.String(128), primary_key=True, default=get_uuid)
-    user_id = db.Column(db.String(128), db.ForeignKey('users.id'), nullable=True)
-    world_id = db.Column(db.String(128), db.ForeignKey('world.id'), nullable=True)
-    index = db.Column(db.Integer, nullable=True)
+    user_id = db.Column(db.String(128), db.ForeignKey('users.id'), nullable=False)
     field_index = db.Column(db.Integer, default=0)
 
 
