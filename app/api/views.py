@@ -192,7 +192,7 @@ def submit_task_preview():
     
     task = Task.query.get(id=json['task_id'])
     
-    if not task or task.user_id != g.access_key.user_id:
+    if not task or task.user_id != g.user.id:
         return make_response({"error": "No task found."}, 404)
     
     try:
@@ -653,7 +653,7 @@ def add_field():
 
     task = Task.query.get(json["task_id"])
 
-    if task.user_id != g.access_key.user_id:
+    if task.user_id != g.user.id:
         return make_response({"error" : "You don't own this task."}, 400)
 
     field_type = json["field_type"]
@@ -706,7 +706,7 @@ def move_field():
 
     task = Task.query.get(id=task_field.task_id)
 
-    if task.user_id != g.access_key.user_id:
+    if task.user_id != g.user.id:
         return make_response({"error" : "You don't own this task."}, 400)
 
     if not task:
@@ -742,7 +742,7 @@ def move_field():
 def duplicate_field(field_id):
     original_task_field = TaskField.query.get(field_id)
 
-    task = Task.query.filter_by(id=original_task_field.task_id, user_id=g.access_key.user_id).first()
+    task = Task.query.filter_by(id=original_task_field.task_id, user_id=g.user.id).first()
 
     if not task:
         return make_response({"error" : "field not found"}, 400)
@@ -775,7 +775,7 @@ def delete_field(field_id):
     if not task_field:
         return make_response({"error" : "field not found"}, 400)
 
-    task = Task.query.filter_by(id=task_field.task_id, user_id=g.access_key.user_id).first()
+    task = Task.query.filter_by(id=task_field.task_id, user_id=g.user.id).first()
 
     if not task:
         return make_response({"error" : "task not found"}, 400)
@@ -816,7 +816,7 @@ def upload_file():
     
     task = Task.query.get(request.form.get('task_id'))
 
-    if not task.user_id == g.access_key.user_id:
+    if not task.user_id == g.user.id:
         return make_response({"error" : "You don't own this task."}, 400)
 
     while True:
@@ -1001,7 +1001,7 @@ def update_answer():
 
     task_field = TaskField.query.get(json["field_id"])
 
-    if not Task.query.filter_by(id=task_field.task_id, user_id=g.access_key.user_id).first():
+    if not Task.query.filter_by(id=task_field.task_id, user_id=g.user.id).first():
         return make_response({"error" : "Task field not found."}, 400)
 
     if task_field.field_type == "multiplechoice":

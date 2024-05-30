@@ -47,7 +47,7 @@ async function openMarket() {
     const response = await fetch(market === "merchant"? "/api/merchant" : `/api/market/${market}`, {
         method: "GET",
         headers: {
-            "Authorization" : getCookie("psk"),
+            "Authorization" : getCookie('psk'),
         }
     });
 
@@ -108,7 +108,7 @@ async function sellItem() {
         body: JSON.stringify({item_type: inventoryItem.item_type, amount: amountInput.value, price: priceInput.value}),
         headers: {
             "Content-Type" : "application/json",
-            "Authorization" : getCookie("psk")
+            "Authorization" : getCookie('psk')
         }
     })
 
@@ -160,7 +160,7 @@ async function buyItem(id) {
         body: JSON.stringify({item_id: marketItem.id}),
         headers: {
             "Content-Type" : "application/json",
-            "Authorization" : getCookie("psk")
+            "Authorization" : getCookie('psk')
         }
     })
 
@@ -190,7 +190,7 @@ async function loadWarehouse(warehouseId) {
         method: "GET",
         headers: {
             "Content-Type" : "application/json",
-            "Authorization" : getCookie("psk")
+            "Authorization" : getCookie('psk')
         }
     })
 

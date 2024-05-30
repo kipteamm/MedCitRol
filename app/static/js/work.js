@@ -55,7 +55,7 @@ async function loadTask() {
     const response = await fetch('/api/task', {
         method: "GET",
         headers: {
-            "Authorization" : getCookie("psk"),
+            "Authorization" : getCookie('psk'),
         }
     });
 
@@ -115,7 +115,7 @@ async function updateProfession(profession) {
         body: JSON.stringify({profession: profession}),
         headers: {
             "Content-Type" : "application/json",
-            "Authorization" : getCookie("psk")
+            "Authorization" : getCookie('psk')
         }
     });
 
@@ -140,7 +140,7 @@ async function submitTask() {
         body: JSON.stringify(answers),
         headers: {
             "Content-Type" : "application/json",
-            "Authorization" : getCookie("psk")
+            "Authorization" : getCookie('psk')
         }
     });
 

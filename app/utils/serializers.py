@@ -189,8 +189,6 @@ def task_serializer(task: Task, include_answers: bool=False) -> dict:
     
     return {
         'id' : task.id,
-        'world_id' : task.world_id,
-        'index' : task.index,
         'field_index' : task.field_index,
         'name' : name,
         'finished' : finished_users_count,

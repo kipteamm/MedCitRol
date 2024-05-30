@@ -4,7 +4,7 @@ async function addField(fieldType) {
         body: JSON.stringify({task_id: getCookie('task'), field_type: fieldType}),
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `${getCookie('psk')}`,
+            'Authorization': `${getCookie('token')}`,
         },
     })
 
@@ -21,7 +21,7 @@ async function editField(fieldId, value) {
         body: JSON.stringify({field_id: fieldId, content: value}),
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `${getCookie('psk')}`,
+            'Authorization': `${getCookie('token')}`,
         },
     })
 
@@ -64,7 +64,7 @@ async function uploadFile(file) {
         method: 'POST',
         body: formData,
         headers: {
-            "Authorization": getCookie("psk"),
+            "Authorization": getCookie('token'),
         }
     })
 
@@ -81,7 +81,7 @@ async function addOption(fieldId) {
         body: JSON.stringify({field_id: fieldId}),
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `${getCookie('psk')}`,
+            'Authorization': `${getCookie('token')}`,
         },
     })
 
@@ -98,7 +98,7 @@ async function editOption(optionId, value) {
         body: JSON.stringify({option_id: optionId, content: value}),
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `${getCookie('psk')}`,
+            'Authorization': `${getCookie('token')}`,
         },
     })
 
@@ -117,7 +117,7 @@ async function updateAnswer(fieldId, answer) {
         body: JSON.stringify({field_id : fieldId, answer: answer}),
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `${getCookie('psk')}`,
+            'Authorization': `${getCookie('token')}`,
         },
     })
 
@@ -167,7 +167,7 @@ async function moveField(direction) {
         body: JSON.stringify({field_id: fieldId.slice(3), direction: direction}),
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `${getCookie('psk')}`,
+            'Authorization': `${getCookie('token')}`,
         },
     })
 
@@ -206,7 +206,7 @@ async function duplicateField() {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `${getCookie('psk')}`,
+            'Authorization': `${getCookie('token')}`,
         },
     })
 
@@ -224,7 +224,7 @@ async function deleteField() {
         method: "DELETE",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `${getCookie('psk')}`,
+            'Authorization': `${getCookie('token')}`,
         },
     })
 

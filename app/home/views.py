@@ -98,6 +98,9 @@ def create_task():
 
         world_query = f'?world={world.id}'
 
+    else:
+        world_query = ''
+
     return redirect(f'/task/{task.id}/edit{world_query}')
 
 
@@ -109,7 +112,7 @@ def edit_task(task_id):
     if not task or task.user_id != current_user.id:
         return redirect(f"/tasks")
 
-    response = make_response(render_template('teacher/edit_task.html', task=task_serializer(task, True)))
+    response = make_response(render_template('home/edit_task.html', task=task_serializer(task, True)))
 
     response.set_cookie('task', task.id)
 
@@ -129,4 +132,10 @@ def preview_task(task_id):
     if world_query and not WorldTask.query.filter_by(task_id=task.id, world_id=world_query).first():
         return redirect(f'/task/{task.id}/edit{f"?world={world_query}" if world_query else ""}')
 
-    return render_template('teacher/task_preview.html', task=task_serializer(task))
+    return render_template('home/task_preview.html', task=task_serializer(task))
+
+
+@home_blueprint.route('/account')
+@login_required
+def account():
+    return render_template('home/account.html', user=current_user)

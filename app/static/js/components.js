@@ -42,7 +42,7 @@ function taskFieldComponent(taskField) {
             <p>${taskField.content? taskField.content.replace(/\n+/g, '</p><p>') : ""}</p>
         `;
     } else if (taskField.field_type === "image") {
-        wrapper.appendChild(imageComponent(taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/assets/notfound.webp"))
+        wrapper.appendChild(imageComponent(taskField.content? `${taskField.content}?psk=${getCookie('psk')}` : "/static/images/assets/notfound.webp"))
     } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes" || taskField.field_type === "connect") {
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")
@@ -116,7 +116,7 @@ function editableTaskFieldComponent(taskField) {
             <textarea onchange="editField('${taskField.id}', this.value)" placeholder="Text">${taskField.content? taskField.content : ""}</textarea>
         `;
     } else if (taskField.field_type === "image") {
-        wrapper.appendChild(imageComponent(taskField.content? `${taskField.content}?psk=${getCookie("psk")}` : "/static/images/assets/notfound.webp"))
+        wrapper.appendChild(imageComponent(taskField.content? `${taskField.content}?psk=${getCookie('psk')}` : "/static/images/assets/notfound.webp"))
     } else if (taskField.field_type === "multiplechoice" || taskField.field_type === "checkboxes" || taskField.field_type === "connect") {
         wrapper.classList.add(taskField.field_type)
         wrapper.classList.add("question")

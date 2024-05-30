@@ -150,7 +150,7 @@ async function submitTaskPreview(taskId) {
         body: JSON.stringify({task_id: taskId, answers: answers}),
         headers: {
             "Content-Type" : "application/json",
-            "Authorization" : getCookie("psk")
+            "Authorization" : getCookie('psk')
         }
     });
 
