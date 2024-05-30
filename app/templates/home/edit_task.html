@@ -1,12 +1,25 @@
-{% extends "/home/home_base.html" %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block content %}
+    <title>Teacher</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tasks.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/basics.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css') }}">
+
     <script src="{{ url_for('static', filename='js/tasks.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/basics.js') }}"></script>
     <script src="{{ url_for('static', filename='js/editTask.js') }}"></script>
     <script src="{{ url_for('static', filename='js/components.js') }}"></script>
-    
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/tasks.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher.css') }}">
+
+    <!-- Not custom JS-->
+    <script src="https://kit.fontawesome.com/6996113341.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <button class="back" onclick="backToTasks('{{ world_id }}')">Back</button>
 
     <div class="actions" id="actions">
         <button onclick="moveField('up')"><i class="fa-solid fa-arrow-up"></i></button>
@@ -48,4 +61,5 @@
             task.appendChild(taskField);    
         });
     </script>
-{% endblock %}
+</body>
+</html>

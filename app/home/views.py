@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, make_r
 
 from flask_login import login_required, current_user
 
-from app.utils.serializers import task_serializer
+from app.utils.serializers import task_serializer, task_preview_serializer
 from app.teacher.models import Task, WorldTask
 from app.auth.models import UserWorlds
 from app.game.models import World
@@ -73,7 +73,7 @@ def create_game(psw):
 @home_blueprint.route('/tasks')
 @login_required
 def teacher_tasks():
-    return render_template('home/tasks.html', tasks=[task_serializer(task) for task in Task.query.filter_by(user_id=current_user.id).all()], world=None)
+    return render_template('home/tasks.html', tasks=[task_preview_serializer(task) for task in Task.query.filter_by(user_id=current_user.id).all()], world=None)
 
 
 @home_blueprint.route('/task/create')
@@ -91,7 +91,7 @@ def create_task():
     if world:
         world_task = WorldTask(world_id=world.id, task_id=task.id, index=world.task_index)
 
-        world.task_inde += 1
+        world.task_index += 1
 
         db.session.add(world_task)
         db.session.commit()
@@ -111,8 +111,8 @@ def edit_task(task_id):
 
     if not task or task.user_id != current_user.id:
         return redirect(f"/tasks")
-
-    response = make_response(render_template('home/edit_task.html', task=task_serializer(task, True)))
+    
+    response = make_response(render_template('home/edit_task.html', task=task_serializer(task, True), world_id=request.args.get('world')))
 
     response.set_cookie('task', task.id)
 

@@ -1,3 +1,9 @@
+function backToTasks(worldId) {
+    if (worldId !== "None") return window.location.href=`/teacher/${worldId}/tasks`;
+
+    return window.location.href="/tasks";
+}
+
 async function addField(fieldType) {
     const response = await fetch("/api/task/field/add", {
         method: "POST",

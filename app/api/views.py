@@ -963,6 +963,15 @@ def delete_task(task_id):
         db.session.commit()
 
         return make_response({"success" : True}, 204)
+    
+
+    for world_task in WorldTask.query.filter_by(task_id=task.id).all():
+        world = World.query.get(world_task.world_id)
+
+        world.task_index -= 1
+
+        db.session.delete(world_task)
+        db.session.commit()
 
     for field in TaskField.query.filter_by(task_id=task.id).all():
         if field.field_type == "image":

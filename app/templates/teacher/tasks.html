@@ -3,8 +3,9 @@
 {% block content %}
     <script src="{{ url_for('static', filename='js/taskManagement.js') }}"></script>
 
-     <button onclick="window.location.href='/task/create?world={{ world.id }}'">Create task</button>
-    
+    <button onclick="window.location.href='/task/create?world={{ world.id }}'">Create task</button>
+    <button onclick="importTask('{{ world.id }}')">Import task</button>
+
     {% for task in tasks %}
         <div class="task" id="task-{{ task.id }}">
             <h3>{{ task.name }} ({{ task.finished }}/{{ world.players }})</h3>

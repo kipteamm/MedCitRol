@@ -3,7 +3,7 @@ from flask_login import current_user, AnonymousUserMixin
 from flask import Blueprint, render_template, redirect, send_from_directory, request, make_response
 
 from app.utils.functions import get_access_key
-from app.teacher.models import Task, TaskField, TaskOption
+from app.teacher.models import Task, WorldTask, TaskField, TaskOption
 from app.game.models import World, Settlement, SettlementRuler, Character, AccessKey, Tile, InventoryItem, Farmer, MarketItem, Merchant, Warehouse, TraderouteRequest
 from app.auth.models import UserWorlds
 from app.extensions import db
@@ -34,6 +34,7 @@ def help():
 @main_blueprint.route('/reset')
 def reset():
     Task.query.delete()
+    WorldTask.query.delete()
     TaskField.query.delete()
     TaskOption.query.delete()
     World.query.delete()

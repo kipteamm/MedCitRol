@@ -194,6 +194,9 @@ def task_serializer(task: Task, include_answers: bool=False) -> dict:
 def world_task_serializer(world_task: WorldTask, include_answers: bool=False):
     task = Task.query.filter_by(id=world_task.task_id).first()
 
+    if not task:
+        return {}
+
     data = task_serializer(task, include_answers)
 
     finished_users_count = db.session.query(db.func.count(db.func.distinct(TaskUser.user_id))) \
@@ -216,18 +219,32 @@ def task_preview_serializer(task: Task) -> dict:
     else:
         name = "Unnamed"
 
+    return {
+        'id' : task.id,
+        'field_index' : task.field_index,
+        'name' : name,
+    }
+
+
+def world_task_preview_serializer(world_task: WorldTask) -> dict:
+    print(world_task.task_id)
+
+    task = Task.query.filter_by(id=world_task.task_id).first()
+
+    if not task:
+        return {}
+
+    data = task_preview_serializer(task)
+
     finished_users_count = db.session.query(db.func.count(db.func.distinct(TaskUser.user_id))) \
         .filter(TaskUser.task_id == task.id, TaskUser.percentage >= 80) \
         .scalar()
 
-    return {
-        'id' : task.id,
-        'world_id' : task.world_id,
-        'index' : task.index,
-        'field_index' : task.field_index,
-        'name' : name,
-        'finished' : finished_users_count,
-    }
+    data["world_id"] = world_task.world_id
+    data["index"] = world_task.index
+    data["finished"] = finished_users_count
+
+    return data
 
 
 def task_field_serializer(task_field: TaskField, include_answers: bool=False) -> dict:

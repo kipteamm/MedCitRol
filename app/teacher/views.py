@@ -2,7 +2,7 @@ from flask_login import current_user, login_required
 
 from flask import Blueprint, redirect, url_for, render_template, request
 
-from app.utils.serializers import task_serializer, task_preview_serializer, user_serializer, game_serializer, task_user_serializer
+from app.utils.serializers import task_serializer, world_task_preview_serializer, user_serializer, game_serializer, task_user_serializer
 from app.auth.models import UserWorlds, User
 from app.game.models import World
 from app.extensions import db
@@ -53,23 +53,9 @@ def tasks(world_id):
     if not world:
         return redirect(url_for('home.games'))
     
-    tasks = Task.query.filter_by(world_id=world.id).all()
+    tasks = WorldTask.query.filter_by(world_id=world.id).all()
 
-    if tasks:
-        for task in tasks:
-            if task.user_id != None:
-                continue
-
-            task.user_id = current_user.id
-            task.world_id = None
-            task.index = None
-            
-            world_task = WorldTask(task_id=task.id, world_id=world.id, index=task.index)
-
-            db.session.add(world_task)
-            db.session.commit()
-
-    return render_template('teacher/tasks.html', world=game_serializer(world), tasks=[task_preview_serializer(task) for task in tasks])
+    return render_template('teacher/tasks.html', world=game_serializer(world), tasks=[world_task_preview_serializer(task) for task in tasks])
 
 
 @teacher_blueprint.route('/task/<task_id>/info')
