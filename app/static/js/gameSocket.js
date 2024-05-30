@@ -8,7 +8,7 @@ socket.on('connect', function() {
 
 socket.on('disconnect', function() {
     console.log('disconnect');
-    return window.location.href = `/home?game=${world.id}`;
+    return window.location.href = `/games?game=${world.id}`;
 })
 
 socket.on('update_time', function(data) {

@@ -1,4 +1,26 @@
-.game-wrapper {
+nav {
+    position: fixed;
+    top: 0;
+    z-index: 10000;
+    width: 100vw;
+    padding: 25px;
+    font-size: 20px;
+    background-color: white;
+    box-shadow: 0 0px 10px 0 #e3e3e3;
+}
+
+nav .nav-content {
+    max-width: 1200px;
     margin: 0px auto;
+    display: flex;
+    gap: 50px;
+}
+
+nav a {
+    text-decoration: none;
+}
+
+.game-wrapper {
+    margin: 100px auto;
     max-width: 1200px;
 }

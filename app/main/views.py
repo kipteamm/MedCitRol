@@ -1,3 +1,5 @@
+from flask_login import current_user, AnonymousUserMixin
+
 from flask import Blueprint, render_template, redirect, send_from_directory, request, make_response
 
 from app.utils.functions import get_access_key
@@ -6,6 +8,7 @@ from app.game.models import World, Settlement, SettlementRuler, Character, Acces
 from app.auth.models import UserWorlds
 from app.extensions import db
 
+import json
 import os
 
 
@@ -14,8 +17,12 @@ main_blueprint = Blueprint('main', __name__)
 
 @main_blueprint.route('/')
 def index():
-    return redirect('/home')
-    #return render_template('main/index.html')
+    red = request.args.get('red')
+
+    if isinstance(current_user, AnonymousUserMixin) or (red != 'true' and red != None):
+        return render_template('main/index.html', user=current_user)
+    
+    return redirect('/games')
 
 
 @main_blueprint.route('/help')

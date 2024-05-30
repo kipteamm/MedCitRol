@@ -1,0 +1,17 @@
+{% extends "/home/home_base.html" %}
+
+{% block content %}
+    <script src="{{ url_for('static', filename='js/taskManagement.js') }}"></script>
+
+    <button onclick="window.location.href='/task/create'">Create task</button>
+    
+    {% for task in tasks %}
+        <div class="task" id="task-{{ task.id }}">
+            <h3>{{ task.name }} ({{ task.finished }}/{{ world.players }})</h3>
+
+            <button onclick="window.location.href='/task/{{ task.id }}/edit'">Edit task</button>
+            <button onclick="duplicateTask('{{ task.id }}', null)">Duplicate task</button>
+            <button onclick="deleteTask('{{ task.id }}', null)">Delete task</button>
+        </div>
+    {% endfor %}
+{% endblock %}

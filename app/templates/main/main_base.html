@@ -24,6 +24,16 @@
 
     <div class="alert" id="alert"></div>
 
+    <nav>
+        {% if user.is_authenticated  %}
+            <a href="/games">Games</a>
+            <a href="/logout">Logout</a>
+        {% else %}
+            <a href="/register">Register</a>
+            <a href="/login">Login</a>
+        {% endif %}
+    </nav>
+
     <div class="main-wrapper">
         {% block content %}{% endblock %}
     </div>

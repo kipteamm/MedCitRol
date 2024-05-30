@@ -41,7 +41,7 @@ def register():
         
         flash('Registration successful. Welcome!', 'success')
         
-        return redirect(url_for('game.home'))
+        return redirect(url_for('home.games'))
     
     return render_template('auth/register.html')
 
@@ -64,7 +64,7 @@ def login():
             
             flash('Login successful. Welcome back!', 'success')
             
-            response = redirect(url_for('game.home'))
+            response = redirect(url_for('home.games'))
 
             response.set_cookie('token', user.token)
 

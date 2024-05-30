@@ -1,4 +1,4 @@
-{% extends "/teacher/teacher_base.html" %}
+{% extends "/home/home_base.html" %}
 
 {% block content %}
     <script src="{{ url_for('static', filename='js/tasks.js') }}"></script>
@@ -35,7 +35,7 @@
 
         <h3>Preview</h3>
 
-        <button onclick="window.location.href='/teacher/task/{{ task.id }}/preview'">Preview</button>
+        <button onclick="window.location.href='/task/{{ task.id }}/preview'">Preview</button>
     </div>
 
     <script>

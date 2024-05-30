@@ -14,7 +14,7 @@ async function duplicateTask(taskId, worldId) {
         return console.log(response, json);
     }
 
-    return window.location.href=`/teacher/task/${json.id}/edit${worldId? `?world=${worldId}` : ''}`;
+    return window.location.href=`/task/${json.id}/edit${worldId? `?world=${worldId}` : ''}`;
 }
 
 async function deleteTask(taskId, worldId) {

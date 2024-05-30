@@ -11,6 +11,8 @@ from .teacher.views import teacher_blueprint
 from .utils.serializers import properties_serializer
 from .utils.presence import update_time, update_character, update_settlement
 
+from .api.views import api_blueprint
+
 from .auth.models import User
 from .auth.views import auth_blueprint
 
@@ -18,9 +20,9 @@ from .game.views import game_blueprint
 from .game.events import register_events
 from .game.models import World, Character
 
-from .main.views import main_blueprint
+from .home.views import home_blueprint
 
-from .api.views import api_blueprint
+from .main.views import main_blueprint
 
 from .extensions import db, socketio
 
@@ -41,6 +43,7 @@ def create_app():
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(game_blueprint)
     app.register_blueprint(main_blueprint)
+    app.register_blueprint(home_blueprint)
     app.register_blueprint(api_blueprint)
 
     login_manager = LoginManager(app)

@@ -15,70 +15,13 @@ from .models import World, Tile, SettlementRuler, Settlement, Character
 game_blueprint = Blueprint('game', __name__)
 
 
-@game_blueprint.route('/home')
-@login_required
-def home():
-    world_id = request.args.get('game')
-
-    if UserWorlds.query.filter_by(world_id=world_id).first():
-        return redirect(f'/game/{world_id}')
-
-    worlds = []
-
-    for world in current_user.worlds:
-        worlds.append({
-            'id': world.id,
-            'user_id': world.user_id,
-            'name' : world.name,
-            'code': world.code
-        })
-
-    return render_template("game/home.html", worlds=worlds)
-
-
-@game_blueprint.route('/invite/<invite>')
-@login_required
-def invite(invite):
-    world = World.query.filter_by(code=invite).first()
-
-    if not world:
-        return redirect(url_for('game.home'))
-    
-    user_world = UserWorlds.query.filter_by(user_id=current_user.id, world_id=world.id).first()
-
-    if user_world:
-        return redirect(f'/game/{user_world.world_id}')
-    
-    current_user.worlds.append(world)
-
-    db.session.commit()
-
-    return redirect(f'/game/{world.id}')
-
-
-@game_blueprint.route('/game/create/<psw>')
-@login_required
-def create_game(psw):
-    if psw != "jogHq2Hndb":
-        return redirect(url_for('game.home'))
-
-    world = World(user_id=current_user.id)
-
-    db.session.add(world)
-
-    current_user.worlds.append(world)
-
-    db.session.commit()
-
-    return redirect(f'/teacher/{world.id}')
-
 @game_blueprint.route('/game/<id>')
 @login_required
 def game(id):
     user_world = UserWorlds.query.filter_by(user_id=current_user.id, world_id=id).first()
 
     if not user_world:
-        return redirect(url_for('game.home'))
+        return redirect(url_for('home.games'))
     
     world = World.query.get(id)
 
@@ -103,7 +46,7 @@ def settlement(id, settlement_id):
     user_world = UserWorlds.query.filter_by(user_id=current_user.id, world_id=id).first()
 
     if not user_world:
-        return redirect(url_for('game.home'))
+        return redirect(url_for('home.games'))
     
     world = World.query.get(id)
 
