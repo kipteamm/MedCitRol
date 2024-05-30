@@ -1,5 +1,5 @@
 from app.utils.properties import Properties
-from app.teacher.models import Task, TaskField, TaskOption, TaskUser
+from app.teacher.models import Task, WorldTask, TaskField, TaskOption, TaskUser
 from app.utils.functions import get_merchandise
 from app.utils.tiles import get_tile_index
 from app.game.models import World, Settlement, SettlementRuler, Character, Tile, InventoryItem, MarketItem, Merchant
@@ -182,18 +182,29 @@ def task_serializer(task: Task, include_answers: bool=False) -> dict:
 
     else:
         name = "Unnamed"
-
-    finished_users_count = db.session.query(db.func.count(db.func.distinct(TaskUser.user_id))) \
-        .filter(TaskUser.task_id == task.id, TaskUser.percentage >= 80) \
-        .scalar()
     
     return {
         'id' : task.id,
         'field_index' : task.field_index,
         'name' : name,
-        'finished' : finished_users_count,
         'fields' : [task_field_serializer(task_field, include_answers) for task_field in TaskField.query.filter_by(task_id=task.id).order_by(TaskField.field_index)]
     }
+
+
+def world_task_serializer(world_task: WorldTask, include_answers: bool=False):
+    task = Task.query.filter_by(id=world_task.task_id).first()
+
+    data = task_serializer(task, include_answers)
+
+    finished_users_count = db.session.query(db.func.count(db.func.distinct(TaskUser.user_id))) \
+        .filter(TaskUser.task_id == task.id, TaskUser.percentage >= 80) \
+        .scalar()
+
+    data["world_id"] = world_task.world_id
+    data["index"] = world_task.index
+    data["finished"] = finished_users_count
+
+    return data
 
 
 def task_preview_serializer(task: Task) -> dict:
