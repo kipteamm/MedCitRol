@@ -219,10 +219,19 @@ def task_preview_serializer(task: Task) -> dict:
     else:
         name = "Unnamed"
 
+    world_tasks = []
+
+    for world in World.query.filter(World.id.in_([world_task.world_id for world_task in WorldTask.query.filter_by(task_id=task.id).all()])).all():
+        world_tasks.append({
+            "id" : world.id,
+            "name" : world.name
+        })
+
     return {
         'id' : task.id,
         'field_index' : task.field_index,
         'name' : name,
+        'world_tasks' : world_tasks
     }
 
 

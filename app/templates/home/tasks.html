@@ -9,6 +9,20 @@
         <div class="task" id="task-{{ task.id }}">
             <h3>{{ task.name }}</h3>
 
+            {% if task.world_tasks|length > 0 %}
+                <div class="world-tasks">
+                    <h4>Used in</h4>
+
+                    {% for world in task.world_tasks %}
+                        <div class="world-task" id="task-{{ task.id }}-{{ world.id }}">
+                            {{ world.name }}
+
+                            <button onclick="deleteTask('{{ task.id }}', '{{ world.id }}')">Remove task</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             <button onclick="window.location.href='/task/{{ task.id }}/edit'">Edit task</button>
             <button onclick="duplicateTask('{{ task.id }}', null)">Duplicate task</button>
             <button onclick="deleteTask('{{ task.id }}', null)">Delete task</button>

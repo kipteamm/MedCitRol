@@ -24,3 +24,15 @@ nav a {
     margin: 100px auto;
     max-width: 1200px;
 }
+
+.world-tasks h4 {
+    margin-bottom: 6.25px;
+}
+
+.world-tasks {
+    margin-bottom: 25px;
+}
+
+.world-task {
+    margin-bottom: 12.5px;
+}

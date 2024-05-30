@@ -72,7 +72,7 @@ def create_game(psw):
 
 @home_blueprint.route('/tasks')
 @login_required
-def teacher_tasks():
+def tasks():
     return render_template('home/tasks.html', tasks=[task_preview_serializer(task) for task in Task.query.filter_by(user_id=current_user.id).all()], world=None)
 
 

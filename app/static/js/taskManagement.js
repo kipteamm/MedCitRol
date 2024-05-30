@@ -35,7 +35,11 @@ async function deleteTask(taskId, worldId) {
         return console.log(response, await response.json());
     }
 
-    document.getElementById(`task-${taskId}`)?.remove();
+    if (!worldId) return document.getElementById(`task-${taskId}`)?.remove();
+    
+    const worldTask = document.getElementById(`task-${taskId}-${worldId}`);
+
+    worldTask.parentElement.querySelectorAll('div.world-task').length === 1? worldTask.parentElement.remove() : worldTask.remove();
 
     return;
 }
